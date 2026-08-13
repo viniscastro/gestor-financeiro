@@ -52,6 +52,10 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Account: 'Account',
+  Category: 'Category',
+  Budget: 'Budget',
+  RecurringRule: 'RecurringRule',
   Transaction: 'Transaction'
 } as const
 
@@ -76,6 +80,11 @@ export const UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   password: 'password',
+  image: 'image',
+  emailVerified: 'emailVerified',
+  verificationCode: 'verificationCode',
+  verificationExpires: 'verificationExpires',
+  verificationSentAt: 'verificationSentAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -83,16 +92,78 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const AccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  type: 'type',
+  color: 'color',
+  initialBalance: 'initialBalance',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
+
+
+export const CategoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  type: 'type',
+  color: 'color',
+  icon: 'icon',
+  createdAt: 'createdAt'
+} as const
+
+export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
+
+
+export const BudgetScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  categoryId: 'categoryId',
+  amountCents: 'amountCents',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BudgetScalarFieldEnum = (typeof BudgetScalarFieldEnum)[keyof typeof BudgetScalarFieldEnum]
+
+
+export const RecurringRuleScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  description: 'description',
+  amountCents: 'amountCents',
+  type: 'type',
+  categoryId: 'categoryId',
+  accountId: 'accountId',
+  dayOfMonth: 'dayOfMonth',
+  active: 'active',
+  notifyDaysBefore: 'notifyDaysBefore',
+  lastNotifiedAt: 'lastNotifiedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RecurringRuleScalarFieldEnum = (typeof RecurringRuleScalarFieldEnum)[keyof typeof RecurringRuleScalarFieldEnum]
+
+
 export const TransactionScalarFieldEnum = {
   id: 'id',
   transactionType: 'transactionType',
   description: 'description',
   amount: 'amount',
-  category: 'category',
   date: 'date',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  userId: 'userId'
+  userId: 'userId',
+  accountId: 'accountId',
+  categoryId: 'categoryId',
+  transferGroupId: 'transferGroupId',
+  recurringId: 'recurringId',
+  occurrenceMonth: 'occurrenceMonth'
 } as const
 
 export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
@@ -112,4 +183,12 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { amountToCents, transactionSchema } from '@/lib/transactions'
+import { amountToCents, toTransactionDto, transactionSchema } from '@/lib/transactions'
+
+const transactionInclude = {
+  account: { select: { name: true, color: true } },
+  category: { select: { id: true, name: true, color: true } },
+} as const
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -28,7 +33,25 @@ export async function PATCH(request: NextRequest, ctx: Params) {
     )
   }
 
-  const { transactionType, description, amount, category, date } = parsed.data
+  const { transactionType, description, amount, accountId, categoryId, date } = parsed.data
+
+  const account = await prisma.account.findFirst({
+    where: { id: accountId, userId: session.user.id },
+    select: { id: true },
+  })
+  if (!account) {
+    return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
+  }
+
+  if (categoryId) {
+    const category = await prisma.category.findFirst({
+      where: { id: categoryId, userId: session.user.id },
+      select: { id: true },
+    })
+    if (!category) {
+      return NextResponse.json({ error: 'Categoria não encontrada' }, { status: 404 })
+    }
+  }
 
   try {
     const transaction = await prisma.transaction.update({
@@ -37,18 +60,13 @@ export async function PATCH(request: NextRequest, ctx: Params) {
         transactionType,
         description,
         amount: amountToCents(amount),
-        category,
         date: new Date(date),
+        accountId,
+        categoryId: categoryId ?? null,
       },
+      include: transactionInclude,
     })
-    return NextResponse.json({
-      id: transaction.id,
-      transactionType: transaction.transactionType,
-      description: transaction.description,
-      amount: transaction.amount,
-      category: transaction.category,
-      date: transaction.date.toISOString(),
-    })
+    return NextResponse.json(toTransactionDto(transaction))
   } catch {
     return NextResponse.json({ error: 'Transação não encontrada' }, { status: 404 })
   }
@@ -62,12 +80,26 @@ export async function DELETE(_request: NextRequest, ctx: Params) {
 
   const { id } = await ctx.params
 
-  try {
+  const existing = await prisma.transaction.findFirst({
+    where: { id, userId: session.user.id },
+    select: { id: true, transferGroupId: true },
+  })
+  if (!existing) {
+    return NextResponse.json({ error: 'Transação não encontrada' }, { status: 404 })
+  }
+
+  if (existing.transferGroupId) {
+    await prisma.transaction.deleteMany({
+      where: {
+        userId: session.user.id,
+        transferGroupId: existing.transferGroupId,
+      },
+    })
+  } else {
     await prisma.transaction.delete({
       where: { id, userId: session.user.id },
     })
-    return NextResponse.json({ ok: true })
-  } catch {
-    return NextResponse.json({ error: 'Transação não encontrada' }, { status: 404 })
   }
+
+  return NextResponse.json({ ok: true })
 }

@@ -8,26 +8,112 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(cuid())
-  name         String
-  email        String        @unique
-  password     String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  transactions Transaction[]
+  id                   String          @id @default(cuid())
+  name                 String
+  email                String          @unique
+  password             String
+  image                String?
+  emailVerified        DateTime?
+  verificationCode     String?
+  verificationExpires  DateTime?
+  verificationSentAt   DateTime?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  transactions         Transaction[]
+  accounts             Account[]
+  categories           Category[]
+  budgets              Budget[]
+  recurringRules       RecurringRule[]
+}
+
+model Account {
+  id             String          @id @default(cuid())
+  userId         String
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  type           String          @default("CARTEIRA")
+  color          String          @default("#10b981")
+  initialBalance Int             @default(0)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  transactions   Transaction[]
+  recurringRules RecurringRule[]
+
+  @@index([userId])
+}
+
+model Category {
+  id             String          @id @default(cuid())
+  userId         String
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  type           String
+  color          String          @default("#78716c")
+  icon           String          @default("tag")
+  createdAt      DateTime        @default(now())
+  transactions   Transaction[]
+  budgets        Budget[]
+  recurringRules RecurringRule[]
+
+  @@unique([userId, name, type])
+  @@index([userId])
+}
+
+model Budget {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  amountCents Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, categoryId])
+}
+
+model RecurringRule {
+  id               String        @id @default(cuid())
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  description      String
+  amountCents      Int
+  type             String
+  categoryId       String?
+  category         Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  accountId        String
+  account          Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  dayOfMonth       Int
+  active           Boolean       @default(true)
+  notifyDaysBefore Int           @default(3)
+  lastNotifiedAt   DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  transactions     Transaction[]
+
+  @@index([userId])
 }
 
 model Transaction {
-  id              String   @id @default(cuid())
+  id              String         @id @default(cuid())
   transactionType String
   description     String
   amount          Int
-  category        String
   date            DateTime
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
   userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId       String
+  account         Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  categoryId      String?
+  category        Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  transferGroupId String?
+  recurringId     String?
+  recurringRule   RecurringRule? @relation(fields: [recurringId], references: [id], onDelete: SetNull)
+  occurrenceMonth String?
 
   @@index([userId, date])
+  @@index([userId, accountId])
+  @@index([userId, categoryId])
 }

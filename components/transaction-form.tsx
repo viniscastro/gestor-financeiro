@@ -2,18 +2,16 @@
 
 import { useState } from 'react'
 import { LoaderCircle, TrendingDown, TrendingUp, X } from 'lucide-react'
-import {
-  EXPENSE_CATEGORIES,
-  INCOME_CATEGORIES,
-  type TransactionType,
-} from '@/lib/categories'
-import type { TransactionDto } from '@/lib/types'
+import type { TransactionType } from '@/lib/categories'
+import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 
 type Props = {
   open: boolean
   onClose: () => void
   onSaved: () => void
   transaction?: TransactionDto | null
+  accounts: AccountDto[]
+  categories: CategoryDto[]
 }
 
 export default function TransactionForm({
@@ -21,6 +19,8 @@ export default function TransactionForm({
   onClose,
   onSaved,
   transaction,
+  accounts,
+  categories,
 }: Props) {
   if (!open) return null
   return (
@@ -29,6 +29,8 @@ export default function TransactionForm({
       transaction={transaction ?? null}
       onClose={onClose}
       onSaved={onSaved}
+      accounts={accounts}
+      categories={categories}
     />
   )
 }
@@ -37,9 +39,17 @@ type BodyProps = {
   transaction: TransactionDto | null
   onClose: () => void
   onSaved: () => void
+  accounts: AccountDto[]
+  categories: CategoryDto[]
 }
 
-function TransactionFormBody({ transaction, onClose, onSaved }: BodyProps) {
+function TransactionFormBody({
+  transaction,
+  onClose,
+  onSaved,
+  accounts,
+  categories,
+}: BodyProps) {
   const [type, setType] = useState<TransactionType>(
     transaction?.transactionType ?? 'EXPENSE'
   )
@@ -47,7 +57,12 @@ function TransactionFormBody({ transaction, onClose, onSaved }: BodyProps) {
   const [amount, setAmount] = useState(
     transaction ? (transaction.amount / 100).toFixed(2) : ''
   )
-  const [category, setCategory] = useState(transaction?.category ?? '')
+  const [accountId, setAccountId] = useState(
+    transaction?.accountId ?? accounts[0]?.id ?? ''
+  )
+  const [categoryId, setCategoryId] = useState(
+    transaction?.categoryId ?? ''
+  )
   const [date, setDate] = useState(
     transaction
       ? transaction.date.slice(0, 10)
@@ -56,12 +71,11 @@ function TransactionFormBody({ transaction, onClose, onSaved }: BodyProps) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const categories = type === 'INCOME' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES
+  const availableCategories = categories.filter((c) => c.type === type)
 
   function switchType(next: TransactionType) {
     setType(next)
-    const available = next === 'INCOME' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES
-    if (!available.some((c) => c.id === category)) setCategory('')
+    if (!availableCategories.some((c) => c.id === categoryId)) setCategoryId('')
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -73,7 +87,8 @@ function TransactionFormBody({ transaction, onClose, onSaved }: BodyProps) {
         transactionType: type,
         description,
         amount: Number(amount),
-        category,
+        accountId,
+        categoryId: categoryId || null,
         date,
       }
       const res = await fetch(
@@ -96,20 +111,20 @@ function TransactionFormBody({ transaction, onClose, onSaved }: BodyProps) {
   }
 
   const inputClass =
-    'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
+    'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl">
+      <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white">
+          <h2 className="text-lg font-bold text-zinc-900 dark:text-white">
             {transaction ? 'Editar transação' : 'Nova transação'}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+            className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
             aria-label="Fechar"
           >
             <X className="h-5 w-5" />
@@ -117,14 +132,14 @@ function TransactionFormBody({ transaction, onClose, onSaved }: BodyProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-800/80 p-1">
+          <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800/80">
             <button
               type="button"
               onClick={() => switchType('EXPENSE')}
               className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                 type === 'EXPENSE'
                   ? 'bg-rose-500 text-white shadow'
-                  : 'text-zinc-400 hover:text-zinc-200'
+                  : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
               }`}
             >
               <TrendingDown className="h-4 w-4" />
@@ -136,7 +151,7 @@ function TransactionFormBody({ transaction, onClose, onSaved }: BodyProps) {
               className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                 type === 'INCOME'
                   ? 'bg-emerald-500 text-white shadow'
-                  : 'text-zinc-400 hover:text-zinc-200'
+                  : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
               }`}
             >
               <TrendingUp className="h-4 w-4" />
@@ -145,7 +160,7 @@ function TransactionFormBody({ transaction, onClose, onSaved }: BodyProps) {
           </div>
 
           <div>
-            <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-300">
+            <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Descrição
             </label>
             <input
@@ -162,7 +177,7 @@ function TransactionFormBody({ transaction, onClose, onSaved }: BodyProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-300">
+              <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Valor (R$)
               </label>
               <input
@@ -179,7 +194,7 @@ function TransactionFormBody({ transaction, onClose, onSaved }: BodyProps) {
               />
             </div>
             <div>
-              <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-zinc-300">
+              <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Data
               </label>
               <input
@@ -194,29 +209,53 @@ function TransactionFormBody({ transaction, onClose, onSaved }: BodyProps) {
           </div>
 
           <div>
-            <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-300">
-              Categoria
+            <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Conta
             </label>
             <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              id="account"
+              value={accountId}
+              onChange={(e) => setAccountId(e.target.value)}
               required
               className={inputClass}
             >
               <option value="" disabled>
                 Selecione...
               </option>
-              {categories.map((c) => (
+              {accounts.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Categoria
+            </label>
+            <select
+              id="category"
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              required
+              className={inputClass}
+            >
+              <option value="" disabled>
+                Selecione...
+              </option>
+              {availableCategories.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.label}
+                  {c.name}
                 </option>
               ))}
             </select>
           </div>
 
           {error && (
-            <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">{error}</p>
+            <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+              {error}
+            </p>
           )}
 
           <button

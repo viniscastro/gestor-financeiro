@@ -21,11 +21,14 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 ## ✨ Funcionalidades
 
 - 🔐 **Autenticação completa** — cadastro e login com e-mail/senha, senha criptografada com **bcrypt** e sessão segura via **JWT**
+- 🥇 **Login com Google** — entrada com um clique via OAuth (credenciais no Google Cloud Console)
+- ✉️ **Confirmação de e-mail** — código de 6 dígitos enviado por e-mail, com expiração de 10 min, reenvio com cooldown e bloqueio de login até a conta ser verificada
 - 💸 **Entradas e saídas no mesmo lugar** — cadastre receitas e despesas em uma única tela, escolhendo o tipo na hora
 - 🏷️ **Categorias pré-definidas** — 5 categorias de receita e 8 de despesa, com cores e rótulos em português
 - 📊 **Dashboard resumido** — saldo total, entradas e saídas do mês, e as 5 transações mais recentes
 - 📈 **Estatísticas com gráficos** — evolução mensal dos últimos 6 meses (barras) e despesas por categoria (pizza), com **Recharts**
-- 🎨 **Interface moderna** — tema escuro, responsiva (menu lateral que vira gaveta no mobile) e ícones **Lucide**
+- 🎨 **Interface moderna** — temas **claro e escuro** com alternância, responsiva (menu lateral que vira gaveta no mobile) e ícones **Lucide**
+- 🖼️ **Foto de perfil** — envie uma imagem (redimensionada no cliente) ou remova, exibida na sidebar e na página de conta
 - 🛡️ **Proteção de rotas** — áreas privadas redirecionam para o login; APIs exigem sessão válida (401 sem cookie)
 - 💱 **Valores em centavos** — o dinheiro é armazenado como inteiro (cents), sem problemas de ponto flutuante
 
@@ -38,7 +41,8 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 | UI              | [Tailwind CSS](https://tailwindcss.com) 4 · [Lucide](https://lucide.dev) |
 | Gráficos        | [Recharts](https://recharts.org) 3.10.1                |
 | Banco de dados  | [PostgreSQL](https://www.postgresql.org) 17 · [Prisma](https://www.prisma.io) 7.9.1 (driver adapter `pg`) |
-| Autenticação    | [NextAuth.js](https://next-auth.js.org) 5 (beta) · [bcryptjs](https://github.com/dcodeIO/bcrypt.js) |
+| Autenticação    | [NextAuth.js](https://next-auth.js.org) 5 (beta) · [bcryptjs](https://github.com/dcodeIO/bcrypt.js) · [Google OAuth](https://console.cloud.google.com) |
+| E-mails         | [Nodemailer](https://nodemailer.com) (SMTP/Gmail) · [Resend](https://resend.com) |
 | Validação       | [Zod](https://zod.dev) 4                               |
 
 ## 🏗️ Estrutura do projeto
@@ -52,13 +56,16 @@ gestor-financeiro/
 │   │   ├── stats/              #   Gráficos e estatísticas
 │   │   └── layout.tsx          #   Layout com sidebar
 │   ├── (auth)/page.tsx         # Tela única de login + cadastro
+│   ├── verify-email/page.tsx   # Confirmação de e-mail com código
 │   ├── api/
 │   │   ├── auth/[...nextauth]/ # Rotas do NextAuth
-│   │   ├── register/           # Criação de usuário
+│   │   ├── register/           # Criação de usuário + envio de código
+│   │   ├── verify-email/       # Confirma o código recebido
+│   │   ├── resend-verification/# Reenvia o código de confirmação
 │   │   └── transactions/       # Listar/criar · editar/excluir ([id])
 │   └── layout.tsx · globals.css
-├── components/                 # auth-form, sidebar, transaction-*, statistics-charts
-├── lib/                        # auth, prisma, format, categories, transactions, types
+├── components/                 # auth-form, verify-email-form, sidebar, transaction-*, statistics-charts
+├── lib/                        # auth, email (Resend), verification, prisma, format, categories, transactions, types
 ├── prisma/
 │   ├── migrations/             # Migrações versionadas (PostgreSQL)
 │   └── schema.prisma           # Modelos User e Transaction
@@ -71,13 +78,17 @@ gestor-financeiro/
 
 ```prisma
 model User {
-  id           String        @id @default(cuid())
-  name         String
-  email        String        @unique
-  password     String        // hash bcrypt
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  transactions Transaction[]
+  id                   String        @id @default(cuid())
+  name                 String
+  email                String        @unique
+  password             String        // hash bcrypt (vazio para contas Google)
+  emailVerified        DateTime?     // null = e-mail ainda não confirmado
+  verificationCode     String?       // hash bcrypt do código de confirmação
+  verificationExpires  DateTime?     // expiração do código (10 min)
+  verificationSentAt   DateTime?     // usado no cooldown de reenvio (60s)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  transactions         Transaction[]
 }
 
 model Transaction {
@@ -102,7 +113,9 @@ model Transaction {
 
 | Método | Rota                            | Descrição                            | Acesso |
 | ------ | ------------------------------- | ------------------------------------ | ------ |
-| POST   | `/api/register`                 | Cadastra um novo usuário             | Público |
+| POST   | `/api/register`                 | Cadastra um novo usuário e envia o código de confirmação | Público |
+| POST   | `/api/verify-email`             | Valida o código e confirma o e-mail  | Público |
+| POST   | `/api/resend-verification`      | Reenvia o código (cooldown de 60s)   | Público |
 | GET    | `/api/auth/session`             | Retorna a sessão atual               | Cookie |
 | POST   | `/api/auth/callback/credentials`| Autentica e cria a sessão (CSRF)     | Público |
 | GET    | `/api/transactions`             | Lista as transações do usuário       | 🔒 Auth |
@@ -131,6 +144,10 @@ Preencha o `.env`:
 DATABASE_URL="postgresql://SEU_USUARIO:SUA_SENHA@localhost:5432/gestor"
 AUTH_SECRET="<gere um secret>"
 AUTH_TRUST_HOST="true"
+RESEND_API_KEY="<sua api key do Resend>"
+EMAIL_FROM="Gestor Financeiro <onboarding@resend.dev>"
+GOOGLE_CLIENT_ID="<seu google client id>"
+GOOGLE_CLIENT_SECRET="<seu google client secret>"
 ```
 
 Para gerar um `AUTH_SECRET` seguro:
@@ -141,6 +158,8 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 
 > ⚠️ Se a senha do banco contiver caracteres especiais (`#`, `$`, `@`...), ela deve ser **codificada na URL** (ex.: `#` → `%23`, `$` → `%24`).
 
+> 💡 Sem `RESEND_API_KEY`, o código de confirmação é exibido no **console do servidor** (útil em desenvolvimento). Sem `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, o botão "Entrar com Google" simplesmente não aparece.
+
 ```bash
 # 3. Crie o banco de dados e aplique as migrações
 npx prisma migrate dev
@@ -149,7 +168,16 @@ npx prisma migrate dev
 npm run dev
 ```
 
-Acesse **http://localhost:3000** 🎉
+Acesse **https://localhost:3000** 🎉
+
+> 🔒 **HTTPS em desenvolvimento:** o navegador Brave (e outros com "forçar HTTPS" ativo) bloqueia o `http://localhost` em dev. O projeto usa um certificado local confiável (via [mkcert](https://github.com/FiloSottile/mkcert)) para rodar o servidor em HTTPS. Certificados já configurados em `.certs/` (ignorados pelo git). Para regenerar em outra máquina:
+>
+> ```bash
+> winget install FiloSottile.mkcert
+> mkcert -install
+> mkdir .certs
+> mkcert -cert-file .certs/localhost.pem -key-file .certs/localhost-key.pem localhost 127.0.0.1 ::1
+> ```
 
 ### Modo produção
 
@@ -162,11 +190,59 @@ npm start
 
 | Comando            | Descrição                              |
 | ------------------ | -------------------------------------- |
-| `npm run dev`      | Servidor de desenvolvimento (Turbopack) |
+| `npm run dev`      | Servidor de desenvolvimento HTTP (Turbopack) |
+| `npm run dev:https`| Servidor de desenvolvimento HTTPS (certificado `.certs/`) |
 | `npm run build`    | Build de produção + checagem de tipos  |
 | `npm start`        | Serve o build de produção              |
 | `npm run lint`     | ESLint                                 |
 | `npx prisma studio`| Visualizar/editar dados no navegador   |
+
+## 🔑 Configurando o login com Google (OAuth)
+
+1. Acesse o [Google Cloud Console](https://console.cloud.google.com) e crie/abra um projeto
+2. Vá em **APIs e serviços → Tela de permissão OAuth**:
+   - Marque **Externo**, preencha nome do app e e-mail de suporte
+   - Em **Publicar app**, confirme a publicação (evita o aviso "app não verificado" para contas próprias)
+3. Vá em **APIs e serviços → Credenciais → Criar credenciais → IDs do cliente OAuth**:
+   - Tipo: **Aplicativo da Web**
+   - **URIs de redirecionamento autorizados** (não é a origem!):
+     - `https://localhost:3000/api/auth/callback/google`
+     - em produção: `https://SEU-DOMINIO/api/auth/callback/google`
+4. Copie o **ID do cliente** e a **Chave secreta do cliente** para o `.env` (`GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET`)
+5. Reinicie o servidor e o botão "Entrar com Google" aparecerá na tela de login
+
+> O primeiro login do Google cria a conta automaticamente (e-mail já vem verificado pelo Google).
+
+## ✉️ Configurando o envio de e-mails
+
+O app tenta enviar na seguinte ordem: **SMTP (Gmail)** → **Resend** → console (dev).
+
+### Opção 1 — Gmail (SMTP) — grátis e sem domínio
+
+1. Ative a **Verificação em duas etapas** na sua conta Google (https://myaccount.google.com/security)
+2. Acesse https://myaccount.google.com/apppasswords e crie uma **Senha de app** (tipo: Correio/Mail)
+3. Preencha no `.env`:
+
+```env
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="465"
+SMTP_USER="seuemail@gmail.com"
+SMTP_PASS="<senha de app de 16 dígitos, sem espaços>"
+EMAIL_FROM="Gestor Financeiro <seuemail@gmail.com>"
+```
+
+> O Gmail permite enviar para **qualquer** e-mail. Limite de ~500 e-mails/dia — suficiente para códigos de verificação.
+
+### Opção 2 — Resend (requer domínio para enviar a qualquer e-mail)
+
+1. Crie uma conta em [resend.com](https://resend.com)
+2. Em **API Keys**, gere uma chave e cole em `RESEND_API_KEY`
+3. Em **Domínios**, adicione e verifique um domínio (com o domínio de teste `resend.dev`, o e-mail **só chega para o e-mail da própria conta**)
+4. Ajuste `EMAIL_FROM` para o seu domínio verificado
+
+### Sem nenhuma configuração
+
+O código aparece no console do servidor — útil para desenvolvimento.
 
 ## ☁️ Deploy (Vercel)
 
@@ -174,7 +250,7 @@ O projeto está pronto para deploy na [Vercel](https://vercel.com):
 
 1. Suba o código para um repositório no GitHub e importe-o na Vercel
 2. Use um PostgreSQL na nuvem (ex.: [Neon](https://neon.tech) ou [Supabase](https://supabase.com)) e obtenha a `DATABASE_URL`
-3. Configure as variáveis de ambiente na Vercel: `DATABASE_URL` e `AUTH_SECRET` (e `AUTH_TRUST_HOST="true"`)
+3. Configure as variáveis de ambiente na Vercel: `DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST="true"`, `EMAIL_FROM`, `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` (ou `RESEND_API_KEY`), `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET`
 4. Rode as migrações no banco da nuvem:
 
 ```bash

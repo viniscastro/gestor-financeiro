@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { sendVerificationCode } from '@/lib/email'
+import { generateVerificationCode, CODE_TTL_MS } from '@/lib/verification'
+import { ensureDefaultData } from '@/lib/defaults'
 
 const registerSchema = z.object({
   name: z.string().trim().min(2, 'Informe seu nome'),
@@ -38,10 +41,32 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const hash = await bcrypt.hash(password, 10)
-  await prisma.user.create({
-    data: { name, email: normalizedEmail, password: hash },
+  const code = generateVerificationCode()
+  const passwordHash = await bcrypt.hash(password, 10)
+  const codeHash = await bcrypt.hash(code, 10)
+  const now = new Date()
+
+  const created = await prisma.user.create({
+    data: {
+      name,
+      email: normalizedEmail,
+      password: passwordHash,
+      emailVerified: null,
+      verificationCode: codeHash,
+      verificationExpires: new Date(now.getTime() + CODE_TTL_MS),
+      verificationSentAt: now,
+    },
   })
 
-  return NextResponse.json({ ok: true }, { status: 201 })
+  await ensureDefaultData(created.id)
+
+  try {
+    await sendVerificationCode(normalizedEmail, code)
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Erro desconhecido'
+    await prisma.user.deleteMany({ where: { email: normalizedEmail } })
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+
+  return NextResponse.json({ ok: true, email: normalizedEmail }, { status: 201 })
 }

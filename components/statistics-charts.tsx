@@ -53,8 +53,8 @@ function ChartTooltip({
 }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs shadow-xl">
-      <p className="mb-1 font-medium text-zinc-300">{label}</p>
+    <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
+      <p className="mb-1 font-medium text-zinc-700 dark:text-zinc-300">{label}</p>
       {payload.map((entry: TooltipEntry) => (
         <p key={String(entry.dataKey)} style={{ color: entry.color }}>
           {entry.name}: {formatBRL(Number(entry.value))}
@@ -74,12 +74,14 @@ function PieTooltip({
   if (!active || !payload?.length) return null
   const entry = payload[0]
   return (
-    <div className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs shadow-xl">
+    <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
       <p style={{ color: entry.payload?.color }}>{entry.name}</p>
-      <p className="text-zinc-300">{formatBRL(Number(entry.value))}</p>
+      <p className="text-zinc-700 dark:text-zinc-300">{formatBRL(Number(entry.value))}</p>
     </div>
   )
 }
+
+const legendStyle = { color: 'var(--chart-axis)' }
 
 export default function StatisticsCharts({ monthly, byCategory, totalExpense }: Props) {
   const hasMonthly = monthly.some((m) => m.income > 0 || m.expense > 0)
@@ -87,24 +89,34 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
 
   return (
     <div className="grid gap-6 xl:grid-cols-2">
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
-        <h2 className="mb-1 text-base font-semibold text-white">Entradas vs. Saídas</h2>
+      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
+        <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-white">
+          Entradas vs. Saídas
+        </h2>
         <p className="mb-4 text-xs text-zinc-500">Últimos 6 meses</p>
         {hasMonthly ? (
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthly} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-                <XAxis dataKey="label" stroke="#71717a" fontSize={12} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                <XAxis
+                  dataKey="label"
+                  stroke="var(--chart-axis)"
+                  fontSize={12}
+                  tickLine={false}
+                />
                 <YAxis
-                  stroke="#71717a"
+                  stroke="var(--chart-axis)"
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(v: number) => `R$ ${(v / 100).toLocaleString('pt-BR')}`}
                 />
-                <Tooltip content={<ChartTooltip />} cursor={{ fill: '#27272a', opacity: 0.4 }} />
-                <Legend />
+                <Tooltip
+                  content={<ChartTooltip />}
+                  cursor={{ fill: 'var(--chart-grid)', opacity: 0.4 }}
+                />
+                <Legend wrapperStyle={legendStyle} />
                 <Bar dataKey="income" name="Entradas" fill="#10b981" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="expense" name="Saídas" fill="#f43f5e" radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -117,8 +129,10 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
         )}
       </div>
 
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
-        <h2 className="mb-1 text-base font-semibold text-white">Gastos por categoria</h2>
+      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
+        <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-white">
+          Gastos por categoria
+        </h2>
         <p className="mb-4 text-xs text-zinc-500">
           {totalExpense > 0
             ? `Total de saídas: ${formatBRL(totalExpense)}`
@@ -156,9 +170,11 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
                       className="h-3 w-3 shrink-0 rounded-full"
                       style={{ backgroundColor: c.color }}
                     />
-                    <span className="flex-1 truncate text-zinc-300">{c.label}</span>
-                    <span className="text-zinc-400">{pct.toFixed(0)}%</span>
-                    <span className="w-28 text-right font-medium text-zinc-100">
+                    <span className="flex-1 truncate text-zinc-700 dark:text-zinc-300">
+                      {c.label}
+                    </span>
+                    <span className="text-zinc-500">{pct.toFixed(0)}%</span>
+                    <span className="w-28 text-right font-medium text-zinc-900 dark:text-zinc-100">
                       {formatBRL(c.amount)}
                     </span>
                   </li>

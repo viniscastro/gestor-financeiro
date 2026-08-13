@@ -1,29 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { amountToCents, transactionSchema } from '@/lib/transactions'
+import { amountToCents, toTransactionDto, transactionSchema } from '@/lib/transactions'
 
-export async function GET() {
+const transactionInclude = {
+  account: { select: { name: true, color: true } },
+  category: { select: { id: true, name: true, color: true } },
+} as const
+
+export async function GET(request: NextRequest) {
   const session = await auth()
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
   }
 
+  const { searchParams } = request.nextUrl
+  const accountId = searchParams.get('accountId')
+  const categoryId = searchParams.get('categoryId')
+
   const transactions = await prisma.transaction.findMany({
-    where: { userId: session.user.id },
+    where: {
+      userId: session.user.id,
+      ...(accountId ? { accountId } : {}),
+      ...(categoryId ? { categoryId } : {}),
+    },
+    include: transactionInclude,
     orderBy: { date: 'desc' },
   })
 
-  return NextResponse.json(
-    transactions.map((t) => ({
-      id: t.id,
-      transactionType: t.transactionType,
-      description: t.description,
-      amount: t.amount,
-      category: t.category,
-      date: t.date.toISOString(),
-    }))
-  )
+  return NextResponse.json(transactions.map(toTransactionDto))
 }
 
 export async function POST(request: NextRequest) {
@@ -47,28 +52,38 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { transactionType, description, amount, category, date } = parsed.data
+  const { transactionType, description, amount, accountId, categoryId, date } = parsed.data
+
+  const account = await prisma.account.findFirst({
+    where: { id: accountId, userId: session.user.id },
+    select: { id: true },
+  })
+  if (!account) {
+    return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
+  }
+
+  if (categoryId) {
+    const category = await prisma.category.findFirst({
+      where: { id: categoryId, userId: session.user.id },
+      select: { id: true },
+    })
+    if (!category) {
+      return NextResponse.json({ error: 'Categoria não encontrada' }, { status: 404 })
+    }
+  }
 
   const transaction = await prisma.transaction.create({
     data: {
       transactionType,
       description,
       amount: amountToCents(amount),
-      category,
       date: new Date(date),
       userId: session.user.id,
+      accountId,
+      categoryId: categoryId ?? null,
     },
+    include: transactionInclude,
   })
 
-  return NextResponse.json(
-    {
-      id: transaction.id,
-      transactionType: transaction.transactionType,
-      description: transaction.description,
-      amount: transaction.amount,
-      category: transaction.category,
-      date: transaction.date.toISOString(),
-    },
-    { status: 201 }
-  )
+  return NextResponse.json(toTransactionDto(transaction), { status: 201 })
 }
