@@ -1,0 +1,399 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import {
+  CalendarDays,
+  Flag,
+  LoaderCircle,
+  Pencil,
+  Plus,
+  Trash2,
+  Wallet,
+} from 'lucide-react'
+import { formatBRL } from '@/lib/format'
+import type { AccountDto, SavingsGoalDto } from '@/lib/types'
+
+export default function GoalsManager() {
+  const [goals, setGoals] = useState<SavingsGoalDto[]>([])
+  const [accounts, setAccounts] = useState<AccountDto[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editing, setEditing] = useState<SavingsGoalDto | null>(null)
+  const [name, setName] = useState('')
+  const [targetAmount, setTargetAmount] = useState('')
+  const [accountId, setAccountId] = useState('')
+  const [currentAmount, setCurrentAmount] = useState('')
+  const [targetDate, setTargetDate] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [formError, setFormError] = useState('')
+
+  async function reload() {
+    try {
+      const [gRes, aRes] = await Promise.all([
+        fetch('/api/goals', { cache: 'no-store' }),
+        fetch('/api/accounts', { cache: 'no-store' }),
+      ])
+      if (!gRes.ok || !aRes.ok) throw new Error('Erro ao carregar')
+      setGoals((await gRes.json()) as SavingsGoalDto[])
+      setAccounts((await aRes.json()) as AccountDto[])
+      setError('')
+    } catch {
+      setError('Não foi possível carregar as metas.')
+    }
+  }
+
+  useEffect(() => {
+    let cancelled = false
+    async function fetchData() {
+      try {
+        const [gRes, aRes] = await Promise.all([
+          fetch('/api/goals', { cache: 'no-store' }),
+          fetch('/api/accounts', { cache: 'no-store' }),
+        ])
+        if (!gRes.ok || !aRes.ok) throw new Error('Erro ao carregar')
+        const data = (await gRes.json()) as SavingsGoalDto[]
+        if (!cancelled) {
+          setGoals(data)
+          setAccounts((await aRes.json()) as AccountDto[])
+          setError('')
+        }
+      } catch {
+        if (!cancelled) setError('Não foi possível carregar as metas.')
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    fetchData()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  function openCreate() {
+    setEditing(null)
+    setName('')
+    setTargetAmount('')
+    setAccountId('')
+    setCurrentAmount('')
+    setTargetDate('')
+    setFormError('')
+    setModalOpen(true)
+  }
+
+  function openEdit(goal: SavingsGoalDto) {
+    setEditing(goal)
+    setName(goal.name)
+    setTargetAmount((goal.targetAmount / 100).toFixed(2))
+    setAccountId(goal.accountId ?? '')
+    setCurrentAmount((goal.currentAmount / 100).toFixed(2))
+    setTargetDate(goal.targetDate ?? '')
+    setFormError('')
+    setModalOpen(true)
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setSaving(true)
+    setFormError('')
+    try {
+      const payload = {
+        name,
+        targetAmount: Number(targetAmount),
+        accountId: accountId || null,
+        currentAmount: Number(currentAmount || 0),
+        targetDate: targetDate || null,
+      }
+      const res = await fetch(
+        editing ? `/api/goals/${editing.id}` : '/api/goals',
+        {
+          method: editing ? 'PATCH' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      )
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setFormError(data.error ?? 'Erro ao salvar a meta')
+        return
+      }
+      setModalOpen(false)
+      await reload()
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function handleDelete(goal: SavingsGoalDto) {
+    if (!window.confirm(`Excluir a meta "${goal.name}"?`)) return
+    const res = await fetch(`/api/goals/${goal.id}`, { method: 'DELETE' })
+    if (!res.ok) {
+      setError('Erro ao excluir a meta.')
+      return
+    }
+    await reload()
+  }
+
+  function formatDate(value: string): string {
+    const [y, m, d] = value.split('-')
+    if (!y || !m || !d) return value
+    return `${d}/${m}/${y}`
+  }
+
+  const inputClass =
+    'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
+
+  const totalSaved = goals.reduce((sum, g) => sum + g.currentAmount, 0)
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Metas de economia</h1>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Defina objetivos e acompanhe o progresso
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={openCreate}
+          className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
+        >
+          <Plus className="h-4 w-4" />
+          Nova meta
+        </button>
+      </div>
+
+      <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900/60">
+        <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Guardado</p>
+        <p className="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+          {formatBRL(totalSaved)}
+        </p>
+      </div>
+
+      {error && (
+        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+          {error}
+        </p>
+      )}
+
+      {loading ? (
+        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-800 dark:bg-zinc-900/60">
+          <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
+        </div>
+      ) : goals.length === 0 ? (
+        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-800 dark:bg-zinc-900/60">
+          <Flag className="mx-auto h-10 w-10 text-zinc-400" />
+          <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
+            Nenhuma meta criada ainda. Ex.: viagem, reserva de emergência, entrada do
+            carro...
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {goals.map((goal) => {
+            const done = goal.percent >= 100
+            return (
+              <div
+                key={goal.id}
+                className="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+                        done
+                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                          : 'bg-sky-500/15 text-sky-600 dark:text-sky-400'
+                      }`}
+                    >
+                      <Flag className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-white">
+                        {goal.name}
+                      </p>
+                      <p className="text-xs text-zinc-500">
+                        {goal.accountName
+                          ? `${goal.accountName} · ${goal.percent}%`
+                          : `${goal.percent}%`}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 opacity-0 transition group-hover:opacity-100">
+                    <button
+                      type="button"
+                      onClick={() => openEdit(goal)}
+                      className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                      aria-label="Editar"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(goal)}
+                      className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-400 dark:hover:text-rose-400"
+                      aria-label="Excluir"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      done
+                        ? 'bg-emerald-500'
+                        : 'bg-gradient-to-r from-sky-500 to-emerald-500'
+                    }`}
+                    style={{ width: `${Math.min(goal.percent, 100)}%` }}
+                  />
+                </div>
+
+                <div className="mt-2 flex items-baseline justify-between">
+                  <p className="text-sm font-semibold text-zinc-900 dark:text-white">
+                    {formatBRL(goal.currentAmount)}
+                    <span className="font-normal text-zinc-500"> de {formatBRL(goal.targetAmount)}</span>
+                  </p>
+                  {goal.targetDate && (
+                    <p className="flex items-center gap-1 text-xs text-zinc-500">
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      {formatDate(goal.targetDate)}
+                    </p>
+                  )}
+                </div>
+
+                {goal.accountName && (
+                  <p className="mt-2 flex items-center gap-1 text-xs text-zinc-500">
+                    <Wallet className="h-3.5 w-3.5" />
+                    Progresso pelo saldo da conta
+                  </p>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setModalOpen(false)}
+          />
+          <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
+            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-white">
+              {editing ? 'Editar meta' : 'Nova meta'}
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Nome
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="Ex: Viagem, Reserva de emergência..."
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  maxLength={60}
+                  className={inputClass}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="target" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Valor da meta (R$)
+                  </label>
+                  <input
+                    id="target"
+                    type="number"
+                    inputMode="decimal"
+                    step="0.01"
+                    min="0.01"
+                    placeholder="0,00"
+                    value={targetAmount}
+                    onChange={(e) => setTargetAmount(e.target.value)}
+                    required
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="targetDate" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Data alvo
+                  </label>
+                  <input
+                    id="targetDate"
+                    type="date"
+                    value={targetDate}
+                    onChange={(e) => setTargetDate(e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Conta vinculada (opcional)
+                </label>
+                <select
+                  id="account"
+                  value={accountId}
+                  onChange={(e) => setAccountId(e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">Nenhuma conta</option>
+                  {accounts.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-1 text-xs text-zinc-500">
+                  Ao vincular, o progresso é calculado pelo saldo da conta.
+                </p>
+              </div>
+
+              {!accountId && (
+                <div>
+                  <label htmlFor="current" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Valor guardado (R$)
+                  </label>
+                  <input
+                    id="current"
+                    type="number"
+                    inputMode="decimal"
+                    step="0.01"
+                    min="0"
+                    placeholder="0,00"
+                    value={currentAmount}
+                    onChange={(e) => setCurrentAmount(e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
+              )}
+
+              {formError && (
+                <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+                  {formError}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={saving}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                {editing ? 'Salvar alterações' : 'Criar meta'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

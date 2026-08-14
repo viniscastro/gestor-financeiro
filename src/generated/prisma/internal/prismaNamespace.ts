@@ -402,7 +402,8 @@ export const ModelName = {
   Category: 'Category',
   Budget: 'Budget',
   RecurringRule: 'RecurringRule',
-  Transaction: 'Transaction'
+  Transaction: 'Transaction',
+  SavingsGoal: 'SavingsGoal'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -418,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "category" | "budget" | "recurringRule" | "transaction"
+    modelProps: "user" | "account" | "category" | "budget" | "recurringRule" | "transaction" | "savingsGoal"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -866,6 +867,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SavingsGoal: {
+      payload: Prisma.$SavingsGoalPayload<ExtArgs>
+      fields: Prisma.SavingsGoalFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SavingsGoalFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavingsGoalPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SavingsGoalFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavingsGoalPayload>
+        }
+        findFirst: {
+          args: Prisma.SavingsGoalFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavingsGoalPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SavingsGoalFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavingsGoalPayload>
+        }
+        findMany: {
+          args: Prisma.SavingsGoalFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavingsGoalPayload>[]
+        }
+        create: {
+          args: Prisma.SavingsGoalCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavingsGoalPayload>
+        }
+        createMany: {
+          args: Prisma.SavingsGoalCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SavingsGoalCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavingsGoalPayload>[]
+        }
+        delete: {
+          args: Prisma.SavingsGoalDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavingsGoalPayload>
+        }
+        update: {
+          args: Prisma.SavingsGoalUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavingsGoalPayload>
+        }
+        deleteMany: {
+          args: Prisma.SavingsGoalDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SavingsGoalUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SavingsGoalUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavingsGoalPayload>[]
+        }
+        upsert: {
+          args: Prisma.SavingsGoalUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SavingsGoalPayload>
+        }
+        aggregate: {
+          args: Prisma.SavingsGoalAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSavingsGoal>
+        }
+        groupBy: {
+          args: Prisma.SavingsGoalGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SavingsGoalGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SavingsGoalCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SavingsGoalCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -966,9 +1041,11 @@ export const RecurringRuleScalarFieldEnum = {
   userId: 'userId',
   description: 'description',
   amountCents: 'amountCents',
+  kind: 'kind',
   type: 'type',
   categoryId: 'categoryId',
   accountId: 'accountId',
+  toAccountId: 'toAccountId',
   dayOfMonth: 'dayOfMonth',
   active: 'active',
   notifyDaysBefore: 'notifyDaysBefore',
@@ -997,6 +1074,21 @@ export const TransactionScalarFieldEnum = {
 } as const
 
 export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
+
+
+export const SavingsGoalScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  targetAmount: 'targetAmount',
+  currentAmount: 'currentAmount',
+  accountId: 'accountId',
+  targetDate: 'targetDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SavingsGoalScalarFieldEnum = (typeof SavingsGoalScalarFieldEnum)[keyof typeof SavingsGoalScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1248,6 +1340,7 @@ export type GlobalOmitConfig = {
   budget?: Prisma.BudgetOmit
   recurringRule?: Prisma.RecurringRuleOmit
   transaction?: Prisma.TransactionOmit
+  savingsGoal?: Prisma.SavingsGoalOmit
 }
 
 /* Types for Logging */

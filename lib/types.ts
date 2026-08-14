@@ -1,5 +1,7 @@
 export type TransactionType = 'INCOME' | 'EXPENSE'
 
+export type RecurringKind = 'TRANSACTION' | 'TRANSFER'
+
 export type TransactionDto = {
   id: string
   transactionType: TransactionType
@@ -42,17 +44,33 @@ export type BudgetDto = {
   spent: number
 }
 
+export type SavingsGoalDto = {
+  id: string
+  name: string
+  targetAmount: number
+  currentAmount: number
+  percent: number
+  accountId: string | null
+  accountName: string | null
+  accountColor: string | null
+  targetDate: string | null
+}
+
 export type RecurringRuleDto = {
   id: string
   description: string
   amountCents: number
-  type: TransactionType
+  kind: RecurringKind
+  type: TransactionType | null
   categoryId: string | null
   categoryName: string | null
   categoryColor: string | null
   accountId: string
   accountName: string
   accountColor: string
+  toAccountId: string | null
+  toAccountName: string | null
+  toAccountColor: string | null
   dayOfMonth: number
   active: boolean
   notifyDaysBefore: number

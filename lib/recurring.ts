@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
 import { formatBRL, formatDateLong } from '@/lib/format'
@@ -58,16 +59,53 @@ export async function materializeRecurring(userId: string): Promise<void> {
     })
     if (exists) continue
 
+    const date = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      Math.min(rule.dayOfMonth, lastDay)
+    )
+
+    if (rule.kind === 'TRANSFER' && rule.toAccountId) {
+      const groupId = randomUUID()
+      await prisma.$transaction([
+        prisma.transaction.create({
+          data: {
+            transactionType: 'EXPENSE',
+            description: rule.description,
+            amount: rule.amountCents,
+            date,
+            userId,
+            accountId: rule.accountId,
+            categoryId: null,
+            recurringId: rule.id,
+            occurrenceMonth: key,
+            transferGroupId: groupId,
+          },
+        }),
+        prisma.transaction.create({
+          data: {
+            transactionType: 'INCOME',
+            description: rule.description,
+            amount: rule.amountCents,
+            date,
+            userId,
+            accountId: rule.toAccountId,
+            categoryId: null,
+            recurringId: rule.id,
+            occurrenceMonth: key,
+            transferGroupId: groupId,
+          },
+        }),
+      ])
+      continue
+    }
+
     await prisma.transaction.create({
       data: {
         transactionType: rule.type,
         description: rule.description,
         amount: rule.amountCents,
-        date: new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          Math.min(rule.dayOfMonth, lastDay)
-        ),
+        date,
         userId,
         accountId: rule.accountId,
         categoryId: rule.categoryId,
@@ -98,7 +136,7 @@ export async function getUpcomingBills(
   withinDays = 30
 ): Promise<UpcomingBill[]> {
   const rules = await prisma.recurringRule.findMany({
-    where: { userId, active: true },
+    where: { userId, active: true, kind: 'TRANSACTION' },
     include: {
       account: { select: { name: true, color: true } },
       category: { select: { name: true, color: true } },

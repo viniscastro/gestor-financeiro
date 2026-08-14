@@ -243,6 +243,8 @@ export type AccountWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   transactions?: Prisma.TransactionListRelationFilter
   recurringRules?: Prisma.RecurringRuleListRelationFilter
+  recurringIncoming?: Prisma.RecurringRuleListRelationFilter
+  goals?: Prisma.SavingsGoalListRelationFilter
 }
 
 export type AccountOrderByWithRelationInput = {
@@ -257,6 +259,8 @@ export type AccountOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
   recurringRules?: Prisma.RecurringRuleOrderByRelationAggregateInput
+  recurringIncoming?: Prisma.RecurringRuleOrderByRelationAggregateInput
+  goals?: Prisma.SavingsGoalOrderByRelationAggregateInput
 }
 
 export type AccountWhereUniqueInput = Prisma.AtLeast<{
@@ -274,6 +278,8 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   transactions?: Prisma.TransactionListRelationFilter
   recurringRules?: Prisma.RecurringRuleListRelationFilter
+  recurringIncoming?: Prisma.RecurringRuleListRelationFilter
+  goals?: Prisma.SavingsGoalListRelationFilter
 }, "id">
 
 export type AccountOrderByWithAggregationInput = {
@@ -317,6 +323,8 @@ export type AccountCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutAccountInput
   recurringRules?: Prisma.RecurringRuleCreateNestedManyWithoutAccountInput
+  recurringIncoming?: Prisma.RecurringRuleCreateNestedManyWithoutToAccountInput
+  goals?: Prisma.SavingsGoalCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateInput = {
@@ -330,6 +338,8 @@ export type AccountUncheckedCreateInput = {
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutAccountInput
   recurringRules?: Prisma.RecurringRuleUncheckedCreateNestedManyWithoutAccountInput
+  recurringIncoming?: Prisma.RecurringRuleUncheckedCreateNestedManyWithoutToAccountInput
+  goals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUpdateInput = {
@@ -343,6 +353,8 @@ export type AccountUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutAccountNestedInput
   recurringRules?: Prisma.RecurringRuleUpdateManyWithoutAccountNestedInput
+  recurringIncoming?: Prisma.RecurringRuleUpdateManyWithoutToAccountNestedInput
+  goals?: Prisma.SavingsGoalUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateInput = {
@@ -356,6 +368,8 @@ export type AccountUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutAccountNestedInput
   recurringRules?: Prisma.RecurringRuleUncheckedUpdateManyWithoutAccountNestedInput
+  recurringIncoming?: Prisma.RecurringRuleUncheckedUpdateManyWithoutToAccountNestedInput
+  goals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountCreateManyInput = {
@@ -446,6 +460,11 @@ export type AccountScalarRelationFilter = {
   isNot?: Prisma.AccountWhereInput
 }
 
+export type AccountNullableScalarRelationFilter = {
+  is?: Prisma.AccountWhereInput | null
+  isNot?: Prisma.AccountWhereInput | null
+}
+
 export type AccountCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.AccountCreateWithoutUserInput, Prisma.AccountUncheckedCreateWithoutUserInput> | Prisma.AccountCreateWithoutUserInput[] | Prisma.AccountUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.AccountCreateOrConnectWithoutUserInput | Prisma.AccountCreateOrConnectWithoutUserInput[]
@@ -502,12 +521,28 @@ export type AccountCreateNestedOneWithoutRecurringRulesInput = {
   connect?: Prisma.AccountWhereUniqueInput
 }
 
+export type AccountCreateNestedOneWithoutRecurringIncomingInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutRecurringIncomingInput, Prisma.AccountUncheckedCreateWithoutRecurringIncomingInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutRecurringIncomingInput
+  connect?: Prisma.AccountWhereUniqueInput
+}
+
 export type AccountUpdateOneRequiredWithoutRecurringRulesNestedInput = {
   create?: Prisma.XOR<Prisma.AccountCreateWithoutRecurringRulesInput, Prisma.AccountUncheckedCreateWithoutRecurringRulesInput>
   connectOrCreate?: Prisma.AccountCreateOrConnectWithoutRecurringRulesInput
   upsert?: Prisma.AccountUpsertWithoutRecurringRulesInput
   connect?: Prisma.AccountWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutRecurringRulesInput, Prisma.AccountUpdateWithoutRecurringRulesInput>, Prisma.AccountUncheckedUpdateWithoutRecurringRulesInput>
+}
+
+export type AccountUpdateOneWithoutRecurringIncomingNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutRecurringIncomingInput, Prisma.AccountUncheckedCreateWithoutRecurringIncomingInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutRecurringIncomingInput
+  upsert?: Prisma.AccountUpsertWithoutRecurringIncomingInput
+  disconnect?: Prisma.AccountWhereInput | boolean
+  delete?: Prisma.AccountWhereInput | boolean
+  connect?: Prisma.AccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutRecurringIncomingInput, Prisma.AccountUpdateWithoutRecurringIncomingInput>, Prisma.AccountUncheckedUpdateWithoutRecurringIncomingInput>
 }
 
 export type AccountCreateNestedOneWithoutTransactionsInput = {
@@ -524,6 +559,22 @@ export type AccountUpdateOneRequiredWithoutTransactionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutTransactionsInput, Prisma.AccountUpdateWithoutTransactionsInput>, Prisma.AccountUncheckedUpdateWithoutTransactionsInput>
 }
 
+export type AccountCreateNestedOneWithoutGoalsInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutGoalsInput, Prisma.AccountUncheckedCreateWithoutGoalsInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutGoalsInput
+  connect?: Prisma.AccountWhereUniqueInput
+}
+
+export type AccountUpdateOneWithoutGoalsNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutGoalsInput, Prisma.AccountUncheckedCreateWithoutGoalsInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutGoalsInput
+  upsert?: Prisma.AccountUpsertWithoutGoalsInput
+  disconnect?: Prisma.AccountWhereInput | boolean
+  delete?: Prisma.AccountWhereInput | boolean
+  connect?: Prisma.AccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutGoalsInput, Prisma.AccountUpdateWithoutGoalsInput>, Prisma.AccountUncheckedUpdateWithoutGoalsInput>
+}
+
 export type AccountCreateWithoutUserInput = {
   id?: string
   name: string
@@ -534,6 +585,8 @@ export type AccountCreateWithoutUserInput = {
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutAccountInput
   recurringRules?: Prisma.RecurringRuleCreateNestedManyWithoutAccountInput
+  recurringIncoming?: Prisma.RecurringRuleCreateNestedManyWithoutToAccountInput
+  goals?: Prisma.SavingsGoalCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateWithoutUserInput = {
@@ -546,6 +599,8 @@ export type AccountUncheckedCreateWithoutUserInput = {
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutAccountInput
   recurringRules?: Prisma.RecurringRuleUncheckedCreateNestedManyWithoutAccountInput
+  recurringIncoming?: Prisma.RecurringRuleUncheckedCreateNestedManyWithoutToAccountInput
+  goals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutUserInput = {
@@ -598,6 +653,8 @@ export type AccountCreateWithoutRecurringRulesInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutAccountInput
+  recurringIncoming?: Prisma.RecurringRuleCreateNestedManyWithoutToAccountInput
+  goals?: Prisma.SavingsGoalCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateWithoutRecurringRulesInput = {
@@ -610,11 +667,46 @@ export type AccountUncheckedCreateWithoutRecurringRulesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutAccountInput
+  recurringIncoming?: Prisma.RecurringRuleUncheckedCreateNestedManyWithoutToAccountInput
+  goals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutRecurringRulesInput = {
   where: Prisma.AccountWhereUniqueInput
   create: Prisma.XOR<Prisma.AccountCreateWithoutRecurringRulesInput, Prisma.AccountUncheckedCreateWithoutRecurringRulesInput>
+}
+
+export type AccountCreateWithoutRecurringIncomingInput = {
+  id?: string
+  name: string
+  type?: string
+  color?: string
+  initialBalance?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutAccountsInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutAccountInput
+  recurringRules?: Prisma.RecurringRuleCreateNestedManyWithoutAccountInput
+  goals?: Prisma.SavingsGoalCreateNestedManyWithoutAccountInput
+}
+
+export type AccountUncheckedCreateWithoutRecurringIncomingInput = {
+  id?: string
+  userId: string
+  name: string
+  type?: string
+  color?: string
+  initialBalance?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutAccountInput
+  recurringRules?: Prisma.RecurringRuleUncheckedCreateNestedManyWithoutAccountInput
+  goals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutAccountInput
+}
+
+export type AccountCreateOrConnectWithoutRecurringIncomingInput = {
+  where: Prisma.AccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountCreateWithoutRecurringIncomingInput, Prisma.AccountUncheckedCreateWithoutRecurringIncomingInput>
 }
 
 export type AccountUpsertWithoutRecurringRulesInput = {
@@ -638,6 +730,8 @@ export type AccountUpdateWithoutRecurringRulesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutAccountNestedInput
+  recurringIncoming?: Prisma.RecurringRuleUpdateManyWithoutToAccountNestedInput
+  goals?: Prisma.SavingsGoalUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutRecurringRulesInput = {
@@ -650,6 +744,47 @@ export type AccountUncheckedUpdateWithoutRecurringRulesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutAccountNestedInput
+  recurringIncoming?: Prisma.RecurringRuleUncheckedUpdateManyWithoutToAccountNestedInput
+  goals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutAccountNestedInput
+}
+
+export type AccountUpsertWithoutRecurringIncomingInput = {
+  update: Prisma.XOR<Prisma.AccountUpdateWithoutRecurringIncomingInput, Prisma.AccountUncheckedUpdateWithoutRecurringIncomingInput>
+  create: Prisma.XOR<Prisma.AccountCreateWithoutRecurringIncomingInput, Prisma.AccountUncheckedCreateWithoutRecurringIncomingInput>
+  where?: Prisma.AccountWhereInput
+}
+
+export type AccountUpdateToOneWithWhereWithoutRecurringIncomingInput = {
+  where?: Prisma.AccountWhereInput
+  data: Prisma.XOR<Prisma.AccountUpdateWithoutRecurringIncomingInput, Prisma.AccountUncheckedUpdateWithoutRecurringIncomingInput>
+}
+
+export type AccountUpdateWithoutRecurringIncomingInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  initialBalance?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutAccountNestedInput
+  recurringRules?: Prisma.RecurringRuleUpdateManyWithoutAccountNestedInput
+  goals?: Prisma.SavingsGoalUpdateManyWithoutAccountNestedInput
+}
+
+export type AccountUncheckedUpdateWithoutRecurringIncomingInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  initialBalance?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutAccountNestedInput
+  recurringRules?: Prisma.RecurringRuleUncheckedUpdateManyWithoutAccountNestedInput
+  goals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountCreateWithoutTransactionsInput = {
@@ -662,6 +797,8 @@ export type AccountCreateWithoutTransactionsInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
   recurringRules?: Prisma.RecurringRuleCreateNestedManyWithoutAccountInput
+  recurringIncoming?: Prisma.RecurringRuleCreateNestedManyWithoutToAccountInput
+  goals?: Prisma.SavingsGoalCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateWithoutTransactionsInput = {
@@ -674,6 +811,8 @@ export type AccountUncheckedCreateWithoutTransactionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   recurringRules?: Prisma.RecurringRuleUncheckedCreateNestedManyWithoutAccountInput
+  recurringIncoming?: Prisma.RecurringRuleUncheckedCreateNestedManyWithoutToAccountInput
+  goals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutTransactionsInput = {
@@ -702,6 +841,8 @@ export type AccountUpdateWithoutTransactionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
   recurringRules?: Prisma.RecurringRuleUpdateManyWithoutAccountNestedInput
+  recurringIncoming?: Prisma.RecurringRuleUpdateManyWithoutToAccountNestedInput
+  goals?: Prisma.SavingsGoalUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutTransactionsInput = {
@@ -714,6 +855,80 @@ export type AccountUncheckedUpdateWithoutTransactionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   recurringRules?: Prisma.RecurringRuleUncheckedUpdateManyWithoutAccountNestedInput
+  recurringIncoming?: Prisma.RecurringRuleUncheckedUpdateManyWithoutToAccountNestedInput
+  goals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutAccountNestedInput
+}
+
+export type AccountCreateWithoutGoalsInput = {
+  id?: string
+  name: string
+  type?: string
+  color?: string
+  initialBalance?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutAccountsInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutAccountInput
+  recurringRules?: Prisma.RecurringRuleCreateNestedManyWithoutAccountInput
+  recurringIncoming?: Prisma.RecurringRuleCreateNestedManyWithoutToAccountInput
+}
+
+export type AccountUncheckedCreateWithoutGoalsInput = {
+  id?: string
+  userId: string
+  name: string
+  type?: string
+  color?: string
+  initialBalance?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutAccountInput
+  recurringRules?: Prisma.RecurringRuleUncheckedCreateNestedManyWithoutAccountInput
+  recurringIncoming?: Prisma.RecurringRuleUncheckedCreateNestedManyWithoutToAccountInput
+}
+
+export type AccountCreateOrConnectWithoutGoalsInput = {
+  where: Prisma.AccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountCreateWithoutGoalsInput, Prisma.AccountUncheckedCreateWithoutGoalsInput>
+}
+
+export type AccountUpsertWithoutGoalsInput = {
+  update: Prisma.XOR<Prisma.AccountUpdateWithoutGoalsInput, Prisma.AccountUncheckedUpdateWithoutGoalsInput>
+  create: Prisma.XOR<Prisma.AccountCreateWithoutGoalsInput, Prisma.AccountUncheckedCreateWithoutGoalsInput>
+  where?: Prisma.AccountWhereInput
+}
+
+export type AccountUpdateToOneWithWhereWithoutGoalsInput = {
+  where?: Prisma.AccountWhereInput
+  data: Prisma.XOR<Prisma.AccountUpdateWithoutGoalsInput, Prisma.AccountUncheckedUpdateWithoutGoalsInput>
+}
+
+export type AccountUpdateWithoutGoalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  initialBalance?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutAccountNestedInput
+  recurringRules?: Prisma.RecurringRuleUpdateManyWithoutAccountNestedInput
+  recurringIncoming?: Prisma.RecurringRuleUpdateManyWithoutToAccountNestedInput
+}
+
+export type AccountUncheckedUpdateWithoutGoalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  initialBalance?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutAccountNestedInput
+  recurringRules?: Prisma.RecurringRuleUncheckedUpdateManyWithoutAccountNestedInput
+  recurringIncoming?: Prisma.RecurringRuleUncheckedUpdateManyWithoutToAccountNestedInput
 }
 
 export type AccountCreateManyUserInput = {
@@ -736,6 +951,8 @@ export type AccountUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutAccountNestedInput
   recurringRules?: Prisma.RecurringRuleUpdateManyWithoutAccountNestedInput
+  recurringIncoming?: Prisma.RecurringRuleUpdateManyWithoutToAccountNestedInput
+  goals?: Prisma.SavingsGoalUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutUserInput = {
@@ -748,6 +965,8 @@ export type AccountUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutAccountNestedInput
   recurringRules?: Prisma.RecurringRuleUncheckedUpdateManyWithoutAccountNestedInput
+  recurringIncoming?: Prisma.RecurringRuleUncheckedUpdateManyWithoutToAccountNestedInput
+  goals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateManyWithoutUserInput = {
@@ -768,11 +987,15 @@ export type AccountUncheckedUpdateManyWithoutUserInput = {
 export type AccountCountOutputType = {
   transactions: number
   recurringRules: number
+  recurringIncoming: number
+  goals: number
 }
 
 export type AccountCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transactions?: boolean | AccountCountOutputTypeCountTransactionsArgs
   recurringRules?: boolean | AccountCountOutputTypeCountRecurringRulesArgs
+  recurringIncoming?: boolean | AccountCountOutputTypeCountRecurringIncomingArgs
+  goals?: boolean | AccountCountOutputTypeCountGoalsArgs
 }
 
 /**
@@ -799,6 +1022,20 @@ export type AccountCountOutputTypeCountRecurringRulesArgs<ExtArgs extends runtim
   where?: Prisma.RecurringRuleWhereInput
 }
 
+/**
+ * AccountCountOutputType without action
+ */
+export type AccountCountOutputTypeCountRecurringIncomingArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RecurringRuleWhereInput
+}
+
+/**
+ * AccountCountOutputType without action
+ */
+export type AccountCountOutputTypeCountGoalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SavingsGoalWhereInput
+}
+
 
 export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -812,6 +1049,8 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   transactions?: boolean | Prisma.Account$transactionsArgs<ExtArgs>
   recurringRules?: boolean | Prisma.Account$recurringRulesArgs<ExtArgs>
+  recurringIncoming?: boolean | Prisma.Account$recurringIncomingArgs<ExtArgs>
+  goals?: boolean | Prisma.Account$goalsArgs<ExtArgs>
   _count?: boolean | Prisma.AccountCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["account"]>
 
@@ -855,6 +1094,8 @@ export type AccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   transactions?: boolean | Prisma.Account$transactionsArgs<ExtArgs>
   recurringRules?: boolean | Prisma.Account$recurringRulesArgs<ExtArgs>
+  recurringIncoming?: boolean | Prisma.Account$recurringIncomingArgs<ExtArgs>
+  goals?: boolean | Prisma.Account$goalsArgs<ExtArgs>
   _count?: boolean | Prisma.AccountCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AccountIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -870,6 +1111,8 @@ export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     user: Prisma.$UserPayload<ExtArgs>
     transactions: Prisma.$TransactionPayload<ExtArgs>[]
     recurringRules: Prisma.$RecurringRulePayload<ExtArgs>[]
+    recurringIncoming: Prisma.$RecurringRulePayload<ExtArgs>[]
+    goals: Prisma.$SavingsGoalPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1277,6 +1520,8 @@ export interface Prisma__AccountClient<T, Null = never, ExtArgs extends runtime.
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   transactions<T extends Prisma.Account$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   recurringRules<T extends Prisma.Account$recurringRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$recurringRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  recurringIncoming<T extends Prisma.Account$recurringIncomingArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$recurringIncomingArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  goals<T extends Prisma.Account$goalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$goalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavingsGoalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1760,6 +2005,54 @@ export type Account$recurringRulesArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.RecurringRuleScalarFieldEnum | Prisma.RecurringRuleScalarFieldEnum[]
+}
+
+/**
+ * Account.recurringIncoming
+ */
+export type Account$recurringIncomingArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RecurringRule
+   */
+  select?: Prisma.RecurringRuleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RecurringRule
+   */
+  omit?: Prisma.RecurringRuleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RecurringRuleInclude<ExtArgs> | null
+  where?: Prisma.RecurringRuleWhereInput
+  orderBy?: Prisma.RecurringRuleOrderByWithRelationInput | Prisma.RecurringRuleOrderByWithRelationInput[]
+  cursor?: Prisma.RecurringRuleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RecurringRuleScalarFieldEnum | Prisma.RecurringRuleScalarFieldEnum[]
+}
+
+/**
+ * Account.goals
+ */
+export type Account$goalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SavingsGoal
+   */
+  select?: Prisma.SavingsGoalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SavingsGoal
+   */
+  omit?: Prisma.SavingsGoalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SavingsGoalInclude<ExtArgs> | null
+  where?: Prisma.SavingsGoalWhereInput
+  orderBy?: Prisma.SavingsGoalOrderByWithRelationInput | Prisma.SavingsGoalOrderByWithRelationInput[]
+  cursor?: Prisma.SavingsGoalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SavingsGoalScalarFieldEnum | Prisma.SavingsGoalScalarFieldEnum[]
 }
 
 /**

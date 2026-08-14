@@ -1,29 +1,58 @@
 import { z } from 'zod'
 import { TRANSACTION_TYPES } from '@/lib/categories'
-import type { RecurringRuleDto, TransactionType } from '@/lib/types'
+import type { RecurringKind, RecurringRuleDto, TransactionType } from '@/lib/types'
 import { nextOccurrence } from '@/lib/recurring'
 
-export const recurringRuleSchema = z.object({
+const base = {
   description: z.string().trim().min(1, 'Informe a descrição').max(100),
   amount: z.number().positive('O valor deve ser maior que zero'),
-  type: z.enum(TRANSACTION_TYPES),
-  categoryId: z.string().nullable().optional(),
-  accountId: z.string().min(1, 'Escolha a conta'),
   dayOfMonth: z.coerce
     .number()
     .int('Dia inválido')
     .min(1, 'Dia inválido')
     .max(31, 'Dia inválido'),
-  notifyDaysBefore: z.coerce.number().int().min(0).max(30).default(3),
+  active: z.boolean().optional(),
+}
+
+export const recurringRuleSchema = z.discriminatedUnion('kind', [
+  z.object({
+    ...base,
+    kind: z.literal('TRANSACTION'),
+    type: z.enum(TRANSACTION_TYPES),
+    accountId: z.string().min(1, 'Escolha a conta'),
+    categoryId: z.string().nullable().optional(),
+    notifyDaysBefore: z.coerce.number().int().min(0).max(30).default(3),
+  }),
+  z.object({
+    ...base,
+    kind: z.literal('TRANSFER'),
+    fromAccountId: z.string().min(1, 'Escolha a conta de origem'),
+    toAccountId: z.string().min(1, 'Escolha a conta de destino'),
+    notifyDaysBefore: z.coerce.number().int().min(0).max(30).default(0),
+  }),
+])
+
+export const recurringRulePatchSchema = z.object({
+  kind: z.enum(['TRANSACTION', 'TRANSFER']).optional(),
+  description: z.string().trim().min(1, 'Informe a descrição').max(100).optional(),
+  amount: z.number().positive('O valor deve ser maior que zero').optional(),
+  type: z.enum(TRANSACTION_TYPES).optional(),
+  accountId: z.string().min(1).optional(),
+  toAccountId: z.string().min(1).nullable().optional(),
+  categoryId: z.string().nullable().optional(),
+  dayOfMonth: z.coerce.number().int().min(1, 'Dia inválido').max(31, 'Dia inválido').optional(),
+  notifyDaysBefore: z.coerce.number().int().min(0).max(30).optional(),
   active: z.boolean().optional(),
 })
 
 export type RecurringRuleInput = z.infer<typeof recurringRuleSchema>
+export type RecurringRulePatch = z.infer<typeof recurringRulePatchSchema>
 
 export function toRecurringRuleDto(rule: {
   id: string
   description: string
   amountCents: number
+  kind: string
   type: string
   dayOfMonth: number
   active: boolean
@@ -32,18 +61,25 @@ export function toRecurringRuleDto(rule: {
   account: { name: string; color: string } | null
   categoryId: string | null
   category: { name: string; color: string } | null
+  toAccountId: string | null
+  toAccount: { name: string; color: string } | null
 }): RecurringRuleDto {
+  const isTransfer = rule.kind === 'TRANSFER'
   return {
     id: rule.id,
     description: rule.description,
     amountCents: rule.amountCents,
-    type: rule.type as TransactionType,
+    kind: rule.kind as RecurringKind,
+    type: isTransfer ? null : (rule.type as TransactionType),
     categoryId: rule.categoryId,
-    categoryName: rule.category?.name ?? null,
-    categoryColor: rule.category?.color ?? null,
+    categoryName: isTransfer ? null : (rule.category?.name ?? null),
+    categoryColor: isTransfer ? null : (rule.category?.color ?? null),
     accountId: rule.accountId,
     accountName: rule.account?.name ?? '',
     accountColor: rule.account?.color ?? '#10b981',
+    toAccountId: isTransfer ? rule.toAccountId : null,
+    toAccountName: isTransfer ? (rule.toAccount?.name ?? null) : null,
+    toAccountColor: isTransfer ? (rule.toAccount?.color ?? null) : null,
     dayOfMonth: rule.dayOfMonth,
     active: rule.active,
     notifyDaysBefore: rule.notifyDaysBefore,

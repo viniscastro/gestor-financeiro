@@ -24,6 +24,7 @@ model User {
   categories           Category[]
   budgets              Budget[]
   recurringRules       RecurringRule[]
+  goals                SavingsGoal[]
 }
 
 model Account {
@@ -37,7 +38,9 @@ model Account {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   transactions   Transaction[]
-  recurringRules RecurringRule[]
+  recurringRules RecurringRule[] @relation("RecurringFromAccount")
+  recurringIncoming RecurringRule[] @relation("RecurringToAccount")
+  goals          SavingsGoal[]
 
   @@index([userId])
 }
@@ -78,11 +81,14 @@ model RecurringRule {
   user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   description      String
   amountCents      Int
+  kind             String        @default("TRANSACTION")
   type             String
   categoryId       String?
   category         Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   accountId        String
-  account          Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  account          Account       @relation("RecurringFromAccount", fields: [accountId], references: [id], onDelete: Cascade)
+  toAccountId      String?
+  toAccount        Account?      @relation("RecurringToAccount", fields: [toAccountId], references: [id], onDelete: SetNull)
   dayOfMonth       Int
   active           Boolean       @default(true)
   notifyDaysBefore Int           @default(3)
@@ -116,4 +122,20 @@ model Transaction {
   @@index([userId, date])
   @@index([userId, accountId])
   @@index([userId, categoryId])
+}
+
+model SavingsGoal {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  targetAmount  Int
+  currentAmount Int       @default(0)
+  accountId     String?
+  account       Account?  @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  targetDate    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
 }

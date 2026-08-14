@@ -4,7 +4,7 @@
 
 ### Controle suas finanças pessoais de forma simples e elegante.
 
-Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, com autenticação segura, dashboard de resumo e gráficos estatísticos — tudo em **tempo real**, construída com Next.js e PostgreSQL.
+Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, com **múltiplas contas e transferências**, orçamentos por categoria, lançamentos recorrentes, **metas de economia** e gráficos estatísticos — tudo em **tempo real**, construída com Next.js e PostgreSQL.
 
 ![Next.js](https://img.shields.io/badge/Next.js%2016-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![React 19](https://img.shields.io/badge/React%2019-61DAFB?style=for-the-badge&logo=react&logoColor=black)
@@ -23,9 +23,15 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 - 🔐 **Autenticação completa** — cadastro e login com e-mail/senha, senha criptografada com **bcrypt** e sessão segura via **JWT**
 - 🥇 **Login com Google** — entrada com um clique via OAuth (credenciais no Google Cloud Console)
 - ✉️ **Confirmação de e-mail** — código de 6 dígitos enviado por e-mail, com expiração de 10 min, reenvio com cooldown e bloqueio de login até a conta ser verificada
-- 💸 **Entradas e saídas no mesmo lugar** — cadastre receitas e despesas em uma única tela, escolhendo o tipo na hora
-- 🏷️ **Categorias pré-definidas** — 5 categorias de receita e 8 de despesa, com cores e rótulos em português
-- 📊 **Dashboard resumido** — saldo total, entradas e saídas do mês, e as 5 transações mais recentes
+- 💼 **Multi-contas** — crie contas de qualquer tipo (Carteira, Investimento, Poupança...) com saldo inicial e cor própria; o saldo é calculado automaticamente
+- 🔁 **Transferências entre contas** — mova dinheiro entre contas: as duas pernas (saída/entrada) são criadas vinculadas e excluídas juntas
+- 💸 **Entradas e saídas no mesmo lugar** — cadastre receitas e despesas em uma única tela, escolhendo o tipo, a conta e a categoria na hora
+- 🏷️ **Categorias pré-definidas** — 13 categorias (5 de receita e 8 de despesa) com cores, ícones e rótulos em português, listadas em ordem alfabética com **"Outros" por último**
+- 🎯 **Orçamentos mensais por categoria** — defina um limite por categoria e acompanhe o gasto do mês com barra de progresso e alerta visual ao se aproximar/estourar
+- 📆 **Lançamentos recorrentes** — transações e **transferências automáticas** mensais (dia do mês), com ativação/desativação e lembrete com dias de antecedência configurável
+- 🏦 **Metas de economia** — defina objetivos (viagem, reserva...) com valor e data alvo; o progresso acompanha o **saldo da conta vinculada** em tempo real ou um valor manual
+- 📤 **Exportar CSV** — exporte as transações (respeitando os filtros ativos) e um relatório de estatísticas (mensal + por categoria) em CSV pronto para Excel
+- 📊 **Dashboard resumido** — saldo total por conta, entradas e saídas do mês, status dos orçamentos e as transações mais recentes
 - 📈 **Estatísticas com gráficos** — evolução mensal dos últimos 6 meses (barras) e despesas por categoria (pizza), com **Recharts**
 - 🎨 **Interface moderna** — temas **claro e escuro** com alternância, responsiva (menu lateral que vira gaveta no mobile) e ícones **Lucide**
 - 🖼️ **Foto de perfil** — envie uma imagem (redimensionada no cliente) ou remova, exibida na sidebar e na página de conta
@@ -52,23 +58,25 @@ gestor-financeiro/
 ├── app/
 │   ├── (app)/                  # Áreas protegidas (após login)
 │   │   ├── dashboard/          #   Resumo financeiro
-│   │   ├── transactions/       #   CRUD de entradas/saídas
+│   │   ├── transactions/       #   Entradas/saídas (busca + filtros + exportar CSV)
+│   │   ├── accounts/           #   Multi-contas e transferências
+│   │   ├── budgets/            #   Orçamentos mensais por categoria
+│   │   ├── recurring/          #   Lançamentos recorrentes
+│   │   ├── goals/              #   Metas de economia
 │   │   ├── stats/              #   Gráficos e estatísticas
+│   │   ├── account/            #   Conta (foto, tema, excluir)
 │   │   └── layout.tsx          #   Layout com sidebar
 │   ├── (auth)/page.tsx         # Tela única de login + cadastro
 │   ├── verify-email/page.tsx   # Confirmação de e-mail com código
-│   ├── api/
-│   │   ├── auth/[...nextauth]/ # Rotas do NextAuth
-│   │   ├── register/           # Criação de usuário + envio de código
-│   │   ├── verify-email/       # Confirma o código recebido
-│   │   ├── resend-verification/# Reenvia o código de confirmação
-│   │   └── transactions/       # Listar/criar · editar/excluir ([id])
+│   ├── api/                    # Rotas: auth, register, verify-email, resend-verification,
+│   │                           # transactions, transfers, accounts, categories, budgets,
+│   │                           # recurring, goals, account (avatar)
 │   └── layout.tsx · globals.css
-├── components/                 # auth-form, verify-email-form, sidebar, transaction-*, statistics-charts
-├── lib/                        # auth, email (Resend), verification, prisma, format, categories, transactions, types
+├── components/                 # managers de cada módulo, forms, sidebar, statistics-charts...
+├── lib/                        # auth, email, prisma, validation (zod), helpers de cada módulo
 ├── prisma/
 │   ├── migrations/             # Migrações versionadas (PostgreSQL)
-│   └── schema.prisma           # Modelos User e Transaction
+│   └── schema.prisma           # Modelos do banco
 ├── src/generated/prisma/       # Prisma Client gerado
 ├── types/                      # Augmentação de tipos do NextAuth
 └── prisma.config.ts            # Configuração do Prisma 7
@@ -78,32 +86,93 @@ gestor-financeiro/
 
 ```prisma
 model User {
-  id                   String        @id @default(cuid())
+  id                   String         @id @default(cuid())
   name                 String
-  email                String        @unique
-  password             String        // hash bcrypt (vazio para contas Google)
-  emailVerified        DateTime?     // null = e-mail ainda não confirmado
-  verificationCode     String?       // hash bcrypt do código de confirmação
-  verificationExpires  DateTime?     // expiração do código (10 min)
-  verificationSentAt   DateTime?     // usado no cooldown de reenvio (60s)
-  createdAt            DateTime      @default(now())
-  updatedAt            DateTime      @updatedAt
+  email                String         @unique
+  password             String         // hash bcrypt (vazio para contas Google)
+  image                String?
+  emailVerified        DateTime?
+  verificationCode     String?        // hash bcrypt do código de confirmação
+  verificationExpires  DateTime?
+  verificationSentAt   DateTime?
+  accounts             Account[]
+  categories           Category[]
+  budgets              Budget[]
+  recurringRules       RecurringRule[]
+  goals                SavingsGoal[]
   transactions         Transaction[]
 }
 
-model Transaction {
-  id              String   @id @default(cuid())
-  transactionType String   // "INCOME" | "EXPENSE"
-  description     String
-  amount          Int      // valor em centavos
-  category        String
-  date            DateTime
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Account {
+  id             String         @id @default(cuid())
+  userId         String
+  name           String
+  type           String         @default("CARTEIRA")  // CARTEIRA | INVESTIMENTO | ...
+  color          String         @default("#10b981")
+  initialBalance Int            @default(0)           // centavos
+  transactions   Transaction[]
+  recurringRules RecurringRule[] @relation("RecurringFromAccount")
+  recurringIncoming RecurringRule[] @relation("RecurringToAccount")
+  goals          SavingsGoal[]
+}
 
-  @@index([userId, date])
+model Category {
+  id       String   @id @default(cuid())
+  userId   String
+  name     String
+  type     String   // INCOME | EXPENSE
+  color    String   @default("#78716c")
+  icon     String   @default("tag")
+  budgets  Budget[]
+  recurringRules RecurringRule[]
+  @@unique([userId, name, type])
+}
+
+model Budget {
+  id          String   @id @default(cuid())
+  userId      String
+  categoryId  String
+  amountCents Int
+  @@unique([userId, categoryId])   // um orçamento por categoria
+}
+
+model RecurringRule {
+  id               String    @id @default(cuid())
+  userId           String
+  description      String
+  amountCents      Int
+  kind             String    @default("TRANSACTION") // TRANSACTION | TRANSFER
+  type             String    // INCOME | EXPENSE (para TRANSACTION)
+  categoryId       String?
+  accountId        String    // conta de origem
+  toAccountId      String?   // conta de destino (kind = TRANSFER)
+  dayOfMonth       Int
+  active           Boolean   @default(true)
+  notifyDaysBefore Int       @default(3)
+  lastNotifiedAt   DateTime?
+}
+
+model Transaction {
+  id              String         @id @default(cuid())
+  transactionType String         // INCOME | EXPENSE
+  description     String
+  amount          Int            // centavos
+  date            DateTime
+  accountId       String
+  categoryId      String?
+  transferGroupId String?        // vincula as duas pernas de uma transferência
+  recurringId     String?
+  occurrenceMonth String?        // "YYYY-MM" (materialização de recorrente)
+}
+
+model SavingsGoal {
+  id            String   @id @default(cuid())
+  userId        String
+  name          String
+  targetAmount  Int      // centavos
+  currentAmount Int      @default(0)   // usado quando não há conta vinculada
+  accountId     String?               // se vinculada, progresso = saldo da conta
+  targetDate    DateTime?
 }
 ```
 
@@ -111,17 +180,40 @@ model Transaction {
 
 ## 🔌 API
 
-| Método | Rota                            | Descrição                            | Acesso |
-| ------ | ------------------------------- | ------------------------------------ | ------ |
-| POST   | `/api/register`                 | Cadastra um novo usuário e envia o código de confirmação | Público |
-| POST   | `/api/verify-email`             | Valida o código e confirma o e-mail  | Público |
-| POST   | `/api/resend-verification`      | Reenvia o código (cooldown de 60s)   | Público |
-| GET    | `/api/auth/session`             | Retorna a sessão atual               | Cookie |
-| POST   | `/api/auth/callback/credentials`| Autentica e cria a sessão (CSRF)     | Público |
-| GET    | `/api/transactions`             | Lista as transações do usuário       | 🔒 Auth |
-| POST   | `/api/transactions`             | Cria uma transação                   | 🔒 Auth |
-| PATCH  | `/api/transactions/[id]`        | Atualiza uma transação               | 🔒 Auth |
-| DELETE | `/api/transactions/[id]`        | Exclui uma transação                 | 🔒 Auth |
+| Método | Rota                             | Descrição                                          | Acesso |
+| ------ | -------------------------------- | -------------------------------------------------- | ------ |
+| POST   | `/api/register`                  | Cadastra um novo usuário e envia o código de confirmação | Público |
+| POST   | `/api/verify-email`              | Valida o código e confirma o e-mail                 | Público |
+| POST   | `/api/resend-verification`       | Reenvia o código (cooldown de 60s)                  | Público |
+| GET    | `/api/auth/session`              | Retorna a sessão atual                              | Cookie |
+| POST   | `/api/auth/callback/credentials` | Autentica e cria a sessão (CSRF)                    | Público |
+| GET    | `/api/transactions`              | Lista as transações (filtros `accountId`/`categoryId` via query) | 🔒 Auth |
+| POST   | `/api/transactions`              | Cria uma transação                                  | 🔒 Auth |
+| PATCH  | `/api/transactions/[id]`         | Atualiza uma transação                              | 🔒 Auth |
+| DELETE | `/api/transactions/[id]`         | Exclui uma transação                                | 🔒 Auth |
+| POST   | `/api/transfers`                 | Cria uma transferência (par de transações)          | 🔒 Auth |
+| GET    | `/api/accounts`                  | Lista contas (com saldo calculado)                  | 🔒 Auth |
+| POST   | `/api/accounts`                  | Cria uma conta                                      | 🔒 Auth |
+| PATCH  | `/api/accounts/[id]`             | Edita uma conta                                     | 🔒 Auth |
+| DELETE | `/api/accounts/[id]`             | Exclui uma conta (bloqueada se houver transações)   | 🔒 Auth |
+| GET    | `/api/categories`                | Lista categorias (alfabético, "Outros" por último)  | 🔒 Auth |
+| POST   | `/api/categories`                | Cria uma categoria                                  | 🔒 Auth |
+| PATCH  | `/api/categories/[id]`           | Edita uma categoria                                 | 🔒 Auth |
+| DELETE | `/api/categories/[id]`           | Exclui uma categoria                                | 🔒 Auth |
+| GET    | `/api/budgets`                   | Lista orçamentos (com gasto do mês)                 | 🔒 Auth |
+| POST   | `/api/budgets`                   | Cria um orçamento por categoria                     | 🔒 Auth |
+| PATCH  | `/api/budgets/[id]`              | Atualiza o valor                                    | 🔒 Auth |
+| DELETE | `/api/budgets/[id]`              | Exclui um orçamento                                 | 🔒 Auth |
+| GET    | `/api/recurring`                 | Lista recorrentes (materializa o mês corrente)      | 🔒 Auth |
+| POST   | `/api/recurring`                 | Cria uma recorrência (transação ou transferência)   | 🔒 Auth |
+| PATCH  | `/api/recurring/[id]`            | Edita uma recorrência                               | 🔒 Auth |
+| DELETE | `/api/recurring/[id]`            | Exclui uma recorrência                              | 🔒 Auth |
+| GET    | `/api/goals`                     | Lista metas (com progresso)                         | 🔒 Auth |
+| POST   | `/api/goals`                     | Cria uma meta de economia                           | 🔒 Auth |
+| PATCH  | `/api/goals/[id]`                | Edita uma meta                                      | 🔒 Auth |
+| DELETE | `/api/goals/[id]`                | Exclui uma meta                                     | 🔒 Auth |
+| PATCH  | `/api/account/avatar`            | Atualiza a foto de perfil                           | 🔒 Auth |
+| DELETE | `/api/account`                   | Exclui a conta do usuário (requer senha)            | 🔒 Auth |
 
 ## 🚦 Pré-requisitos
 
@@ -144,8 +236,13 @@ Preencha o `.env`:
 DATABASE_URL="postgresql://SEU_USUARIO:SUA_SENHA@localhost:5432/gestor"
 AUTH_SECRET="<gere um secret>"
 AUTH_TRUST_HOST="true"
+# Envio de e-mails — use SMTP (Gmail) OU Resend. SMTP tem prioridade.
+EMAIL_FROM="Gestor Financeiro <seuemail@gmail.com>"
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="465"
+SMTP_USER="seuemail@gmail.com"
+SMTP_PASS="<senha de app do Gmail>"
 RESEND_API_KEY="<sua api key do Resend>"
-EMAIL_FROM="Gestor Financeiro <onboarding@resend.dev>"
 GOOGLE_CLIENT_ID="<seu google client id>"
 GOOGLE_CLIENT_SECRET="<seu google client secret>"
 ```
@@ -158,7 +255,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 
 > ⚠️ Se a senha do banco contiver caracteres especiais (`#`, `$`, `@`...), ela deve ser **codificada na URL** (ex.: `#` → `%23`, `$` → `%24`).
 
-> 💡 Sem `RESEND_API_KEY`, o código de confirmação é exibido no **console do servidor** (útil em desenvolvimento). Sem `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, o botão "Entrar com Google" simplesmente não aparece.
+> 💡 Sem SMTP/Resend configurados, o código de confirmação é exibido no **console do servidor** (útil em desenvolvimento). Sem `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, o botão "Entrar com Google" simplesmente não aparece.
 
 ```bash
 # 3. Crie o banco de dados e aplique as migrações
@@ -261,11 +358,12 @@ npx prisma migrate deploy
 
 ## 🗺️ Próximas ideias
 
-- [ ] Parcelamento e recorrência (mensal, semanal...)
-- [ ] Metas de economia e orçamento por categoria
-- [ ] Exportação para CSV
+- [ ] Parcelamento de compras
+- [ ] Recorrências semanais/quinzenais/anuais
+- [ ] Notificações por e-mail de contas a vencer (agendadas)
 - [ ] Upload de comprovantes
-- [ ] Modo claro/escuro
+- [ ] Importação de extratos (OFX)
+- [ ] Backup e restauração de dados
 
 ---
 

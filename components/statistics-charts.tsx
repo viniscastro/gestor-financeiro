@@ -1,5 +1,6 @@
 'use client'
 
+import { Download } from 'lucide-react'
 import {
   Bar,
   BarChart,
@@ -13,7 +14,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { formatBRL } from '@/lib/format'
+import { downloadCsv, formatBRL, formatCentsPtBR, toCsv } from '@/lib/format'
 
 export type MonthlyPoint = {
   label: string
@@ -87,8 +88,46 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
   const hasMonthly = monthly.some((m) => m.income > 0 || m.expense > 0)
   const hasCategories = byCategory.length > 0
 
+  function exportCsv() {
+    const monthlyRows = monthly.map((m) => [
+      m.label,
+      formatCentsPtBR(m.income),
+      formatCentsPtBR(m.expense),
+      formatCentsPtBR(m.income - m.expense),
+    ])
+    const categoryRows = byCategory.map((c) => {
+      const pct = totalExpense > 0 ? (c.amount / totalExpense) * 100 : 0
+      return [
+        c.label,
+        formatCentsPtBR(c.amount),
+        `${pct.toFixed(1).replace('.', ',')}%`,
+      ]
+    })
+    const content =
+      toCsv(['Mês', 'Entradas', 'Saídas', 'Resultado'], monthlyRows) +
+      '\r\n\r\n' +
+      toCsv(['Categoria', 'Valor', 'Percentual'], categoryRows)
+    downloadCsv(
+      `relatorio_${new Date().toISOString().slice(0, 10)}.csv`,
+      content
+    )
+  }
+
   return (
-    <div className="grid gap-6 xl:grid-cols-2">
+    <>
+      <div className="mb-6 flex justify-end">
+        <button
+          type="button"
+          onClick={exportCsv}
+          disabled={!hasMonthly && !hasCategories}
+          className="flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-600 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        >
+          <Download className="h-4 w-4" />
+          Exportar CSV
+        </button>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-2">
       <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
         <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-white">
           Entradas vs. Saídas
@@ -188,6 +227,7 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
           </p>
         )}
       </div>
-    </div>
+      </div>
+    </>
   )
 }

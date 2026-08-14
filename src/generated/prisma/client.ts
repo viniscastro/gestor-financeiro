@@ -71,3 +71,8 @@ export type RecurringRule = Prisma.RecurringRuleModel
  * 
  */
 export type Transaction = Prisma.TransactionModel
+/**
+ * Model SavingsGoal
+ * 
+ */
+export type SavingsGoal = Prisma.SavingsGoalModel

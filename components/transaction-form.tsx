@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { LoaderCircle, TrendingDown, TrendingUp, X } from 'lucide-react'
+import { Info, LoaderCircle, TrendingDown, TrendingUp, X } from 'lucide-react'
 import type { TransactionType } from '@/lib/categories'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 
@@ -72,6 +72,8 @@ function TransactionFormBody({
   const [loading, setLoading] = useState(false)
 
   const availableCategories = categories.filter((c) => c.type === type)
+  const selectedAccount = accounts.find((a) => a.id === accountId)
+  const showTransferHint = selectedAccount !== undefined && selectedAccount.type !== 'CARTEIRA'
 
   function switchType(next: TransactionType) {
     setType(next)
@@ -229,6 +231,18 @@ function TransactionFormBody({
               ))}
             </select>
           </div>
+
+          {showTransferHint && (
+            <div className="flex gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <p>
+                Movimentação entre as suas contas? Aportes e retiradas de{' '}
+                {selectedAccount?.name} não devem ser registrados como Saída/Entrada —
+                use <span className="font-semibold">Transferir</span> na lista de
+                transações para o saldo total não mudar.
+              </p>
+            </div>
+          )}
 
           <div>
             <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">

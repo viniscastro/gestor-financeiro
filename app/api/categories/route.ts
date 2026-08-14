@@ -11,7 +11,14 @@ export async function GET() {
 
   const categories = await prisma.category.findMany({
     where: { userId: session.user.id },
-    orderBy: [{ type: 'asc' }, { name: 'asc' }],
+  })
+
+  categories.sort((a, b) => {
+    if (a.type !== b.type) return a.type === 'EXPENSE' ? -1 : 1
+    const aLast = a.name.trim().toLowerCase() === 'outros'
+    const bLast = b.name.trim().toLowerCase() === 'outros'
+    if (aLast !== bLast) return aLast ? 1 : -1
+    return a.name.localeCompare(b.name, 'pt-BR')
   })
 
   return NextResponse.json(categories.map(toCategoryDto))

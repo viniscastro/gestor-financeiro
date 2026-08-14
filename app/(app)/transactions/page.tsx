@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowRightLeft, LoaderCircle, Plus, Search } from 'lucide-react'
+import { ArrowRightLeft, Download, LoaderCircle, Plus, Search } from 'lucide-react'
 import TransactionForm from '@/components/transaction-form'
 import TransactionList from '@/components/transaction-list'
 import TransferForm from '@/components/transfer-form'
-import { formatBRL } from '@/lib/format'
+import { downloadCsv, formatCentsPtBR, formatBRL, formatDate, toCsv } from '@/lib/format'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 
 type TypeFilter = 'ALL' | 'INCOME' | 'EXPENSE'
@@ -132,6 +132,25 @@ export default function TransactionsPage() {
     router.refresh()
   }
 
+  function exportCsv() {
+    const rows = filtered.map((t) => [
+      formatDate(new Date(t.date)),
+      t.transferGroupId
+        ? 'Transferência'
+        : t.transactionType === 'INCOME'
+          ? 'Entrada'
+          : 'Saída',
+      t.description,
+      formatCentsPtBR(t.amount),
+      t.accountName,
+      t.categoryName ?? '',
+    ])
+    downloadCsv(
+      `transacoes_${new Date().toISOString().slice(0, 10)}.csv`,
+      toCsv(['Data', 'Tipo', 'Descrição', 'Valor', 'Conta', 'Categoria'], rows)
+    )
+  }
+
   function handleSaved() {
     setFormOpen(false)
     setEditing(null)
@@ -152,6 +171,15 @@ export default function TransactionsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={exportCsv}
+            disabled={filtered.length === 0}
+            className="flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-600 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          >
+            <Download className="h-4 w-4" />
+            Exportar CSV
+          </button>
           <button
             type="button"
             onClick={() => setTransferOpen(true)}

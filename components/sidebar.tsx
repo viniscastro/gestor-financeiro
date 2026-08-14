@@ -7,6 +7,7 @@ import { signOut } from 'next-auth/react'
 import {
   ArrowLeftRight,
   ChartPie,
+  Flag,
   LayoutDashboard,
   LoaderCircle,
   LogOut,
@@ -32,6 +33,7 @@ const NAV_ITEMS = [
   { href: '/transactions', label: 'Transações', icon: ArrowLeftRight },
   { href: '/accounts', label: 'Contas', icon: Wallet },
   { href: '/budgets', label: 'Orçamentos', icon: Target },
+  { href: '/goals', label: 'Metas', icon: Flag },
   { href: '/recurring', label: 'Recorrentes', icon: Repeat },
   { href: '/stats', label: 'Estatísticas', icon: ChartPie },
   { href: '/account', label: 'Conta', icon: Settings },
