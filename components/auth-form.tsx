@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { LoaderCircle, PiggyBank } from 'lucide-react'
+import { Eye, EyeOff, LoaderCircle, PiggyBank } from 'lucide-react'
 
 type Mode = 'login' | 'register'
 
@@ -35,6 +36,7 @@ export default function AuthForm({ googleEnabled }: { googleEnabled: boolean }) 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
@@ -198,17 +200,27 @@ export default function AuthForm({ googleEnabled }: { googleEnabled: boolean }) 
             <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Senha
             </label>
-            <input
-              id="password"
-              type="password"
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-              placeholder="••••••••"
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className={inputClass}
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                placeholder="••••••••"
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className={`${inputClass} pr-11`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((s) => !s)}
+                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
           {error && (
@@ -225,6 +237,17 @@ export default function AuthForm({ googleEnabled }: { googleEnabled: boolean }) 
             {loading && <LoaderCircle className="h-4 w-4 animate-spin" />}
             {mode === 'login' ? 'Entrar' : 'Criar conta'}
           </button>
+
+          {mode === 'login' && (
+            <div className="text-center">
+              <Link
+                href="/forgot-password"
+                className="text-sm font-medium text-emerald-600 transition hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+              >
+                Esqueceu a senha?
+              </Link>
+            </div>
+          )}
 
           {mode === 'register' && (
             <p className="text-center text-xs text-zinc-500">

@@ -23,6 +23,8 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 - 🔐 **Autenticação completa** — cadastro e login com e-mail/senha, senha criptografada com **bcrypt** e sessão segura via **JWT**
 - 🥇 **Login com Google** — entrada com um clique via OAuth (credenciais no Google Cloud Console)
 - ✉️ **Confirmação de e-mail** — código de 6 dígitos enviado por e-mail, com expiração de 10 min, reenvio com cooldown e bloqueio de login até a conta ser verificada
+- 🔑 **Redefinição de senha** — fluxo em 3 telas (`/forgot-password` → código → nova senha), com cooldown no reenvio, expiração em 10 min e anti-enumeração (retorna `200` mesmo se o e-mail não existir)
+- 👁️ **Mostrar/ocultar senha** — toggle com ícone de olho nos campos de senha (login, cadastro e redefinição)
 - 💼 **Multi-contas** — crie contas de qualquer tipo (Carteira, Investimento, Poupança...) com saldo inicial e cor própria; o saldo é calculado automaticamente
 - 🔁 **Transferências entre contas** — mova dinheiro entre contas: as duas pernas (saída/entrada) são criadas vinculadas e excluídas juntas
 - 💸 **Entradas e saídas no mesmo lugar** — cadastre receitas e despesas em uma única tela, escolhendo o tipo, a conta e a categoria na hora
@@ -35,6 +37,7 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 - 📈 **Estatísticas com gráficos** — evolução mensal dos últimos 6 meses (barras) e despesas por categoria (pizza), com **Recharts**
 - 🎨 **Interface moderna** — temas **claro e escuro** com alternância, responsiva (menu lateral que vira gaveta no mobile) e ícones **Lucide**
 - 🖼️ **Foto de perfil** — envie uma imagem (redimensionada no cliente) ou remova, exibida na sidebar e na página de conta
+- 📱 **PWA instalável** — manifest, ícones 192/512/maskable, theme-color dinâmico (claro/escuro) e suporte a iOS (apple-touch-icon); instale o app no celular/desktop como atalho de tela cheia
 - 🛡️ **Proteção de rotas** — áreas privadas redirecionam para o login; APIs exigem sessão válida (401 sem cookie)
 - 💱 **Valores em centavos** — o dinheiro é armazenado como inteiro (cents), sem problemas de ponto flutuante
 
@@ -68,7 +71,12 @@ gestor-financeiro/
 │   │   └── layout.tsx          #   Layout com sidebar
 │   ├── (auth)/page.tsx         # Tela única de login + cadastro
 │   ├── verify-email/page.tsx   # Confirmação de e-mail com código
+│   ├── forgot-password/        # Redefinição de senha (3 telas):
+│   │   ├── page.tsx            #   Tela 1 — informar e-mail
+│   │   ├── verify/page.tsx     #   Tela 2 — digitar código de verificação
+│   │   └── reset/page.tsx      #   Tela 3 — definir nova senha
 │   ├── api/                    # Rotas: auth, register, verify-email, resend-verification,
+│   │                           # forgot-password, verify-reset-code, reset-password,
 │   │                           # transactions, transfers, accounts, categories, budgets,
 │   │                           # recurring, goals, account (avatar)
 │   └── layout.tsx · globals.css
@@ -95,6 +103,9 @@ model User {
   verificationCode     String?        // hash bcrypt do código de confirmação
   verificationExpires  DateTime?
   verificationSentAt   DateTime?
+  resetCode            String?        // hash bcrypt do código de redefinição
+  resetExpires         DateTime?
+  resetSentAt          DateTime?
   accounts             Account[]
   categories           Category[]
   budgets              Budget[]
@@ -185,6 +196,9 @@ model SavingsGoal {
 | POST   | `/api/register`                  | Cadastra um novo usuário e envia o código de confirmação | Público |
 | POST   | `/api/verify-email`              | Valida o código e confirma o e-mail                 | Público |
 | POST   | `/api/resend-verification`       | Reenvia o código (cooldown de 60s)                  | Público |
+| POST   | `/api/forgot-password`           | Envia código de redefinição (cooldown 60s, anti-enumeração) | Público |
+| POST   | `/api/verify-reset-code`         | Valida código de redefinição sem consumir            | Público |
+| POST   | `/api/reset-password`            | Redefine a senha com código e nova senha             | Público |
 | GET    | `/api/auth/session`              | Retorna a sessão atual                              | Cookie |
 | POST   | `/api/auth/callback/credentials` | Autentica e cria a sessão (CSRF)                    | Público |
 | GET    | `/api/transactions`              | Lista as transações (filtros `accountId`/`categoryId` via query) | 🔒 Auth |

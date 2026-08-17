@@ -1,0 +1,65 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
+import { prisma } from '@/lib/prisma'
+import { sendPasswordResetCode } from '@/lib/email'
+import {
+  generateVerificationCode,
+  storeResetCode,
+  RESEND_COOLDOWN_MS,
+} from '@/lib/verification'
+
+const forgotSchema = z.object({
+  email: z.string().trim().email('E-mail inválido'),
+})
+
+export async function POST(request: NextRequest) {
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+  }
+
+  const parsed = forgotSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? 'Dados inválidos' },
+      { status: 400 }
+    )
+  }
+
+  const { email } = parsed.data
+  const normalizedEmail = email.toLowerCase()
+
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  })
+
+  // Não revelar se o e-mail existe: para e-mails desconhecidos também retorna ok.
+  if (!user || !user.password) {
+    return NextResponse.json({ ok: true })
+  }
+
+  if (user.resetSentAt) {
+    const elapsed = Date.now() - user.resetSentAt.getTime()
+    if (elapsed < RESEND_COOLDOWN_MS) {
+      const waitSeconds = Math.ceil((RESEND_COOLDOWN_MS - elapsed) / 1000)
+      return NextResponse.json(
+        { error: `Aguarde ${waitSeconds}s para reenviar o código.` },
+        { status: 429 }
+      )
+    }
+  }
+
+  const code = generateVerificationCode()
+  await storeResetCode(user.id, code)
+
+  try {
+    await sendPasswordResetCode(normalizedEmail, code)
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Erro desconhecido'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+
+  return NextResponse.json({ ok: true })
+}

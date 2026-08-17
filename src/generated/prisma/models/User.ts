@@ -34,6 +34,9 @@ export type UserMinAggregateOutputType = {
   verificationCode: string | null
   verificationExpires: Date | null
   verificationSentAt: Date | null
+  resetCode: string | null
+  resetExpires: Date | null
+  resetSentAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -48,6 +51,9 @@ export type UserMaxAggregateOutputType = {
   verificationCode: string | null
   verificationExpires: Date | null
   verificationSentAt: Date | null
+  resetCode: string | null
+  resetExpires: Date | null
+  resetSentAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +68,9 @@ export type UserCountAggregateOutputType = {
   verificationCode: number
   verificationExpires: number
   verificationSentAt: number
+  resetCode: number
+  resetExpires: number
+  resetSentAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -78,6 +87,9 @@ export type UserMinAggregateInputType = {
   verificationCode?: true
   verificationExpires?: true
   verificationSentAt?: true
+  resetCode?: true
+  resetExpires?: true
+  resetSentAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -92,6 +104,9 @@ export type UserMaxAggregateInputType = {
   verificationCode?: true
   verificationExpires?: true
   verificationSentAt?: true
+  resetCode?: true
+  resetExpires?: true
+  resetSentAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -106,6 +121,9 @@ export type UserCountAggregateInputType = {
   verificationCode?: true
   verificationExpires?: true
   verificationSentAt?: true
+  resetCode?: true
+  resetExpires?: true
+  resetSentAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -193,6 +211,9 @@ export type UserGroupByOutputType = {
   verificationCode: string | null
   verificationExpires: Date | null
   verificationSentAt: Date | null
+  resetCode: string | null
+  resetExpires: Date | null
+  resetSentAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -228,6 +249,9 @@ export type UserWhereInput = {
   verificationCode?: Prisma.StringNullableFilter<"User"> | string | null
   verificationExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   verificationSentAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  resetCode?: Prisma.StringNullableFilter<"User"> | string | null
+  resetExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  resetSentAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   transactions?: Prisma.TransactionListRelationFilter
@@ -248,6 +272,9 @@ export type UserOrderByWithRelationInput = {
   verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
   verificationExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   verificationSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
@@ -271,6 +298,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   verificationCode?: Prisma.StringNullableFilter<"User"> | string | null
   verificationExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   verificationSentAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  resetCode?: Prisma.StringNullableFilter<"User"> | string | null
+  resetExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  resetSentAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   transactions?: Prisma.TransactionListRelationFilter
@@ -291,6 +321,9 @@ export type UserOrderByWithAggregationInput = {
   verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
   verificationExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   verificationSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -311,6 +344,9 @@ export type UserScalarWhereWithAggregatesInput = {
   verificationCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   verificationExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   verificationSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  resetCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  resetExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  resetSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -325,6 +361,9 @@ export type UserCreateInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -345,6 +384,9 @@ export type UserUncheckedCreateInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -365,6 +407,9 @@ export type UserUpdateInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -385,6 +430,9 @@ export type UserUncheckedUpdateInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -405,6 +453,9 @@ export type UserCreateManyInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -419,6 +470,9 @@ export type UserUpdateManyMutationInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -433,6 +487,9 @@ export type UserUncheckedUpdateManyInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -447,6 +504,9 @@ export type UserCountOrderByAggregateInput = {
   verificationCode?: Prisma.SortOrder
   verificationExpires?: Prisma.SortOrder
   verificationSentAt?: Prisma.SortOrder
+  resetCode?: Prisma.SortOrder
+  resetExpires?: Prisma.SortOrder
+  resetSentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -461,6 +521,9 @@ export type UserMaxOrderByAggregateInput = {
   verificationCode?: Prisma.SortOrder
   verificationExpires?: Prisma.SortOrder
   verificationSentAt?: Prisma.SortOrder
+  resetCode?: Prisma.SortOrder
+  resetExpires?: Prisma.SortOrder
+  resetSentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -475,6 +538,9 @@ export type UserMinOrderByAggregateInput = {
   verificationCode?: Prisma.SortOrder
   verificationExpires?: Prisma.SortOrder
   verificationSentAt?: Prisma.SortOrder
+  resetCode?: Prisma.SortOrder
+  resetExpires?: Prisma.SortOrder
+  resetSentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -594,6 +660,9 @@ export type UserCreateWithoutAccountsInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -613,6 +682,9 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -648,6 +720,9 @@ export type UserUpdateWithoutAccountsInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -667,6 +742,9 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -686,6 +764,9 @@ export type UserCreateWithoutCategoriesInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -705,6 +786,9 @@ export type UserUncheckedCreateWithoutCategoriesInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -740,6 +824,9 @@ export type UserUpdateWithoutCategoriesInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -759,6 +846,9 @@ export type UserUncheckedUpdateWithoutCategoriesInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -778,6 +868,9 @@ export type UserCreateWithoutBudgetsInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -797,6 +890,9 @@ export type UserUncheckedCreateWithoutBudgetsInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -832,6 +928,9 @@ export type UserUpdateWithoutBudgetsInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -851,6 +950,9 @@ export type UserUncheckedUpdateWithoutBudgetsInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -870,6 +972,9 @@ export type UserCreateWithoutRecurringRulesInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -889,6 +994,9 @@ export type UserUncheckedCreateWithoutRecurringRulesInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -924,6 +1032,9 @@ export type UserUpdateWithoutRecurringRulesInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -943,6 +1054,9 @@ export type UserUncheckedUpdateWithoutRecurringRulesInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -962,6 +1076,9 @@ export type UserCreateWithoutTransactionsInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -981,6 +1098,9 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -1016,6 +1136,9 @@ export type UserUpdateWithoutTransactionsInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -1035,6 +1158,9 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1054,6 +1180,9 @@ export type UserCreateWithoutGoalsInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -1073,6 +1202,9 @@ export type UserUncheckedCreateWithoutGoalsInput = {
   verificationCode?: string | null
   verificationExpires?: Date | string | null
   verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -1108,6 +1240,9 @@ export type UserUpdateWithoutGoalsInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -1127,6 +1262,9 @@ export type UserUncheckedUpdateWithoutGoalsInput = {
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -1222,6 +1360,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   verificationCode?: boolean
   verificationExpires?: boolean
   verificationSentAt?: boolean
+  resetCode?: boolean
+  resetExpires?: boolean
+  resetSentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
@@ -1243,6 +1384,9 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   verificationCode?: boolean
   verificationExpires?: boolean
   verificationSentAt?: boolean
+  resetCode?: boolean
+  resetExpires?: boolean
+  resetSentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1257,6 +1401,9 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   verificationCode?: boolean
   verificationExpires?: boolean
   verificationSentAt?: boolean
+  resetCode?: boolean
+  resetExpires?: boolean
+  resetSentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1271,11 +1418,14 @@ export type UserSelectScalar = {
   verificationCode?: boolean
   verificationExpires?: boolean
   verificationSentAt?: boolean
+  resetCode?: boolean
+  resetExpires?: boolean
+  resetSentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "image" | "emailVerified" | "verificationCode" | "verificationExpires" | "verificationSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "image" | "emailVerified" | "verificationCode" | "verificationExpires" | "verificationSentAt" | "resetCode" | "resetExpires" | "resetSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -1308,6 +1458,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     verificationCode: string | null
     verificationExpires: Date | null
     verificationSentAt: Date | null
+    resetCode: string | null
+    resetExpires: Date | null
+    resetSentAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1748,6 +1901,9 @@ export interface UserFieldRefs {
   readonly verificationCode: Prisma.FieldRef<"User", 'String'>
   readonly verificationExpires: Prisma.FieldRef<"User", 'DateTime'>
   readonly verificationSentAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly resetCode: Prisma.FieldRef<"User", 'String'>
+  readonly resetExpires: Prisma.FieldRef<"User", 'DateTime'>
+  readonly resetSentAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }

@@ -21,3 +21,16 @@ export async function storeVerificationCode(userId: string, code: string): Promi
     },
   })
 }
+
+export async function storeResetCode(userId: string, code: string): Promise<void> {
+  const hash = await bcrypt.hash(code, 10)
+  const now = new Date()
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      resetCode: hash,
+      resetExpires: new Date(now.getTime() + CODE_TTL_MS),
+      resetSentAt: now,
+    },
+  })
+}
