@@ -9,6 +9,7 @@ import {
   Plus,
   Trash2,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { formatBRL } from '@/lib/format'
 import type { SavingsGoalDto } from '@/lib/types'
 
@@ -110,14 +111,33 @@ export default function GoalsManager() {
     }
   }
 
+  async function undoCreate(goal: SavingsGoalDto) {
+    const res = await fetch('/api/goals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: goal.name,
+        targetAmount: goal.targetAmount / 100,
+        currentAmount: goal.currentAmount / 100,
+        targetDate: goal.targetDate,
+      }),
+    })
+    if (res.ok) await reload()
+  }
+
   async function handleDelete(goal: SavingsGoalDto) {
-    if (!window.confirm(`Excluir a meta "${goal.name}"?`)) return
     const res = await fetch(`/api/goals/${goal.id}`, { method: 'DELETE' })
     if (!res.ok) {
-      setError('Erro ao excluir a meta.')
+      toast.error('Erro ao excluir a meta.')
       return
     }
     await reload()
+    toast.success('Meta excluída', {
+      action: {
+        label: 'Desfazer',
+        onClick: () => undoCreate(goal),
+      },
+    })
   }
 
   function formatDate(value: string): string {

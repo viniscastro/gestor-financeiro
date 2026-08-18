@@ -7,12 +7,16 @@ import {
   storeVerificationCode,
   RESEND_COOLDOWN_MS,
 } from '@/lib/verification'
+import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
 
 const resendSchema = z.object({
   email: z.string().trim().email('E-mail inválido'),
 })
 
 export async function POST(request: NextRequest) {
+  const rateLimited = withRateLimit(request, RATE_LIMITS.auth, 'resend-verification')
+  if (rateLimited) return rateLimited
+
   let body: unknown
   try {
     body = await request.json()

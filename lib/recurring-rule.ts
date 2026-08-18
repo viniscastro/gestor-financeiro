@@ -57,6 +57,7 @@ export function toRecurringRuleDto(rule: {
   dayOfMonth: number
   active: boolean
   notifyDaysBefore: number
+  position: number
   accountId: string
   account: { name: string; color: string } | null
   categoryId: string | null
@@ -83,6 +84,7 @@ export function toRecurringRuleDto(rule: {
     dayOfMonth: rule.dayOfMonth,
     active: rule.active,
     notifyDaysBefore: rule.notifyDaysBefore,
+    position: rule.position,
     nextDate: nextOccurrence(rule.dayOfMonth, new Date()).toISOString(),
   }
 }

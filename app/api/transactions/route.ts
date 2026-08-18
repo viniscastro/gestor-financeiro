@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { amountToCents, toTransactionDto, transactionSchema } from '@/lib/transactions'
+import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
 
 const transactionInclude = {
   account: { select: { name: true, color: true } },
@@ -9,6 +10,9 @@ const transactionInclude = {
 } as const
 
 export async function GET(request: NextRequest) {
+  const rateLimited = withRateLimit(request, RATE_LIMITS.api, 'transactions')
+  if (rateLimited) return rateLimited
+
   const session = await auth()
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
@@ -32,6 +36,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const rateLimited = withRateLimit(request, RATE_LIMITS.api, 'transactions')
+  if (rateLimited) return rateLimited
+
   const session = await auth()
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
@@ -52,7 +59,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { transactionType, description, amount, accountId, categoryId, date } = parsed.data
+  const { transactionType, description, amount, accountId, categoryId, date, recurringId, occurrenceMonth } = parsed.data
 
   const account = await prisma.account.findFirst({
     where: { id: accountId, userId: session.user.id },
@@ -81,6 +88,8 @@ export async function POST(request: NextRequest) {
       userId: session.user.id,
       accountId,
       categoryId: categoryId ?? null,
+      recurringId: recurringId ?? null,
+      occurrenceMonth: occurrenceMonth ?? null,
     },
     include: transactionInclude,
   })

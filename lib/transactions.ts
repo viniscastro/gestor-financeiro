@@ -11,6 +11,8 @@ export const transactionSchema = z.object({
   accountId: z.string().min(1, 'Escolha uma conta'),
   categoryId: z.string().nullable().optional(),
   date: z.string().min(1, 'Informe a data'),
+  recurringId: z.string().nullable().optional(),
+  occurrenceMonth: z.string().nullable().optional(),
 })
 
 export type TransactionInput = z.infer<typeof transactionSchema>
@@ -29,6 +31,7 @@ type TransactionWithRelations = {
   categoryId: string | null
   transferGroupId: string | null
   recurringId: string | null
+  occurrenceMonth: string | null
   account: { name: string; color: string } | null
   category: { id: string; name: string; color: string } | null
 }
@@ -48,5 +51,6 @@ export function toTransactionDto(t: TransactionWithRelations): TransactionDto {
     categoryColor: t.category?.color ?? null,
     transferGroupId: t.transferGroupId,
     recurringId: t.recurringId,
+    occurrenceMonth: t.occurrenceMonth,
   }
 }

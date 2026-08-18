@@ -53,11 +53,7 @@ export async function materializeRecurring(userId: string): Promise<void> {
   const lastDay = lastDayOfMonth(now.getFullYear(), now.getMonth())
 
   for (const rule of rules) {
-    const exists = await prisma.transaction.findFirst({
-      where: { userId, recurringId: rule.id, occurrenceMonth: key },
-      select: { id: true },
-    })
-    if (exists) continue
+    if (rule.lastMaterializedMonth === key) continue
 
     const date = new Date(
       now.getFullYear(),
@@ -96,23 +92,33 @@ export async function materializeRecurring(userId: string): Promise<void> {
             transferGroupId: groupId,
           },
         }),
+        prisma.recurringRule.update({
+          where: { id: rule.id },
+          data: { lastMaterializedMonth: key },
+        }),
       ])
       continue
     }
 
-    await prisma.transaction.create({
-      data: {
-        transactionType: rule.type,
-        description: rule.description,
-        amount: rule.amountCents,
-        date,
-        userId,
-        accountId: rule.accountId,
-        categoryId: rule.categoryId,
-        recurringId: rule.id,
-        occurrenceMonth: key,
-      },
-    })
+    await prisma.$transaction([
+      prisma.transaction.create({
+        data: {
+          transactionType: rule.type,
+          description: rule.description,
+          amount: rule.amountCents,
+          date,
+          userId,
+          accountId: rule.accountId,
+          categoryId: rule.categoryId,
+          recurringId: rule.id,
+          occurrenceMonth: key,
+        },
+      }),
+      prisma.recurringRule.update({
+        where: { id: rule.id },
+        data: { lastMaterializedMonth: key },
+      }),
+    ])
   }
 }
 

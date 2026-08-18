@@ -1053,6 +1053,8 @@ export const RecurringRuleScalarFieldEnum = {
   active: 'active',
   notifyDaysBefore: 'notifyDaysBefore',
   lastNotifiedAt: 'lastNotifiedAt',
+  lastMaterializedMonth: 'lastMaterializedMonth',
+  position: 'position',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

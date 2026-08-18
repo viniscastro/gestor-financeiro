@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { materializeRecurring } from '@/lib/recurring'
 import { recurringRuleSchema, toRecurringRuleDto } from '@/lib/recurring-rule'
 import { amountToCents } from '@/lib/transactions'
+import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
 
 const ruleInclude = {
   account: { select: { name: true, color: true } },
@@ -22,10 +23,43 @@ export async function GET() {
   const rules = await prisma.recurringRule.findMany({
     where: { userId: session.user.id },
     include: ruleInclude,
-    orderBy: { createdAt: 'asc' },
+    orderBy: [{ position: 'asc' }, { createdAt: 'asc' }],
   })
 
   return NextResponse.json(rules.map(toRecurringRuleDto))
+}
+
+export async function PATCH(request: NextRequest) {
+  const rateLimited = withRateLimit(request, RATE_LIMITS.api, 'recurring')
+  if (rateLimited) return rateLimited
+
+  const session = await auth()
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+  }
+
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+  }
+
+  const { ids } = body as { ids?: string[] }
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+  }
+
+  const updates = ids.map((id, index) =>
+    prisma.recurringRule.update({
+      where: { id, userId: session.user.id },
+      data: { position: index },
+    })
+  )
+
+  await prisma.$transaction(updates)
+
+  return NextResponse.json({ ok: true })
 }
 
 export async function POST(request: NextRequest) {

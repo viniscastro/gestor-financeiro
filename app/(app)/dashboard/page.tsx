@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 import {
   AlarmClock,
   ArrowLeftRight,
+  Flag,
+  Repeat,
   Target,
   TrendingDown,
   TrendingUp,
@@ -20,7 +22,7 @@ export default async function DashboardPage() {
   if (!session?.user?.id) redirect('/')
   const userId = session.user.id
 
-  const [accounts, transactions, recent, budgets] = await Promise.all([
+  const [accounts, transactions, recent, budgets, goals, recurringRules, topCategories] = await Promise.all([
     prisma.account.findMany({
       where: { userId },
       include: {
@@ -51,6 +53,18 @@ export default async function DashboardPage() {
     prisma.budget.findMany({
       where: { userId },
       include: { category: { select: { id: true, name: true, color: true } } },
+    }),
+    prisma.savingsGoal.findMany({
+      where: { userId },
+      select: { currentAmount: true },
+    }),
+    prisma.recurringRule.findMany({
+      where: { userId, active: true },
+      select: { amountCents: true, type: true },
+    }),
+    prisma.category.findMany({
+      where: { userId },
+      select: { id: true, name: true, color: true },
     }),
   ])
 
@@ -100,6 +114,28 @@ export default async function DashboardPage() {
   const upcoming = await getUpcomingBills(userId)
   const upcomingDue = upcoming.filter((b) => b.days <= 7)
 
+  const totalSaved = goals.reduce((sum, g) => sum + g.currentAmount, 0)
+
+  const monthlyRecurring = recurringRules
+    .filter((r) => r.type !== null)
+    .reduce((sum, r) => {
+      if (r.type === 'INCOME') return sum + r.amountCents
+      return sum - r.amountCents
+    }, 0)
+
+  const expenseByCategory = new Map<string, number>()
+  for (const t of transactions) {
+    if (t.transferGroupId || t.transactionType !== 'EXPENSE' || !t.categoryId) continue
+    if (t.date >= startOfMonth) {
+      expenseByCategory.set(t.categoryId, (expenseByCategory.get(t.categoryId) ?? 0) + t.amount)
+    }
+  }
+  const topCats = topCategories
+    .map((c) => ({ ...c, spent: expenseByCategory.get(c.id) ?? 0 }))
+    .filter((c) => c.spent > 0)
+    .sort((a, b) => b.spent - a.spent)
+    .slice(0, 5)
+
   const cards = [
     {
       label: 'Saldo total',
@@ -122,6 +158,18 @@ export default async function DashboardPage() {
       icon: TrendingDown,
       accent: 'text-rose-600 bg-rose-500/15 dark:text-rose-400',
     },
+    {
+      label: 'Guardado (metas)',
+      value: formatBRL(totalSaved),
+      icon: Flag,
+      accent: 'text-sky-600 bg-sky-500/15 dark:text-sky-400',
+    },
+    {
+      label: 'Recorrentes (mês)',
+      value: formatBRL(Math.abs(monthlyRecurring)),
+      icon: Repeat,
+      accent: 'text-violet-600 bg-violet-500/15 dark:text-violet-400',
+    },
   ]
 
   return (
@@ -134,7 +182,7 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {cards.map((card) => (
           <div
             key={card.label}
@@ -211,6 +259,36 @@ export default async function DashboardPage() {
                 </span>
               </li>
             ))}
+          </ul>
+        </div>
+      )}
+
+      {topCats.length > 0 && (
+        <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
+          <h2 className="mb-3 text-base font-semibold text-zinc-900 dark:text-white">
+            Top categorias (mês)
+          </h2>
+          <ul className="space-y-2.5">
+            {topCats.map((c) => {
+              const pct = monthExpense > 0 ? Math.round((c.spent / monthExpense) * 100) : 0
+              return (
+                <li key={c.id}>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: c.color }} />
+                      <span className="font-medium text-zinc-900 dark:text-zinc-100">{c.name}</span>
+                    </div>
+                    <span className="text-zinc-500">{formatBRL(c.spent)} ({pct}%)</span>
+                  </div>
+                  <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${pct}%`, backgroundColor: c.color }}
+                    />
+                  </div>
+                </li>
+              )
+            })}
           </ul>
         </div>
       )}

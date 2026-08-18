@@ -30,17 +30,27 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 - 💸 **Entradas e saídas no mesmo lugar** — cadastre receitas e despesas em uma única tela, escolhendo o tipo, a conta e a categoria na hora
 - 🏷️ **Categorias gerenciáveis** — 13 categorias padrão (5 de receita e 8 de despesa) com cores e ícones; crie novas categorias e exclua as que não usa pela tela de Categorias
 - 🎯 **Orçamentos mensais por categoria** — defina um limite por categoria e acompanhe o gasto do mês com barra de progresso e alerta visual ao se aproximar/estourar
-- 📆 **Lançamentos recorrentes** — transações automáticas mensais (dia do mês), com ativação/desativação e lembrete com dias de antecedência configurável
+- 📆 **Lançamentos recorrentes** — transações automáticas mensais (dia do mês), com ativação/desativação, lembrete por e-mail com dias de antecedência, **arrastar para reordenar** e **desfazer exclusão**
 - 🏦 **Metas de economia** — defina objetivos (viagem, reserva...) com valor alvo e data; acompanhe o progresso pelo valor guardado
-- 🏷️ **Gerenciamento de categorias** — crie e exclua categorias de entrada e saída, com cores e ícones customizáveis; 13 categorias padrão incluídas
+- 🏷️ **Gerenciamento de categorias** — crie, **edite** e exclua categorias de entrada e saída, com cores e ícones customizáveis; 13 categorias padrão incluídas
 - 📤 **Exportar CSV** — exporte as transações (respeitando os filtros ativos) e um relatório de estatísticas (mensal + por categoria) em CSV pronto para Excel
-- 📊 **Dashboard resumido** — saldo total por conta, entradas e saídas do mês, status dos orçamentos e as transações mais recentes
+- 📊 **Dashboard resumido** — saldo total, entradas/saídas do mês, guardado em metas, total de recorrentes, top categorias com barra de progresso, status dos orçamentos e transações mais recentes
+- 🔍 **Filtros avançados** — busque por texto, filtre por tipo, conta, categoria, mês ou **período personalizado** (data início/fim) nas transações
 - 📈 **Estatísticas com gráficos** — evolução mensal dos últimos 6 meses (barras) e despesas por categoria (pizza), com **Recharts**
-- 🎨 **Interface moderna** — temas **claro e escuro** com alternância, responsiva (menu lateral que vira gaveta no mobile) e ícones **Lucide**
+- 🎨 **Interface moderna** — temas **claro, escuro e automático** (detecta preferência do SO) com alternância cíclica, responsiva (menu lateral que vira gaveta no mobile) e ícones **Lucide**
 - 🖼️ **Foto de perfil** — envie uma imagem (redimensionada no cliente) ou remova, exibida na sidebar e na página de conta
+- 🗑️ **Exclusão com desfazer** — ao excluir qualquer item (transação, conta, categoria, meta, orçamento, recorrência), um toast aparece com botão "Desfazer" para recriar o item
 - 📱 **PWA instalável** — manifest, ícones 192/512/maskable, theme-color dinâmico (claro/escuro) e suporte a iOS (apple-touch-icon); instale o app no celular/desktop como atalho de tela cheia
 - 🛡️ **Proteção de rotas** — áreas privadas redirecionam para o login; APIs exigem sessão válida (401 sem cookie)
 - 💱 **Valores em centavos** — o dinheiro é armazenado como inteiro (cents), sem problemas de ponto flutuante
+
+## 🛡️ Segurança & Operação
+
+- ⏱️ **Rate limiting** — limite de requisições por IP em todas as API routes (auth: 10/15min, API: 120/min)
+- 🧹 **Sanitização de inputs** — proteção contra XSS via DOMPurify em todos os campos de texto
+- 🐛 **Monitoramento de erros** — Sentry captura erros em produção com stack trace e contexto (configuração via `SENTRY_DSN`)
+- 🧪 **Testes automatizados** — 24 testes com Vitest cobrindo rate limiter, sanitização, formatação e lógica de recorrência
+- 💾 **Backup automático** — script de backup com `pg_dump` + compressão gzip, retenção de 7 backups, acessível via API ou `npm run backup`
 
 ## 🚀 Stack
 
@@ -54,6 +64,10 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 | Autenticação    | [NextAuth.js](https://next-auth.js.org) 5 (beta) · [bcryptjs](https://github.com/dcodeIO/bcrypt.js) · [Google OAuth](https://console.cloud.google.com) |
 | E-mails         | [Nodemailer](https://nodemailer.com) (SMTP/Gmail) · [Resend](https://resend.com) |
 | Validação       | [Zod](https://zod.dev) 4                               |
+| Notificações    | [Sonner](https://sonner.sh) (toast com undo)           |
+| Segurança       | [DOMPurify](https://github.com/cure53/DOMPurify) (sanitização XSS) |
+| Monitoramento   | [Sentry](https://sentry.io) (logging de erros)         |
+| Testes          | [Vitest](https://vitest.dev) 4.1                       |
 
 ## 🏗️ Estrutura do projeto
 
@@ -66,7 +80,7 @@ gestor-financeiro/
 │   │   ├── accounts/           #   Multi-contas e transferências
 │   │   ├── budgets/            #   Orçamentos mensais por categoria
 │   │   ├── categories/         #   Gerenciar categorias (criar/excluir)
-│   │   ├── recurring/          #   Lançamentos recorrentes
+│   │   ├── recurring/          #   Lançamentos recorrentes (arrastar p/ reordenar)
 │   │   ├── goals/              #   Metas de economia
 │   │   ├── stats/              #   Gráficos e estatísticas
 │   │   ├── account/            #   Conta (foto, tema, excluir)
@@ -80,15 +94,23 @@ gestor-financeiro/
 │   ├── api/                    # Rotas: auth, register, verify-email, resend-verification,
 │   │                           # forgot-password, verify-reset-code, reset-password,
 │   │                           # transactions, transfers, accounts, categories, budgets,
-│   │                           # recurring, goals, account (avatar)
+│   │                           # recurring, goals, account (avatar), backup
 │   └── layout.tsx · globals.css
+├── __tests__/                  # Testes automatizados (Vitest)
+│   ├── rate-limit.test.ts
+│   ├── sanitize.test.ts
+│   ├── format.test.ts
+│   └── recurring.test.ts
 ├── components/                 # managers de cada módulo, forms, sidebar, statistics-charts...
-├── lib/                        # auth, email, prisma, validation (zod), helpers de cada módulo
+├── lib/                        # auth, backup, email, prisma, rate-limit, sanitize,
+│                               # validation (zod), with-rate-limit, with-sentry, helpers
 ├── prisma/
 │   ├── migrations/             # Migrações versionadas (PostgreSQL)
 │   └── schema.prisma           # Modelos do banco
+├── sentry.*.config.ts          # Configurações do Sentry (client, server, edge)
 ├── src/generated/prisma/       # Prisma Client gerado
 ├── types/                      # Augmentação de tipos do NextAuth
+├── vitest.config.ts            # Configuração dos testes
 └── prisma.config.ts            # Configuração do Prisma 7
 ```
 
@@ -150,19 +172,21 @@ model Budget {
 }
 
 model RecurringRule {
-  id               String    @id @default(cuid())
-  userId           String
-  description      String
-  amountCents      Int
-  kind             String    @default("TRANSACTION") // TRANSACTION | TRANSFER
-  type             String    // INCOME | EXPENSE (para TRANSACTION)
-  categoryId       String?
-  accountId        String    // conta de origem
-  toAccountId      String?   // conta de destino (kind = TRANSFER)
-  dayOfMonth       Int
-  active           Boolean   @default(true)
-  notifyDaysBefore Int       @default(3)
-  lastNotifiedAt   DateTime?
+  id                    String    @id @default(cuid())
+  userId                String
+  description           String
+  amountCents           Int
+  kind                  String    @default("TRANSACTION") // TRANSACTION | TRANSFER
+  type                  String    // INCOME | EXPENSE (para TRANSACTION)
+  categoryId            String?
+  accountId             String    // conta de origem
+  toAccountId           String?   // conta de destino (kind = TRANSFER)
+  dayOfMonth            Int
+  active                Boolean   @default(true)
+  notifyDaysBefore      Int       @default(3)
+  lastNotifiedAt        DateTime?
+  lastMaterializedMonth String?   // controla materialização (anti-duplicação)
+  position              Int       @default(0) // ordem de exibição (drag-and-drop)
 }
 
 model Transaction {
@@ -204,7 +228,7 @@ model SavingsGoal {
 | GET    | `/api/auth/session`              | Retorna a sessão atual                              | Cookie |
 | POST   | `/api/auth/callback/credentials` | Autentica e cria a sessão (CSRF)                    | Público |
 | GET    | `/api/transactions`              | Lista as transações (filtros `accountId`/`categoryId` via query) | 🔒 Auth |
-| POST   | `/api/transactions`              | Cria uma transação                                  | 🔒 Auth |
+| POST   | `/api/transactions`              | Cria uma transação (aceita `recurringId` e `occurrenceMonth`) | 🔒 Auth |
 | PATCH  | `/api/transactions/[id]`         | Atualiza uma transação                              | 🔒 Auth |
 | DELETE | `/api/transactions/[id]`         | Exclui uma transação                                | 🔒 Auth |
 | POST   | `/api/transfers`                 | Cria uma transferência (par de transações)          | 🔒 Auth |
@@ -222,6 +246,7 @@ model SavingsGoal {
 | DELETE | `/api/budgets/[id]`              | Exclui um orçamento                                 | 🔒 Auth |
 | GET    | `/api/recurring`                 | Lista recorrentes (materializa o mês corrente)      | 🔒 Auth |
 | POST   | `/api/recurring`                 | Cria uma recorrência (transação)                   | 🔒 Auth |
+| PATCH  | `/api/recurring`                 | Reordena recorrências (envia `ids[]` na ordem desejada) | 🔒 Auth |
 | PATCH  | `/api/recurring/[id]`            | Edita uma recorrência                               | 🔒 Auth |
 | DELETE | `/api/recurring/[id]`            | Exclui uma recorrência                              | 🔒 Auth |
 | GET    | `/api/goals`                     | Lista metas (com progresso)                         | 🔒 Auth |
@@ -230,6 +255,10 @@ model SavingsGoal {
 | DELETE | `/api/goals/[id]`                | Exclui uma meta                                     | 🔒 Auth |
 | PATCH  | `/api/account/avatar`            | Atualiza a foto de perfil                           | 🔒 Auth |
 | DELETE | `/api/account`                   | Exclui a conta do usuário (requer senha)            | 🔒 Auth |
+| GET    | `/api/backup`                    | Lista backups (admin)                               | 🔒 Admin |
+| POST   | `/api/backup`                    | Cria um backup manual do banco (admin)              | 🔒 Admin |
+
+> 🔒 **Rate limiting aplicado em todas as rotas públicas** (auth: 10 req/15min) **e autenticadas** (API: 120 req/min).
 
 ## 🚦 Pré-requisitos
 
@@ -261,6 +290,7 @@ SMTP_PASS="<senha de app do Gmail>"
 RESEND_API_KEY="<sua api key do Resend>"
 GOOGLE_CLIENT_ID="<seu google client id>"
 GOOGLE_CLIENT_SECRET="<seu google client secret>"
+SENTRY_DSN="<seu dsn do sentry (opcional)>"
 ```
 
 Para gerar um `AUTH_SECRET` seguro:
@@ -271,7 +301,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 
 > ⚠️ Se a senha do banco contiver caracteres especiais (`#`, `$`, `@`...), ela deve ser **codificada na URL** (ex.: `#` → `%23`, `$` → `%24`).
 
-> 💡 Sem SMTP/Resend configurados, o código de confirmação é exibido no **console do servidor** (útil em desenvolvimento). Sem `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, o botão "Entrar com Google" simplesmente não aparece.
+> 💡 Sem SMTP/Resend configurados, o código de confirmação é exibido no **console do servidor** (útil em desenvolvimento). Sem `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, o botão "Entrar com Google" simplesmente não aparece. Sem `SENTRY_DSN`, o Sentry fica desligado.
 
 ```bash
 # 3. Crie o banco de dados e aplique as migrações
@@ -308,7 +338,19 @@ npm start
 | `npm run build`    | Build de produção + checagem de tipos  |
 | `npm start`        | Serve o build de produção              |
 | `npm run lint`     | ESLint                                 |
+| `npm test`         | Executa os testes (Vitest)             |
+| `npm run test:watch`| Executa os testes em modo watch       |
+| `npm run backup`   | Cria um backup manual do banco de dados |
 | `npx prisma studio`| Visualizar/editar dados no navegador   |
+
+## 🧪 Testes
+
+```bash
+npm test            # roda todos os testes uma vez
+npm run test:watch  # roda em modo watch (re-executa ao salvar)
+```
+
+Cobertura atual: rate limiter, sanitização XSS, formatação BRL/CSV e lógica de recorrência (monthKey, nextOccurrence, daysUntil).
 
 ## 🔑 Configurando o login com Google (OAuth)
 
@@ -363,7 +405,7 @@ O projeto está pronto para deploy na [Vercel](https://vercel.com):
 
 1. Suba o código para um repositório no GitHub e importe-o na Vercel
 2. Use um PostgreSQL na nuvem (ex.: [Neon](https://neon.tech) ou [Supabase](https://supabase.com)) e obtenha a `DATABASE_URL`
-3. Configure as variáveis de ambiente na Vercel: `DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST="true"`, `EMAIL_FROM`, `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` (ou `RESEND_API_KEY`), `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET`
+3. Configure as variáveis de ambiente na Vercel: `DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST="true"`, `EMAIL_FROM`, `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` (ou `RESEND_API_KEY`), `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` e `SENTRY_DSN` (opcional)
 4. Rode as migrações no banco da nuvem:
 
 ```bash
@@ -376,10 +418,8 @@ npx prisma migrate deploy
 
 - [ ] Parcelamento de compras
 - [ ] Recorrências semanais/quinzenais/anuais
-- [ ] Notificações por e-mail de contas a vencer (agendadas)
 - [ ] Upload de comprovantes
 - [ ] Importação de extratos (OFX)
-- [ ] Backup e restauração de dados
 
 ---
 

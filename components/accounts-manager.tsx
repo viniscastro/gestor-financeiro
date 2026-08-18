@@ -6,6 +6,7 @@ import { ACCOUNT_TYPES } from '@/lib/categories'
 import { CATEGORY_COLORS } from '@/lib/categories'
 import { formatBRL } from '@/lib/format'
 import type { AccountDto } from '@/lib/types'
+import { toast } from 'sonner'
 
 export default function AccountsManager() {
   const [accounts, setAccounts] = useState<AccountDto[]>([])
@@ -106,14 +107,35 @@ export default function AccountsManager() {
   }
 
   async function handleDelete(account: AccountDto) {
-    if (!window.confirm(`Excluir a conta "${account.name}"?`)) return
     const res = await fetch(`/api/accounts/${account.id}`, { method: 'DELETE' })
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))
-      setError(data.error ?? 'Erro ao excluir a conta.')
+      toast.error(data.error ?? 'Erro ao excluir a conta.')
       return
     }
     await reload()
+    toast.success('Conta excluída', {
+      action: {
+        label: 'Desfazer',
+        onClick: () => undoCreate(account),
+      },
+    })
+  }
+
+  async function undoCreate(account: AccountDto) {
+    const res = await fetch('/api/accounts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: account.name,
+        type: account.type,
+        color: account.color,
+        initialBalance: account.initialBalance / 100,
+      }),
+    })
+    if (res.ok) {
+      await reload()
+    }
   }
 
   const inputClass =

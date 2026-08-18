@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import ThemeInitScript from "@/components/theme-init-script";
 import ThemeToggle from "@/components/theme-toggle";
@@ -54,6 +55,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <ThemeToggle />
         <PwaRegister />
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            className: 'dark:bg-zinc-800 dark:text-zinc-100',
+          }}
+          richColors
+          closeButton
+        />
       </body>
     </html>
   );

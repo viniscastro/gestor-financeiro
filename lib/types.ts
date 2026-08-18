@@ -16,6 +16,7 @@ export type TransactionDto = {
   categoryColor: string | null
   transferGroupId: string | null
   recurringId: string | null
+  occurrenceMonth: string | null
 }
 
 export type AccountDto = {
@@ -71,5 +72,6 @@ export type RecurringRuleDto = {
   dayOfMonth: number
   active: boolean
   notifyDaysBefore: number
+  position: number
   nextDate: string
 }

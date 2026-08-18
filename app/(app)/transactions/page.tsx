@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { ArrowRightLeft, Download, LoaderCircle, Plus, Search } from 'lucide-react'
 import TransactionForm from '@/components/transaction-form'
@@ -22,6 +23,8 @@ export default function TransactionsPage() {
   const [monthFilter, setMonthFilter] = useState('ALL')
   const [accountFilter, setAccountFilter] = useState('ALL')
   const [categoryFilter, setCategoryFilter] = useState('ALL')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
   const [formOpen, setFormOpen] = useState(false)
   const [transferOpen, setTransferOpen] = useState(false)
   const [editing, setEditing] = useState<TransactionDto | null>(null)
@@ -94,6 +97,8 @@ export default function TransactionsPage() {
         if (monthFilter !== 'ALL' && !t.date.startsWith(monthFilter)) return false
         if (accountFilter !== 'ALL' && t.accountId !== accountFilter) return false
         if (categoryFilter !== 'ALL' && t.categoryId !== categoryFilter) return false
+        if (dateFrom && t.date < dateFrom) return false
+        if (dateTo && t.date > dateTo + 'T23:59:59') return false
         if (search) {
           const q = search.toLowerCase()
           const haystack = [
@@ -107,7 +112,7 @@ export default function TransactionsPage() {
         }
         return true
       }),
-    [transactions, typeFilter, monthFilter, accountFilter, categoryFilter, search]
+    [transactions, typeFilter, monthFilter, accountFilter, categoryFilter, search, dateFrom, dateTo]
   )
 
   const totals = useMemo(() => {
@@ -122,14 +127,41 @@ export default function TransactionsPage() {
   }, [filtered])
 
   async function handleDelete(id: string) {
-    if (!window.confirm('Excluir esta transação?')) return
+    const tx = transactions.find((t) => t.id === id)
     const res = await fetch(`/api/transactions/${id}`, { method: 'DELETE' })
     if (!res.ok) {
-      setError('Erro ao excluir a transação.')
+      toast.error('Erro ao excluir a transação.')
       return
     }
     reload()
     router.refresh()
+    toast.success('Transação excluída', {
+      action: {
+        label: 'Desfazer',
+        onClick: () => undoCreate(tx!),
+      },
+    })
+  }
+
+  async function undoCreate(tx: TransactionDto) {
+    const res = await fetch('/api/transactions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transactionType: tx.transactionType,
+        description: tx.description,
+        amount: tx.amount / 100,
+        accountId: tx.accountId,
+        categoryId: tx.categoryId,
+        date: tx.date,
+        recurringId: tx.recurringId ?? null,
+        occurrenceMonth: tx.occurrenceMonth ?? null,
+      }),
+    })
+    if (res.ok) {
+      reload()
+      router.refresh()
+    }
   }
 
   function exportCsv() {
@@ -285,6 +317,22 @@ export default function TransactionsPage() {
             </option>
           ))}
         </select>
+        <input
+          type="date"
+          value={dateFrom}
+          onChange={(e) => setDateFrom(e.target.value)}
+          placeholder="De"
+          title="Data inicial"
+          className={selectClass + ' min-w-[140px]'}
+        />
+        <input
+          type="date"
+          value={dateTo}
+          onChange={(e) => setDateTo(e.target.value)}
+          placeholder="Até"
+          title="Data final"
+          className={selectClass + ' min-w-[140px]'}
+        />
       </div>
 
       {error && (

@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { sendVerificationCode } from '@/lib/email'
 import { generateVerificationCode, CODE_TTL_MS } from '@/lib/verification'
 import { ensureDefaultData } from '@/lib/defaults'
+import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
 
 const registerSchema = z.object({
   name: z.string().trim().min(2, 'Informe seu nome'),
@@ -13,6 +14,9 @@ const registerSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
+  const rateLimited = withRateLimit(request, RATE_LIMITS.auth, 'register')
+  if (rateLimited) return rateLimited
+
   let body: unknown
   try {
     body = await request.json()

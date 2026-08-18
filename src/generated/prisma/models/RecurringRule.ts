@@ -30,12 +30,14 @@ export type RecurringRuleAvgAggregateOutputType = {
   amountCents: number | null
   dayOfMonth: number | null
   notifyDaysBefore: number | null
+  position: number | null
 }
 
 export type RecurringRuleSumAggregateOutputType = {
   amountCents: number | null
   dayOfMonth: number | null
   notifyDaysBefore: number | null
+  position: number | null
 }
 
 export type RecurringRuleMinAggregateOutputType = {
@@ -52,6 +54,8 @@ export type RecurringRuleMinAggregateOutputType = {
   active: boolean | null
   notifyDaysBefore: number | null
   lastNotifiedAt: Date | null
+  lastMaterializedMonth: string | null
+  position: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -70,6 +74,8 @@ export type RecurringRuleMaxAggregateOutputType = {
   active: boolean | null
   notifyDaysBefore: number | null
   lastNotifiedAt: Date | null
+  lastMaterializedMonth: string | null
+  position: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -88,6 +94,8 @@ export type RecurringRuleCountAggregateOutputType = {
   active: number
   notifyDaysBefore: number
   lastNotifiedAt: number
+  lastMaterializedMonth: number
+  position: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -98,12 +106,14 @@ export type RecurringRuleAvgAggregateInputType = {
   amountCents?: true
   dayOfMonth?: true
   notifyDaysBefore?: true
+  position?: true
 }
 
 export type RecurringRuleSumAggregateInputType = {
   amountCents?: true
   dayOfMonth?: true
   notifyDaysBefore?: true
+  position?: true
 }
 
 export type RecurringRuleMinAggregateInputType = {
@@ -120,6 +130,8 @@ export type RecurringRuleMinAggregateInputType = {
   active?: true
   notifyDaysBefore?: true
   lastNotifiedAt?: true
+  lastMaterializedMonth?: true
+  position?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -138,6 +150,8 @@ export type RecurringRuleMaxAggregateInputType = {
   active?: true
   notifyDaysBefore?: true
   lastNotifiedAt?: true
+  lastMaterializedMonth?: true
+  position?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -156,6 +170,8 @@ export type RecurringRuleCountAggregateInputType = {
   active?: true
   notifyDaysBefore?: true
   lastNotifiedAt?: true
+  lastMaterializedMonth?: true
+  position?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -261,6 +277,8 @@ export type RecurringRuleGroupByOutputType = {
   active: boolean
   notifyDaysBefore: number
   lastNotifiedAt: Date | null
+  lastMaterializedMonth: string | null
+  position: number
   createdAt: Date
   updatedAt: Date
   _count: RecurringRuleCountAggregateOutputType | null
@@ -302,6 +320,8 @@ export type RecurringRuleWhereInput = {
   active?: Prisma.BoolFilter<"RecurringRule"> | boolean
   notifyDaysBefore?: Prisma.IntFilter<"RecurringRule"> | number
   lastNotifiedAt?: Prisma.DateTimeNullableFilter<"RecurringRule"> | Date | string | null
+  lastMaterializedMonth?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
+  position?: Prisma.IntFilter<"RecurringRule"> | number
   createdAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -325,6 +345,8 @@ export type RecurringRuleOrderByWithRelationInput = {
   active?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
   lastNotifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastMaterializedMonth?: Prisma.SortOrderInput | Prisma.SortOrder
+  position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -351,6 +373,8 @@ export type RecurringRuleWhereUniqueInput = Prisma.AtLeast<{
   active?: Prisma.BoolFilter<"RecurringRule"> | boolean
   notifyDaysBefore?: Prisma.IntFilter<"RecurringRule"> | number
   lastNotifiedAt?: Prisma.DateTimeNullableFilter<"RecurringRule"> | Date | string | null
+  lastMaterializedMonth?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
+  position?: Prisma.IntFilter<"RecurringRule"> | number
   createdAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -374,6 +398,8 @@ export type RecurringRuleOrderByWithAggregationInput = {
   active?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
   lastNotifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastMaterializedMonth?: Prisma.SortOrderInput | Prisma.SortOrder
+  position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.RecurringRuleCountOrderByAggregateInput
@@ -400,6 +426,8 @@ export type RecurringRuleScalarWhereWithAggregatesInput = {
   active?: Prisma.BoolWithAggregatesFilter<"RecurringRule"> | boolean
   notifyDaysBefore?: Prisma.IntWithAggregatesFilter<"RecurringRule"> | number
   lastNotifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"RecurringRule"> | Date | string | null
+  lastMaterializedMonth?: Prisma.StringNullableWithAggregatesFilter<"RecurringRule"> | string | null
+  position?: Prisma.IntWithAggregatesFilter<"RecurringRule"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"RecurringRule"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"RecurringRule"> | Date | string
 }
@@ -414,6 +442,8 @@ export type RecurringRuleCreateInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRecurringRulesInput
@@ -437,6 +467,8 @@ export type RecurringRuleUncheckedCreateInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutRecurringRuleInput
@@ -452,6 +484,8 @@ export type RecurringRuleUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRecurringRulesNestedInput
@@ -475,6 +509,8 @@ export type RecurringRuleUncheckedUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutRecurringRuleNestedInput
@@ -494,6 +530,8 @@ export type RecurringRuleCreateManyInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -508,6 +546,8 @@ export type RecurringRuleUpdateManyMutationInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -526,6 +566,8 @@ export type RecurringRuleUncheckedUpdateManyInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -554,6 +596,8 @@ export type RecurringRuleCountOrderByAggregateInput = {
   active?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
   lastNotifiedAt?: Prisma.SortOrder
+  lastMaterializedMonth?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -562,6 +606,7 @@ export type RecurringRuleAvgOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   dayOfMonth?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
+  position?: Prisma.SortOrder
 }
 
 export type RecurringRuleMaxOrderByAggregateInput = {
@@ -578,6 +623,8 @@ export type RecurringRuleMaxOrderByAggregateInput = {
   active?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
   lastNotifiedAt?: Prisma.SortOrder
+  lastMaterializedMonth?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -596,6 +643,8 @@ export type RecurringRuleMinOrderByAggregateInput = {
   active?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
   lastNotifiedAt?: Prisma.SortOrder
+  lastMaterializedMonth?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -604,6 +653,7 @@ export type RecurringRuleSumOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   dayOfMonth?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
+  position?: Prisma.SortOrder
 }
 
 export type RecurringRuleNullableScalarRelationFilter = {
@@ -809,6 +859,8 @@ export type RecurringRuleCreateWithoutUserInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   category?: Prisma.CategoryCreateNestedOneWithoutRecurringRulesInput
@@ -830,6 +882,8 @@ export type RecurringRuleUncheckedCreateWithoutUserInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutRecurringRuleInput
@@ -878,6 +932,8 @@ export type RecurringRuleScalarWhereInput = {
   active?: Prisma.BoolFilter<"RecurringRule"> | boolean
   notifyDaysBefore?: Prisma.IntFilter<"RecurringRule"> | number
   lastNotifiedAt?: Prisma.DateTimeNullableFilter<"RecurringRule"> | Date | string | null
+  lastMaterializedMonth?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
+  position?: Prisma.IntFilter<"RecurringRule"> | number
   createdAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
 }
@@ -892,6 +948,8 @@ export type RecurringRuleCreateWithoutAccountInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRecurringRulesInput
@@ -913,6 +971,8 @@ export type RecurringRuleUncheckedCreateWithoutAccountInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutRecurringRuleInput
@@ -938,6 +998,8 @@ export type RecurringRuleCreateWithoutToAccountInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRecurringRulesInput
@@ -959,6 +1021,8 @@ export type RecurringRuleUncheckedCreateWithoutToAccountInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutRecurringRuleInput
@@ -1016,6 +1080,8 @@ export type RecurringRuleCreateWithoutCategoryInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRecurringRulesInput
@@ -1037,6 +1103,8 @@ export type RecurringRuleUncheckedCreateWithoutCategoryInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutRecurringRuleInput
@@ -1078,6 +1146,8 @@ export type RecurringRuleCreateWithoutTransactionsInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRecurringRulesInput
@@ -1100,6 +1170,8 @@ export type RecurringRuleUncheckedCreateWithoutTransactionsInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1130,6 +1202,8 @@ export type RecurringRuleUpdateWithoutTransactionsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRecurringRulesNestedInput
@@ -1152,6 +1226,8 @@ export type RecurringRuleUncheckedUpdateWithoutTransactionsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1169,6 +1245,8 @@ export type RecurringRuleCreateManyUserInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1183,6 +1261,8 @@ export type RecurringRuleUpdateWithoutUserInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneWithoutRecurringRulesNestedInput
@@ -1204,6 +1284,8 @@ export type RecurringRuleUncheckedUpdateWithoutUserInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutRecurringRuleNestedInput
@@ -1222,6 +1304,8 @@ export type RecurringRuleUncheckedUpdateManyWithoutUserInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1239,6 +1323,8 @@ export type RecurringRuleCreateManyAccountInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1256,6 +1342,8 @@ export type RecurringRuleCreateManyToAccountInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1270,6 +1358,8 @@ export type RecurringRuleUpdateWithoutAccountInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRecurringRulesNestedInput
@@ -1291,6 +1381,8 @@ export type RecurringRuleUncheckedUpdateWithoutAccountInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutRecurringRuleNestedInput
@@ -1309,6 +1401,8 @@ export type RecurringRuleUncheckedUpdateManyWithoutAccountInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1323,6 +1417,8 @@ export type RecurringRuleUpdateWithoutToAccountInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRecurringRulesNestedInput
@@ -1344,6 +1440,8 @@ export type RecurringRuleUncheckedUpdateWithoutToAccountInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutRecurringRuleNestedInput
@@ -1362,6 +1460,8 @@ export type RecurringRuleUncheckedUpdateManyWithoutToAccountInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1379,6 +1479,8 @@ export type RecurringRuleCreateManyCategoryInput = {
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1393,6 +1495,8 @@ export type RecurringRuleUpdateWithoutCategoryInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRecurringRulesNestedInput
@@ -1414,6 +1518,8 @@ export type RecurringRuleUncheckedUpdateWithoutCategoryInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutRecurringRuleNestedInput
@@ -1432,6 +1538,8 @@ export type RecurringRuleUncheckedUpdateManyWithoutCategoryInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1481,6 +1589,8 @@ export type RecurringRuleSelect<ExtArgs extends runtime.Types.Extensions.Interna
   active?: boolean
   notifyDaysBefore?: boolean
   lastNotifiedAt?: boolean
+  lastMaterializedMonth?: boolean
+  position?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1505,6 +1615,8 @@ export type RecurringRuleSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   active?: boolean
   notifyDaysBefore?: boolean
   lastNotifiedAt?: boolean
+  lastMaterializedMonth?: boolean
+  position?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1527,6 +1639,8 @@ export type RecurringRuleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   active?: boolean
   notifyDaysBefore?: boolean
   lastNotifiedAt?: boolean
+  lastMaterializedMonth?: boolean
+  position?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1549,11 +1663,13 @@ export type RecurringRuleSelectScalar = {
   active?: boolean
   notifyDaysBefore?: boolean
   lastNotifiedAt?: boolean
+  lastMaterializedMonth?: boolean
+  position?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type RecurringRuleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "description" | "amountCents" | "kind" | "type" | "categoryId" | "accountId" | "toAccountId" | "dayOfMonth" | "active" | "notifyDaysBefore" | "lastNotifiedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["recurringRule"]>
+export type RecurringRuleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "description" | "amountCents" | "kind" | "type" | "categoryId" | "accountId" | "toAccountId" | "dayOfMonth" | "active" | "notifyDaysBefore" | "lastNotifiedAt" | "lastMaterializedMonth" | "position" | "createdAt" | "updatedAt", ExtArgs["result"]["recurringRule"]>
 export type RecurringRuleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.RecurringRule$categoryArgs<ExtArgs>
@@ -1598,6 +1714,8 @@ export type $RecurringRulePayload<ExtArgs extends runtime.Types.Extensions.Inter
     active: boolean
     notifyDaysBefore: number
     lastNotifiedAt: Date | null
+    lastMaterializedMonth: string | null
+    position: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["recurringRule"]>
@@ -2041,6 +2159,8 @@ export interface RecurringRuleFieldRefs {
   readonly active: Prisma.FieldRef<"RecurringRule", 'Boolean'>
   readonly notifyDaysBefore: Prisma.FieldRef<"RecurringRule", 'Int'>
   readonly lastNotifiedAt: Prisma.FieldRef<"RecurringRule", 'DateTime'>
+  readonly lastMaterializedMonth: Prisma.FieldRef<"RecurringRule", 'String'>
+  readonly position: Prisma.FieldRef<"RecurringRule", 'Int'>
   readonly createdAt: Prisma.FieldRef<"RecurringRule", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"RecurringRule", 'DateTime'>
 }

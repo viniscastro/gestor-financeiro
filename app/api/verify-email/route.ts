@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
 
 const verifySchema = z.object({
   email: z.string().trim().email('E-mail inválido'),
@@ -9,6 +10,9 @@ const verifySchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
+  const rateLimited = withRateLimit(request, RATE_LIMITS.auth, 'verify-email')
+  if (rateLimited) return rateLimited
+
   let body: unknown
   try {
     body = await request.json()

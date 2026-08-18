@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { LoaderCircle, Pencil, Plus, Target, Trash2 } from 'lucide-react'
 import CategoryIcon from '@/components/category-icon'
+import { toast } from 'sonner'
 import { formatBRL } from '@/lib/format'
 import type { BudgetDto, CategoryDto } from '@/lib/types'
 
@@ -106,13 +107,29 @@ export default function BudgetsManager() {
     }
   }
 
+  async function undoCreate(budget: BudgetDto) {
+    const res = await fetch('/api/budgets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ categoryId: budget.categoryId, amountCents: budget.amountCents / 100 }),
+    })
+    if (res.ok) await reload()
+  }
+
   async function handleDelete(id: string) {
-    if (!window.confirm('Excluir este orçamento?')) return
+    const budget = budgets.find((b) => b.id === id)
     const res = await fetch(`/api/budgets/${id}`, { method: 'DELETE' })
     if (!res.ok) {
-      setError('Erro ao excluir o orçamento.')
+      const data = await res.json().catch(() => ({}))
+      toast.error(data.error ?? 'Erro ao excluir o orçamento.')
       return
     }
+    toast.success('Orçamento excluído', {
+      action: {
+        label: 'Desfazer',
+        onClick: () => undoCreate(budget!),
+      },
+    })
     await reload()
   }
 

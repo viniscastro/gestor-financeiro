@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
+  GripVertical,
   LoaderCircle,
   Pencil,
   Plus,
@@ -10,6 +11,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import type { TransactionType } from '@/lib/types'
 import { formatBRL, formatDateLong } from '@/lib/format'
 import type { AccountDto, CategoryDto, RecurringRuleDto } from '@/lib/types'
@@ -32,6 +34,8 @@ export default function RecurringManager() {
   const [active, setActive] = useState(true)
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
+  const dragItem = useRef<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
 
   async function reload() {
     try {
@@ -142,14 +146,39 @@ export default function RecurringManager() {
     }
   }
 
+  async function undoCreate(rule: RecurringRuleDto) {
+    const payload = {
+      kind: 'TRANSACTION',
+      description: rule.description,
+      type: rule.type,
+      amount: rule.amountCents / 100,
+      accountId: rule.accountId,
+      categoryId: rule.categoryId,
+      dayOfMonth: rule.dayOfMonth,
+      notifyDaysBefore: rule.notifyDaysBefore,
+    }
+    const res = await fetch('/api/recurring', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    if (res.ok) await reload()
+  }
+
   async function handleDelete(id: string) {
-    if (!window.confirm('Excluir esta recorrência?')) return
+    const rule = rules.find((r) => r.id === id)
     const res = await fetch(`/api/recurring/${id}`, { method: 'DELETE' })
     if (!res.ok) {
-      setError('Erro ao excluir a recorrência.')
+      toast.error('Erro ao excluir a recorrência.')
       return
     }
     await reload()
+    toast.success('Recorrência excluída', {
+      action: {
+        label: 'Desfazer',
+        onClick: () => undoCreate(rule!),
+      },
+    })
   }
 
   async function toggleActive(rule: RecurringRuleDto) {
@@ -182,6 +211,46 @@ export default function RecurringManager() {
     setType(next)
     const available = categories.filter((c) => c.type === next)
     if (!available.some((c) => c.id === categoryId)) setCategoryId('')
+  }
+
+  function handleDragStart(index: number) {
+    dragItem.current = index
+  }
+
+  function handleDragEnter(index: number) {
+    setDragOverIndex(index)
+  }
+
+  function handleDragEnd() {
+    if (dragItem.current === null || dragOverIndex === null) {
+      setDragOverIndex(null)
+      dragItem.current = null
+      return
+    }
+    if (dragItem.current === dragOverIndex) {
+      setDragOverIndex(null)
+      dragItem.current = null
+      return
+    }
+
+    const updated = [...rules]
+    const [moved] = updated.splice(dragItem.current, 1)
+    updated.splice(dragOverIndex, 0, moved)
+    setRules(updated)
+
+    const ids = updated.map((r) => r.id)
+    fetch('/api/recurring', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids }),
+    })
+
+    setDragOverIndex(null)
+    dragItem.current = null
+  }
+
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault()
   }
 
   const inputClass =
@@ -228,15 +297,24 @@ export default function RecurringManager() {
         </div>
       ) : (
         <ul className="space-y-2">
-          {rules.map((rule) => {
+          {rules.map((rule, index) => {
             const isIncome = rule.type === 'INCOME'
             return (
               <li
                 key={rule.id}
+                draggable
+                onDragStart={() => handleDragStart(index)}
+                onDragEnter={() => handleDragEnter(index)}
+                onDragEnd={handleDragEnd}
+                onDragOver={handleDragOver}
                 className={`group flex flex-wrap items-center gap-4 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition dark:border-zinc-800 dark:bg-zinc-900/60 ${
                   rule.active ? '' : 'opacity-60'
-                }`}
+                } ${dragOverIndex === index ? 'border-t-2 border-t-emerald-500' : ''}`}
               >
+                <div className="cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400">
+                  <GripVertical className="h-5 w-5" />
+                </div>
+
                 <div
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
                     isIncome

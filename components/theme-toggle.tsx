@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { Moon, Sun } from 'lucide-react'
+import { Monitor, Moon, Sun } from 'lucide-react'
 
 const STORAGE_KEY = 'gf-theme'
 const emptySubscribe = () => () => {}
@@ -11,44 +11,50 @@ type StoredTheme = 'light' | 'dark' | 'system'
 function readStoredTheme(): StoredTheme {
   if (typeof window === 'undefined') return 'system'
   const v = window.localStorage.getItem(STORAGE_KEY)
-  return v === 'light' || v === 'dark' ? v : 'system'
+  if (v === 'light' || v === 'dark' || v === 'system') return v
+  return 'system'
 }
+
+const CYCLE: StoredTheme[] = ['light', 'dark', 'system']
 
 export default function ThemeToggle() {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
   const [theme, setTheme] = useState<StoredTheme>(readStoredTheme)
-  const [systemDark, setSystemDark] = useState(
-    () =>
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches
-  )
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = () => setSystemDark(mq.matches)
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
 
-  useEffect(() => {
-    const dark = theme === 'dark' || (theme === 'system' && systemDark)
-    document.documentElement.classList.toggle('dark', dark)
+    function apply() {
+      const dark = theme === 'dark' || (theme === 'system' && mq.matches)
+      document.documentElement.classList.toggle('dark', dark)
+    }
+
+    apply()
     window.localStorage.setItem(STORAGE_KEY, theme)
-  }, [theme, systemDark])
+    mq.addEventListener('change', apply)
+    return () => mq.removeEventListener('change', apply)
+  }, [theme])
 
   if (!mounted) return null
 
-  const dark = theme === 'dark' || (theme === 'system' && systemDark)
+  function cycle() {
+    const idx = CYCLE.indexOf(theme)
+    setTheme(CYCLE[(idx + 1) % CYCLE.length])
+  }
+
+  const icons = { light: Sun, dark: Moon, system: Monitor }
+  const labels = { light: 'Tema claro', dark: 'Tema escuro', system: 'Tema automático' }
+  const Icon = icons[theme]
 
   return (
     <button
       type="button"
-      onClick={() => setTheme(dark ? 'light' : 'dark')}
-      title={dark ? 'Usar tema claro' : 'Usar tema escuro'}
-      aria-label="Alternar tema claro/escuro"
+      onClick={cycle}
+      title={labels[theme]}
+      aria-label={`Alternar tema (atual: ${labels[theme]})`}
       className="fixed right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
     >
-      {dark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+      <Icon className="h-5 w-5" />
     </button>
   )
 }

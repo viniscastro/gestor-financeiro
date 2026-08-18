@@ -94,9 +94,11 @@ model RecurringRule {
   toAccount        Account?      @relation("RecurringToAccount", fields: [toAccountId], references: [id], onDelete: SetNull)
   dayOfMonth       Int
   active           Boolean       @default(true)
-  notifyDaysBefore Int           @default(3)
-  lastNotifiedAt   DateTime?
-  createdAt        DateTime      @default(now())
+  notifyDaysBefore     Int           @default(3)
+  lastNotifiedAt       DateTime?
+  lastMaterializedMonth String?
+  position             Int           @default(0)
+  createdAt            DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   transactions     Transaction[]
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import {
   LoaderCircle,
+  Pencil,
   Plus,
   Tags,
   Trash2,
@@ -12,6 +13,7 @@ import {
 import type { TransactionType } from '@/lib/types'
 import type { CategoryDto } from '@/lib/types'
 import CategoryIcon from '@/components/category-icon'
+import { toast } from 'sonner'
 import { CATEGORY_COLORS, CATEGORY_ICONS } from '@/lib/categories'
 
 export default function CategoriesManager() {
@@ -26,6 +28,7 @@ export default function CategoriesManager() {
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
   const [tab, setTab] = useState<TransactionType>('EXPENSE')
+  const [editing, setEditing] = useState<CategoryDto | null>(null)
 
   async function reload() {
     try {
@@ -62,6 +65,7 @@ export default function CategoriesManager() {
   }, [])
 
   function openCreate(type: TransactionType) {
+    setEditing(null)
     setNewName('')
     setNewType(type)
     setNewColor(CATEGORY_COLORS[0])
@@ -70,27 +74,42 @@ export default function CategoriesManager() {
     setModalOpen(true)
   }
 
-  async function handleCreate(e: React.FormEvent<HTMLFormElement>) {
+  function openEdit(cat: CategoryDto) {
+    setEditing(cat)
+    setNewName(cat.name)
+    setNewType(cat.type)
+    setNewColor(cat.color)
+    setNewIcon(cat.icon)
+    setFormError('')
+    setModalOpen(true)
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setSaving(true)
     setFormError('')
     try {
-      const res = await fetch('/api/categories', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: newName,
-          type: newType,
-          color: newColor,
-          icon: newIcon,
-        }),
-      })
+      const payload = {
+        name: newName,
+        type: newType,
+        color: newColor,
+        icon: newIcon,
+      }
+      const res = await fetch(
+        editing ? `/api/categories/${editing.id}` : '/api/categories',
+        {
+          method: editing ? 'PATCH' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      )
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setFormError(data.error ?? 'Erro ao criar categoria')
+        setFormError(data.error ?? 'Erro ao salvar categoria')
         return
       }
       setModalOpen(false)
+      setEditing(null)
       await reload()
     } finally {
       setSaving(false)
@@ -98,14 +117,25 @@ export default function CategoriesManager() {
   }
 
   async function handleDelete(cat: CategoryDto) {
-    if (!window.confirm(`Excluir a categoria "${cat.name}"?`)) return
     const res = await fetch(`/api/categories/${cat.id}`, { method: 'DELETE' })
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))
-      setError(data.error ?? 'Erro ao excluir a categoria.')
+      toast.error(data.error ?? 'Erro ao excluir a categoria.')
       return
     }
     await reload()
+    toast.success('Categoria excluída', {
+      action: { label: 'Desfazer', onClick: () => undoCreate(cat) },
+    })
+  }
+
+  async function undoCreate(cat: CategoryDto) {
+    const res = await fetch('/api/categories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: cat.name, type: cat.type, color: cat.color, icon: cat.icon }),
+    })
+    if (res.ok) await reload()
   }
 
   const inputClass =
@@ -193,14 +223,24 @@ export default function CategoriesManager() {
                 <span className="flex-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">
                   {cat.name}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(cat)}
-                  className="rounded-lg p-2 text-zinc-500 opacity-0 transition hover:bg-red-500/10 hover:text-rose-600 group-hover:opacity-100 dark:text-zinc-400 dark:hover:text-rose-400"
-                  aria-label="Excluir"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                <div className="flex gap-1 opacity-0 transition group-hover:opacity-100">
+                  <button
+                    type="button"
+                    onClick={() => openEdit(cat)}
+                    className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                    aria-label="Editar"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(cat)}
+                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-400 dark:hover:text-rose-400"
+                    aria-label="Excluir"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
@@ -215,9 +255,9 @@ export default function CategoriesManager() {
           />
           <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
             <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-white">
-              Nova categoria
+              {editing ? 'Editar categoria' : 'Nova categoria'}
             </h2>
-            <form onSubmit={handleCreate} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="catName" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Nome
@@ -316,7 +356,7 @@ export default function CategoriesManager() {
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                Criar categoria
+                {editing ? 'Salvar alterações' : 'Criar categoria'}
               </button>
             </form>
           </div>
