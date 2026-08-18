@@ -28,10 +28,11 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 - 💼 **Multi-contas** — crie contas de qualquer tipo (Carteira, Investimento, Poupança...) com saldo inicial e cor própria; o saldo é calculado automaticamente
 - 🔁 **Transferências entre contas** — mova dinheiro entre contas: as duas pernas (saída/entrada) são criadas vinculadas e excluídas juntas
 - 💸 **Entradas e saídas no mesmo lugar** — cadastre receitas e despesas em uma única tela, escolhendo o tipo, a conta e a categoria na hora
-- 🏷️ **Categorias pré-definidas** — 13 categorias (5 de receita e 8 de despesa) com cores, ícones e rótulos em português, listadas em ordem alfabética com **"Outros" por último**
+- 🏷️ **Categorias gerenciáveis** — 13 categorias padrão (5 de receita e 8 de despesa) com cores e ícones; crie novas categorias e exclua as que não usa pela tela de Categorias
 - 🎯 **Orçamentos mensais por categoria** — defina um limite por categoria e acompanhe o gasto do mês com barra de progresso e alerta visual ao se aproximar/estourar
-- 📆 **Lançamentos recorrentes** — transações e **transferências automáticas** mensais (dia do mês), com ativação/desativação e lembrete com dias de antecedência configurável
-- 🏦 **Metas de economia** — defina objetivos (viagem, reserva...) com valor e data alvo; o progresso acompanha o **saldo da conta vinculada** em tempo real ou um valor manual
+- 📆 **Lançamentos recorrentes** — transações automáticas mensais (dia do mês), com ativação/desativação e lembrete com dias de antecedência configurável
+- 🏦 **Metas de economia** — defina objetivos (viagem, reserva...) com valor alvo e data; acompanhe o progresso pelo valor guardado
+- 🏷️ **Gerenciamento de categorias** — crie e exclua categorias de entrada e saída, com cores e ícones customizáveis; 13 categorias padrão incluídas
 - 📤 **Exportar CSV** — exporte as transações (respeitando os filtros ativos) e um relatório de estatísticas (mensal + por categoria) em CSV pronto para Excel
 - 📊 **Dashboard resumido** — saldo total por conta, entradas e saídas do mês, status dos orçamentos e as transações mais recentes
 - 📈 **Estatísticas com gráficos** — evolução mensal dos últimos 6 meses (barras) e despesas por categoria (pizza), com **Recharts**
@@ -64,6 +65,7 @@ gestor-financeiro/
 │   │   ├── transactions/       #   Entradas/saídas (busca + filtros + exportar CSV)
 │   │   ├── accounts/           #   Multi-contas e transferências
 │   │   ├── budgets/            #   Orçamentos mensais por categoria
+│   │   ├── categories/         #   Gerenciar categorias (criar/excluir)
 │   │   ├── recurring/          #   Lançamentos recorrentes
 │   │   ├── goals/              #   Metas de economia
 │   │   ├── stats/              #   Gráficos e estatísticas
@@ -219,7 +221,7 @@ model SavingsGoal {
 | PATCH  | `/api/budgets/[id]`              | Atualiza o valor                                    | 🔒 Auth |
 | DELETE | `/api/budgets/[id]`              | Exclui um orçamento                                 | 🔒 Auth |
 | GET    | `/api/recurring`                 | Lista recorrentes (materializa o mês corrente)      | 🔒 Auth |
-| POST   | `/api/recurring`                 | Cria uma recorrência (transação ou transferência)   | 🔒 Auth |
+| POST   | `/api/recurring`                 | Cria uma recorrência (transação)                   | 🔒 Auth |
 | PATCH  | `/api/recurring/[id]`            | Edita uma recorrência                               | 🔒 Auth |
 | DELETE | `/api/recurring/[id]`            | Exclui uma recorrência                              | 🔒 Auth |
 | GET    | `/api/goals`                     | Lista metas (com progresso)                         | 🔒 Auth |

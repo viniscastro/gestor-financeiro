@@ -5,17 +5,6 @@ import { prisma } from '@/lib/prisma'
 import { goalPatchSchema, toGoalDto } from '@/lib/goal'
 import { amountToCents } from '@/lib/transactions'
 
-const goalInclude = {
-  account: {
-    select: {
-      name: true,
-      color: true,
-      initialBalance: true,
-      transactions: { select: { transactionType: true, amount: true } },
-    },
-  },
-} as const
-
 type Params = { params: Promise<{ id: string }> }
 
 export async function PATCH(request: NextRequest, ctx: Params) {
@@ -43,25 +32,10 @@ export async function PATCH(request: NextRequest, ctx: Params) {
 
   const input = parsed.data
 
-  if (input.accountId) {
-    const account = await prisma.account.findFirst({
-      where: { id: input.accountId, userId: session.user.id },
-      select: { id: true },
-    })
-    if (!account) {
-      return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
-    }
-  }
-
   const data: Prisma.SavingsGoalUpdateInput = {}
   if (input.name !== undefined) data.name = input.name
   if (input.targetAmount !== undefined) data.targetAmount = amountToCents(input.targetAmount)
   if (input.currentAmount !== undefined) data.currentAmount = amountToCents(input.currentAmount)
-  if (input.accountId !== undefined) {
-    data.account = input.accountId
-      ? { connect: { id: input.accountId } }
-      : { disconnect: true }
-  }
   if (input.targetDate !== undefined) {
     data.targetDate = input.targetDate ? new Date(`${input.targetDate}T00:00:00.000Z`) : null
   }
@@ -70,7 +44,6 @@ export async function PATCH(request: NextRequest, ctx: Params) {
     const goal = await prisma.savingsGoal.update({
       where: { id, userId: session.user.id },
       data,
-      include: goalInclude,
     })
     return NextResponse.json(toGoalDto(goal))
   } catch {

@@ -50,9 +50,6 @@ export type SavingsGoalDto = {
   targetAmount: number
   currentAmount: number
   percent: number
-  accountId: string | null
-  accountName: string | null
-  accountColor: string | null
   targetDate: string | null
 }
 

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import {
-  ArrowLeftRight,
   LoaderCircle,
   Pencil,
   Plus,
@@ -11,7 +10,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from 'lucide-react'
-import type { RecurringKind, TransactionType } from '@/lib/types'
+import type { TransactionType } from '@/lib/types'
 import { formatBRL, formatDateLong } from '@/lib/format'
 import type { AccountDto, CategoryDto, RecurringRuleDto } from '@/lib/types'
 
@@ -23,12 +22,10 @@ export default function RecurringManager() {
   const [error, setError] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<RecurringRuleDto | null>(null)
-  const [kind, setKind] = useState<RecurringKind>('TRANSACTION')
   const [description, setDescription] = useState('')
   const [type, setType] = useState<TransactionType>('EXPENSE')
   const [amount, setAmount] = useState('')
   const [accountId, setAccountId] = useState('')
-  const [toAccountId, setToAccountId] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [dayOfMonth, setDayOfMonth] = useState('1')
   const [notifyDaysBefore, setNotifyDaysBefore] = useState('3')
@@ -84,12 +81,10 @@ export default function RecurringManager() {
 
   function openCreate() {
     setEditing(null)
-    setKind('TRANSACTION')
     setDescription('')
     setType('EXPENSE')
     setAmount('')
     setAccountId(accounts[0]?.id ?? '')
-    setToAccountId(accounts[1]?.id ?? '')
     setCategoryId('')
     setDayOfMonth('1')
     setNotifyDaysBefore('3')
@@ -100,12 +95,10 @@ export default function RecurringManager() {
 
   function openEdit(rule: RecurringRuleDto) {
     setEditing(rule)
-    setKind(rule.kind)
     setDescription(rule.description)
     setType(rule.type ?? 'EXPENSE')
     setAmount((rule.amountCents / 100).toFixed(2))
     setAccountId(rule.accountId)
-    setToAccountId(rule.toAccountId ?? '')
     setCategoryId(rule.categoryId ?? '')
     setDayOfMonth(String(rule.dayOfMonth))
     setNotifyDaysBefore(String(rule.notifyDaysBefore))
@@ -114,39 +107,21 @@ export default function RecurringManager() {
     setModalOpen(true)
   }
 
-  function switchKind(next: RecurringKind) {
-    setKind(next)
-    if (next === 'TRANSFER') {
-      setCategoryId('')
-      if (!toAccountId) setToAccountId(accounts.find((a) => a.id !== accountId)?.id ?? '')
-    }
-  }
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setSaving(true)
     setFormError('')
     try {
-      const payload =
-        kind === 'TRANSFER'
-          ? {
-              kind,
-              description,
-              amount: Number(amount),
-              fromAccountId: accountId,
-              toAccountId,
-              dayOfMonth: Number(dayOfMonth),
-            }
-          : {
-              kind,
-              description,
-              type,
-              amount: Number(amount),
-              accountId,
-              categoryId: categoryId || null,
-              dayOfMonth: Number(dayOfMonth),
-              notifyDaysBefore: Number(notifyDaysBefore),
-            }
+      const payload = {
+        kind: 'TRANSACTION',
+        description,
+        type,
+        amount: Number(amount),
+        accountId,
+        categoryId: categoryId || null,
+        dayOfMonth: Number(dayOfMonth),
+        notifyDaysBefore: Number(notifyDaysBefore),
+      }
       const res = await fetch(
         editing ? `/api/recurring/${editing.id}` : '/api/recurring',
         {
@@ -178,28 +153,17 @@ export default function RecurringManager() {
   }
 
   async function toggleActive(rule: RecurringRuleDto) {
-    const payload =
-      rule.kind === 'TRANSFER'
-        ? {
-            kind: 'TRANSFER',
-            description: rule.description,
-            amount: rule.amountCents / 100,
-            fromAccountId: rule.accountId,
-            toAccountId: rule.toAccountId,
-            dayOfMonth: rule.dayOfMonth,
-            active: !rule.active,
-          }
-        : {
-            kind: 'TRANSACTION',
-            description: rule.description,
-            type: rule.type,
-            amount: rule.amountCents / 100,
-            accountId: rule.accountId,
-            categoryId: rule.categoryId,
-            dayOfMonth: rule.dayOfMonth,
-            notifyDaysBefore: rule.notifyDaysBefore,
-            active: !rule.active,
-          }
+    const payload = {
+      kind: 'TRANSACTION',
+      description: rule.description,
+      type: rule.type,
+      amount: rule.amountCents / 100,
+      accountId: rule.accountId,
+      categoryId: rule.categoryId,
+      dayOfMonth: rule.dayOfMonth,
+      notifyDaysBefore: rule.notifyDaysBefore,
+      active: !rule.active,
+    }
     const res = await fetch(`/api/recurring/${rule.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -213,10 +177,6 @@ export default function RecurringManager() {
   }
 
   const availableCategories = categories.filter((c) => c.type === type)
-  const canSubmit =
-    kind === 'TRANSFER'
-      ? accountId !== '' && toAccountId !== '' && accountId !== toAccountId
-      : true
 
   function switchType(next: TransactionType) {
     setType(next)
@@ -235,7 +195,7 @@ export default function RecurringManager() {
             Contas recorrentes
           </h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Transações e transferências automáticas todo mês + lembretes por e-mail
+            Transações automáticas todo mês + lembretes por e-mail
           </p>
         </div>
         <button
@@ -263,14 +223,13 @@ export default function RecurringManager() {
           <Repeat className="mx-auto h-10 w-10 text-zinc-400" />
           <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
             Nenhuma recorrência criada. Adicione contas como aluguel, assinaturas,
-            salário ou aportes mensais entre contas.
+            salário ou aportes mensais.
           </p>
         </div>
       ) : (
         <ul className="space-y-2">
           {rules.map((rule) => {
-            const isTransfer = rule.kind === 'TRANSFER'
-            const isIncome = !isTransfer && rule.type === 'INCOME'
+            const isIncome = rule.type === 'INCOME'
             return (
               <li
                 key={rule.id}
@@ -280,16 +239,12 @@ export default function RecurringManager() {
               >
                 <div
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
-                    isTransfer
-                      ? 'bg-sky-500/15 text-sky-600 dark:text-sky-400'
-                      : isIncome
-                        ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
-                        : 'bg-rose-500/15 text-rose-600 dark:text-rose-400'
+                    isIncome
+                      ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                      : 'bg-rose-500/15 text-rose-600 dark:text-rose-400'
                   }`}
                 >
-                  {isTransfer ? (
-                    <ArrowLeftRight className="h-4 w-4" />
-                  ) : isIncome ? (
+                  {isIncome ? (
                     <TrendingUp className="h-4 w-4" />
                   ) : (
                     <TrendingDown className="h-4 w-4" />
@@ -301,33 +256,20 @@ export default function RecurringManager() {
                     {rule.description}
                   </p>
                   <p className="text-xs text-zinc-500">
-                    {isTransfer ? (
-                      <>
-                        Dia {rule.dayOfMonth} · {rule.accountName} →{' '}
-                        <span className="text-sky-600 dark:text-sky-400">
-                          {rule.toAccountName}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        Dia {rule.dayOfMonth} · {rule.accountName}
-                        {rule.categoryName ? ` · ${rule.categoryName}` : ''}
-                      </>
-                    )}
+                    Dia {rule.dayOfMonth} · {rule.accountName}
+                    {rule.categoryName ? ` · ${rule.categoryName}` : ''}
                   </p>
                 </div>
 
                 <div className="shrink-0 text-right">
                   <p
                     className={`text-sm font-semibold ${
-                      isTransfer
-                        ? 'text-sky-600 dark:text-sky-400'
-                        : isIncome
-                          ? 'text-emerald-600 dark:text-emerald-400'
-                          : 'text-rose-600 dark:text-rose-400'
+                      isIncome
+                        ? 'text-emerald-600 dark:text-emerald-400'
+                        : 'text-rose-600 dark:text-rose-400'
                     }`}
                   >
-                    {isTransfer ? '' : isIncome ? '+' : '–'} {formatBRL(rule.amountCents)}
+                    {isIncome ? '+' : '–'} {formatBRL(rule.amountCents)}
                   </p>
                   <p className="text-xs text-zinc-500">
                     Próximo: {formatDateLong(new Date(rule.nextDate))}
@@ -380,33 +322,6 @@ export default function RecurringManager() {
               {editing ? 'Editar recorrência' : 'Nova recorrência'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800/80">
-                <button
-                  type="button"
-                  onClick={() => switchKind('TRANSACTION')}
-                  className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
-                    kind === 'TRANSACTION'
-                      ? 'bg-emerald-500 text-white shadow'
-                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
-                  }`}
-                >
-                  <Repeat className="h-4 w-4" />
-                  Transação
-                </button>
-                <button
-                  type="button"
-                  onClick={() => switchKind('TRANSFER')}
-                  className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
-                    kind === 'TRANSFER'
-                      ? 'bg-sky-500 text-white shadow'
-                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
-                  }`}
-                >
-                  <ArrowLeftRight className="h-4 w-4" />
-                  Transferência
-                </button>
-              </div>
-
               <div>
                 <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Descrição
@@ -414,13 +329,40 @@ export default function RecurringManager() {
                 <input
                   id="description"
                   type="text"
-                  placeholder={kind === 'TRANSFER' ? 'Ex: Aporte mensal' : 'Ex: Aluguel, Netflix...'}
+                  placeholder="Ex: Aluguel, Netflix..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   required
                   maxLength={100}
                   className={inputClass}
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800/80">
+                <button
+                  type="button"
+                  onClick={() => switchType('EXPENSE')}
+                  className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+                    type === 'EXPENSE'
+                      ? 'bg-rose-500 text-white shadow'
+                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  }`}
+                >
+                  <TrendingDown className="h-4 w-4" />
+                  Saída
+                </button>
+                <button
+                  type="button"
+                  onClick={() => switchType('INCOME')}
+                  className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+                    type === 'INCOME'
+                      ? 'bg-emerald-500 text-white shadow'
+                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  }`}
+                >
+                  <TrendingUp className="h-4 w-4" />
+                  Entrada
+                </button>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -458,146 +400,61 @@ export default function RecurringManager() {
                 </div>
               </div>
 
-              {kind === 'TRANSACTION' ? (
-                <>
-                  <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800/80">
-                    <button
-                      type="button"
-                      onClick={() => switchType('EXPENSE')}
-                      className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
-                        type === 'EXPENSE'
-                          ? 'bg-rose-500 text-white shadow'
-                          : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
-                      }`}
-                    >
-                      <TrendingDown className="h-4 w-4" />
-                      Saída
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => switchType('INCOME')}
-                      className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
-                        type === 'INCOME'
-                          ? 'bg-emerald-500 text-white shadow'
-                          : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
-                      }`}
-                    >
-                      <TrendingUp className="h-4 w-4" />
-                      Entrada
-                    </button>
-                  </div>
+              <div>
+                <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Conta
+                </label>
+                <select
+                  id="account"
+                  value={accountId}
+                  onChange={(e) => setAccountId(e.target.value)}
+                  required
+                  className={inputClass}
+                >
+                  <option value="" disabled>
+                    Selecione...
+                  </option>
+                  {accounts.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                  <div>
-                    <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                      Conta
-                    </label>
-                    <select
-                      id="account"
-                      value={accountId}
-                      onChange={(e) => setAccountId(e.target.value)}
-                      required
-                      className={inputClass}
-                    >
-                      <option value="" disabled>
-                        Selecione...
-                      </option>
-                      {accounts.map((a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+              <div>
+                <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Categoria
+                </label>
+                <select
+                  id="category"
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">Sem categoria</option>
+                  {availableCategories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                  <div>
-                    <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                      Categoria
-                    </label>
-                    <select
-                      id="category"
-                      value={categoryId}
-                      onChange={(e) => setCategoryId(e.target.value)}
-                      className={inputClass}
-                    >
-                      <option value="">Sem categoria</option>
-                      {availableCategories.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="notify" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                      Lembrar por e-mail (dias antes)
-                    </label>
-                    <input
-                      id="notify"
-                      type="number"
-                      min="0"
-                      max="30"
-                      value={notifyDaysBefore}
-                      onChange={(e) => setNotifyDaysBefore(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <label htmlFor="fromAccount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                      De (conta de origem)
-                    </label>
-                    <select
-                      id="fromAccount"
-                      value={accountId}
-                      onChange={(e) => setAccountId(e.target.value)}
-                      required
-                      className={inputClass}
-                    >
-                      <option value="" disabled>
-                        Selecione...
-                      </option>
-                      {accounts.map((a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="toAccount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                      Para (conta de destino)
-                    </label>
-                    <select
-                      id="toAccount"
-                      value={toAccountId}
-                      onChange={(e) => setToAccountId(e.target.value)}
-                      required
-                      className={inputClass}
-                    >
-                      <option value="" disabled>
-                        Selecione...
-                      </option>
-                      {accounts
-                        .filter((a) => a.id !== accountId)
-                        .map((a) => (
-                          <option key={a.id} value={a.id}>
-                            {a.name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-
-                  {!canSubmit && (
-                    <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
-                      As contas de origem e destino devem ser diferentes.
-                    </p>
-                  )}
-                </>
-              )}
+              <div>
+                <label htmlFor="notify" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Lembrar por e-mail (dias antes)
+                </label>
+                <input
+                  id="notify"
+                  type="number"
+                  min="0"
+                  max="30"
+                  value={notifyDaysBefore}
+                  onChange={(e) => setNotifyDaysBefore(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
 
               {editing && (
                 <label className="flex cursor-pointer items-center gap-3 text-sm text-zinc-700 dark:text-zinc-300">
@@ -619,7 +476,7 @@ export default function RecurringManager() {
 
               <button
                 type="submit"
-                disabled={saving || !canSubmit}
+                disabled={saving}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}

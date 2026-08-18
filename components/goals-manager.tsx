@@ -8,21 +8,18 @@ import {
   Pencil,
   Plus,
   Trash2,
-  Wallet,
 } from 'lucide-react'
 import { formatBRL } from '@/lib/format'
-import type { AccountDto, SavingsGoalDto } from '@/lib/types'
+import type { SavingsGoalDto } from '@/lib/types'
 
 export default function GoalsManager() {
   const [goals, setGoals] = useState<SavingsGoalDto[]>([])
-  const [accounts, setAccounts] = useState<AccountDto[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<SavingsGoalDto | null>(null)
   const [name, setName] = useState('')
   const [targetAmount, setTargetAmount] = useState('')
-  const [accountId, setAccountId] = useState('')
   const [currentAmount, setCurrentAmount] = useState('')
   const [targetDate, setTargetDate] = useState('')
   const [saving, setSaving] = useState(false)
@@ -30,13 +27,9 @@ export default function GoalsManager() {
 
   async function reload() {
     try {
-      const [gRes, aRes] = await Promise.all([
-        fetch('/api/goals', { cache: 'no-store' }),
-        fetch('/api/accounts', { cache: 'no-store' }),
-      ])
-      if (!gRes.ok || !aRes.ok) throw new Error('Erro ao carregar')
-      setGoals((await gRes.json()) as SavingsGoalDto[])
-      setAccounts((await aRes.json()) as AccountDto[])
+      const res = await fetch('/api/goals', { cache: 'no-store' })
+      if (!res.ok) throw new Error('Erro ao carregar')
+      setGoals((await res.json()) as SavingsGoalDto[])
       setError('')
     } catch {
       setError('Não foi possível carregar as metas.')
@@ -47,15 +40,11 @@ export default function GoalsManager() {
     let cancelled = false
     async function fetchData() {
       try {
-        const [gRes, aRes] = await Promise.all([
-          fetch('/api/goals', { cache: 'no-store' }),
-          fetch('/api/accounts', { cache: 'no-store' }),
-        ])
-        if (!gRes.ok || !aRes.ok) throw new Error('Erro ao carregar')
-        const data = (await gRes.json()) as SavingsGoalDto[]
+        const res = await fetch('/api/goals', { cache: 'no-store' })
+        if (!res.ok) throw new Error('Erro ao carregar')
+        const data = (await res.json()) as SavingsGoalDto[]
         if (!cancelled) {
           setGoals(data)
-          setAccounts((await aRes.json()) as AccountDto[])
           setError('')
         }
       } catch {
@@ -74,7 +63,6 @@ export default function GoalsManager() {
     setEditing(null)
     setName('')
     setTargetAmount('')
-    setAccountId('')
     setCurrentAmount('')
     setTargetDate('')
     setFormError('')
@@ -85,7 +73,6 @@ export default function GoalsManager() {
     setEditing(goal)
     setName(goal.name)
     setTargetAmount((goal.targetAmount / 100).toFixed(2))
-    setAccountId(goal.accountId ?? '')
     setCurrentAmount((goal.currentAmount / 100).toFixed(2))
     setTargetDate(goal.targetDate ?? '')
     setFormError('')
@@ -100,7 +87,6 @@ export default function GoalsManager() {
       const payload = {
         name,
         targetAmount: Number(targetAmount),
-        accountId: accountId || null,
         currentAmount: Number(currentAmount || 0),
         targetDate: targetDate || null,
       }
@@ -214,9 +200,7 @@ export default function GoalsManager() {
                         {goal.name}
                       </p>
                       <p className="text-xs text-zinc-500">
-                        {goal.accountName
-                          ? `${goal.accountName} · ${goal.percent}%`
-                          : `${goal.percent}%`}
+                        {goal.percent}%
                       </p>
                     </div>
                   </div>
@@ -263,13 +247,6 @@ export default function GoalsManager() {
                     </p>
                   )}
                 </div>
-
-                {goal.accountName && (
-                  <p className="mt-2 flex items-center gap-1 text-xs text-zinc-500">
-                    <Wallet className="h-3.5 w-3.5" />
-                    Progresso pelo saldo da conta
-                  </p>
-                )}
               </div>
             )
           })}
@@ -336,45 +313,21 @@ export default function GoalsManager() {
               </div>
 
               <div>
-                <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Conta vinculada (opcional)
+                <label htmlFor="current" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Valor guardado (R$)
                 </label>
-                <select
-                  id="account"
-                  value={accountId}
-                  onChange={(e) => setAccountId(e.target.value)}
+                <input
+                  id="current"
+                  type="number"
+                  inputMode="decimal"
+                  step="0.01"
+                  min="0"
+                  placeholder="0,00"
+                  value={currentAmount}
+                  onChange={(e) => setCurrentAmount(e.target.value)}
                   className={inputClass}
-                >
-                  <option value="">Nenhuma conta</option>
-                  {accounts.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.name}
-                    </option>
-                  ))}
-                </select>
-                <p className="mt-1 text-xs text-zinc-500">
-                  Ao vincular, o progresso é calculado pelo saldo da conta.
-                </p>
+                />
               </div>
-
-              {!accountId && (
-                <div>
-                  <label htmlFor="current" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Valor guardado (R$)
-                  </label>
-                  <input
-                    id="current"
-                    type="number"
-                    inputMode="decimal"
-                    step="0.01"
-                    min="0"
-                    placeholder="0,00"
-                    value={currentAmount}
-                    onChange={(e) => setCurrentAmount(e.target.value)}
-                    className={inputClass}
-                  />
-                </div>
-              )}
 
               {formError && (
                 <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
