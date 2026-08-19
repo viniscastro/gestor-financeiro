@@ -8,6 +8,7 @@ function createClient() {
     connectionString:
       process.env.DATABASE_URL ??
       'postgresql://postgres:postgres@localhost:5432/gestor',
+    max: 5,
   })
   return new PrismaClient({ adapter })
 }
