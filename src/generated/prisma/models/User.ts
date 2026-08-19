@@ -37,6 +37,9 @@ export type UserMinAggregateOutputType = {
   resetCode: string | null
   resetExpires: Date | null
   resetSentAt: Date | null
+  deleteCode: string | null
+  deleteCodeExpires: Date | null
+  deleteCodeSentAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -54,6 +57,9 @@ export type UserMaxAggregateOutputType = {
   resetCode: string | null
   resetExpires: Date | null
   resetSentAt: Date | null
+  deleteCode: string | null
+  deleteCodeExpires: Date | null
+  deleteCodeSentAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -71,6 +77,9 @@ export type UserCountAggregateOutputType = {
   resetCode: number
   resetExpires: number
   resetSentAt: number
+  deleteCode: number
+  deleteCodeExpires: number
+  deleteCodeSentAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -90,6 +99,9 @@ export type UserMinAggregateInputType = {
   resetCode?: true
   resetExpires?: true
   resetSentAt?: true
+  deleteCode?: true
+  deleteCodeExpires?: true
+  deleteCodeSentAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -107,6 +119,9 @@ export type UserMaxAggregateInputType = {
   resetCode?: true
   resetExpires?: true
   resetSentAt?: true
+  deleteCode?: true
+  deleteCodeExpires?: true
+  deleteCodeSentAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -124,6 +139,9 @@ export type UserCountAggregateInputType = {
   resetCode?: true
   resetExpires?: true
   resetSentAt?: true
+  deleteCode?: true
+  deleteCodeExpires?: true
+  deleteCodeSentAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -214,6 +232,9 @@ export type UserGroupByOutputType = {
   resetCode: string | null
   resetExpires: Date | null
   resetSentAt: Date | null
+  deleteCode: string | null
+  deleteCodeExpires: Date | null
+  deleteCodeSentAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -252,6 +273,9 @@ export type UserWhereInput = {
   resetCode?: Prisma.StringNullableFilter<"User"> | string | null
   resetExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   resetSentAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  deleteCode?: Prisma.StringNullableFilter<"User"> | string | null
+  deleteCodeExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  deleteCodeSentAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   transactions?: Prisma.TransactionListRelationFilter
@@ -275,6 +299,9 @@ export type UserOrderByWithRelationInput = {
   resetCode?: Prisma.SortOrderInput | Prisma.SortOrder
   resetExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   resetSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deleteCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  deleteCodeExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  deleteCodeSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
@@ -301,6 +328,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   resetCode?: Prisma.StringNullableFilter<"User"> | string | null
   resetExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   resetSentAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  deleteCode?: Prisma.StringNullableFilter<"User"> | string | null
+  deleteCodeExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  deleteCodeSentAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   transactions?: Prisma.TransactionListRelationFilter
@@ -324,6 +354,9 @@ export type UserOrderByWithAggregationInput = {
   resetCode?: Prisma.SortOrderInput | Prisma.SortOrder
   resetExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   resetSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deleteCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  deleteCodeExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  deleteCodeSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -347,6 +380,9 @@ export type UserScalarWhereWithAggregatesInput = {
   resetCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   resetExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   resetSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  deleteCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  deleteCodeExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  deleteCodeSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -364,6 +400,9 @@ export type UserCreateInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -387,6 +426,9 @@ export type UserUncheckedCreateInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -410,6 +452,9 @@ export type UserUpdateInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -433,6 +478,9 @@ export type UserUncheckedUpdateInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -456,6 +504,9 @@ export type UserCreateManyInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -473,6 +524,9 @@ export type UserUpdateManyMutationInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -490,6 +544,9 @@ export type UserUncheckedUpdateManyInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -507,6 +564,9 @@ export type UserCountOrderByAggregateInput = {
   resetCode?: Prisma.SortOrder
   resetExpires?: Prisma.SortOrder
   resetSentAt?: Prisma.SortOrder
+  deleteCode?: Prisma.SortOrder
+  deleteCodeExpires?: Prisma.SortOrder
+  deleteCodeSentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -524,6 +584,9 @@ export type UserMaxOrderByAggregateInput = {
   resetCode?: Prisma.SortOrder
   resetExpires?: Prisma.SortOrder
   resetSentAt?: Prisma.SortOrder
+  deleteCode?: Prisma.SortOrder
+  deleteCodeExpires?: Prisma.SortOrder
+  deleteCodeSentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -541,6 +604,9 @@ export type UserMinOrderByAggregateInput = {
   resetCode?: Prisma.SortOrder
   resetExpires?: Prisma.SortOrder
   resetSentAt?: Prisma.SortOrder
+  deleteCode?: Prisma.SortOrder
+  deleteCodeExpires?: Prisma.SortOrder
+  deleteCodeSentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -663,6 +729,9 @@ export type UserCreateWithoutAccountsInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -685,6 +754,9 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -723,6 +795,9 @@ export type UserUpdateWithoutAccountsInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -745,6 +820,9 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -767,6 +845,9 @@ export type UserCreateWithoutCategoriesInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -789,6 +870,9 @@ export type UserUncheckedCreateWithoutCategoriesInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -827,6 +911,9 @@ export type UserUpdateWithoutCategoriesInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -849,6 +936,9 @@ export type UserUncheckedUpdateWithoutCategoriesInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -871,6 +961,9 @@ export type UserCreateWithoutBudgetsInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -893,6 +986,9 @@ export type UserUncheckedCreateWithoutBudgetsInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -931,6 +1027,9 @@ export type UserUpdateWithoutBudgetsInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -953,6 +1052,9 @@ export type UserUncheckedUpdateWithoutBudgetsInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -975,6 +1077,9 @@ export type UserCreateWithoutRecurringRulesInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -997,6 +1102,9 @@ export type UserUncheckedCreateWithoutRecurringRulesInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -1035,6 +1143,9 @@ export type UserUpdateWithoutRecurringRulesInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -1057,6 +1168,9 @@ export type UserUncheckedUpdateWithoutRecurringRulesInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -1079,6 +1193,9 @@ export type UserCreateWithoutTransactionsInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -1101,6 +1218,9 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -1139,6 +1259,9 @@ export type UserUpdateWithoutTransactionsInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -1161,6 +1284,9 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1183,6 +1309,9 @@ export type UserCreateWithoutGoalsInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -1205,6 +1334,9 @@ export type UserUncheckedCreateWithoutGoalsInput = {
   resetCode?: string | null
   resetExpires?: Date | string | null
   resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -1243,6 +1375,9 @@ export type UserUpdateWithoutGoalsInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -1265,6 +1400,9 @@ export type UserUncheckedUpdateWithoutGoalsInput = {
   resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -1363,6 +1501,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   resetCode?: boolean
   resetExpires?: boolean
   resetSentAt?: boolean
+  deleteCode?: boolean
+  deleteCodeExpires?: boolean
+  deleteCodeSentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
@@ -1387,6 +1528,9 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   resetCode?: boolean
   resetExpires?: boolean
   resetSentAt?: boolean
+  deleteCode?: boolean
+  deleteCodeExpires?: boolean
+  deleteCodeSentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1404,6 +1548,9 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   resetCode?: boolean
   resetExpires?: boolean
   resetSentAt?: boolean
+  deleteCode?: boolean
+  deleteCodeExpires?: boolean
+  deleteCodeSentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1421,11 +1568,14 @@ export type UserSelectScalar = {
   resetCode?: boolean
   resetExpires?: boolean
   resetSentAt?: boolean
+  deleteCode?: boolean
+  deleteCodeExpires?: boolean
+  deleteCodeSentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "image" | "emailVerified" | "verificationCode" | "verificationExpires" | "verificationSentAt" | "resetCode" | "resetExpires" | "resetSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "image" | "emailVerified" | "verificationCode" | "verificationExpires" | "verificationSentAt" | "resetCode" | "resetExpires" | "resetSentAt" | "deleteCode" | "deleteCodeExpires" | "deleteCodeSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -1461,6 +1611,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     resetCode: string | null
     resetExpires: Date | null
     resetSentAt: Date | null
+    deleteCode: string | null
+    deleteCodeExpires: Date | null
+    deleteCodeSentAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1904,6 +2057,9 @@ export interface UserFieldRefs {
   readonly resetCode: Prisma.FieldRef<"User", 'String'>
   readonly resetExpires: Prisma.FieldRef<"User", 'DateTime'>
   readonly resetSentAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly deleteCode: Prisma.FieldRef<"User", 'String'>
+  readonly deleteCodeExpires: Prisma.FieldRef<"User", 'DateTime'>
+  readonly deleteCodeSentAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }

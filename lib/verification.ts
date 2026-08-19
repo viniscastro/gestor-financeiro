@@ -34,3 +34,16 @@ export async function storeResetCode(userId: string, code: string): Promise<void
     },
   })
 }
+
+export async function storeDeleteCode(userId: string, code: string): Promise<void> {
+  const hash = await bcrypt.hash(code, 10)
+  const now = new Date()
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      deleteCode: hash,
+      deleteCodeExpires: new Date(now.getTime() + CODE_TTL_MS),
+      deleteCodeSentAt: now,
+    },
+  })
+}

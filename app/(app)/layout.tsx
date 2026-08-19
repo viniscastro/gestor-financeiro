@@ -18,9 +18,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { id: true, name: true, email: true, image: true },
+    select: { id: true, name: true, email: true, image: true, emailVerified: true },
   })
   if (!user) redirect('/')
+
+  if (!user.emailVerified) {
+    redirect(`/verify-email?email=${encodeURIComponent(user.email)}`)
+  }
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">

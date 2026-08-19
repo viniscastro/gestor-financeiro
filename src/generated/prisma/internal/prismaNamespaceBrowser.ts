@@ -89,6 +89,9 @@ export const UserScalarFieldEnum = {
   resetCode: 'resetCode',
   resetExpires: 'resetExpires',
   resetSentAt: 'resetSentAt',
+  deleteCode: 'deleteCode',
+  deleteCodeExpires: 'deleteCodeExpires',
+  deleteCodeSentAt: 'deleteCodeSentAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

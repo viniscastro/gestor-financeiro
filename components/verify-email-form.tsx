@@ -2,9 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { LoaderCircle, MailCheck, PiggyBank } from 'lucide-react'
 
-export default function VerifyEmailForm({ initialEmail }: { initialEmail: string }) {
+export default function VerifyEmailForm({
+  initialEmail,
+  isLoggedIn = false,
+}: {
+  initialEmail: string
+  isLoggedIn?: boolean
+}) {
   const [email, setEmail] = useState(initialEmail)
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
@@ -12,6 +19,7 @@ export default function VerifyEmailForm({ initialEmail }: { initialEmail: string
   const [sent, setSent] = useState(false)
   const [resending, setResending] = useState(false)
   const [resendIn, setResendIn] = useState(0)
+  const router = useRouter()
 
   useEffect(() => {
     if (resendIn <= 0) return
@@ -97,14 +105,23 @@ export default function VerifyEmailForm({ initialEmail }: { initialEmail: string
               E-mail confirmado!
             </h2>
             <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              Sua conta foi verificada. Agora é só entrar.
+              {isLoggedIn ? 'Redirecionando...' : 'Sua conta foi verificada. Agora é só entrar.'}
             </p>
-            <Link
-              href="/"
-              className="mt-5 inline-block rounded-lg bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
-            >
-              Fazer login
-            </Link>
+            {isLoggedIn ? (
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="mt-5 inline-block rounded-lg bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
+              >
+                Ir para o painel
+              </button>
+            ) : (
+              <Link
+                href="/"
+                className="mt-5 inline-block rounded-lg bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
+              >
+                Fazer login
+              </Link>
+            )}
           </div>
         ) : (
           <>

@@ -51,7 +51,7 @@ export default async function AccountPage() {
         </dl>
       </div>
 
-      <DeleteAccountForm email={user.email} hasPassword={Boolean(user.password)} />
+      <DeleteAccountForm email={user.email} />
     </div>
   )
 }

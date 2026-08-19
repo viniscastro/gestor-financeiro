@@ -126,6 +126,49 @@ export async function sendPasswordResetCode(to: string, code: string): Promise<v
   console.log(`[email-dev] Código de redefinição de senha para ${to}: ${code}`)
 }
 
+function buildDeleteHtml(code: string): string {
+  return `
+    <div style="font-family:Arial,Helvetica,sans-serif;background:#f4f4f5;padding:32px 16px">
+      <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden">
+        <div style="background:#ef4444;padding:20px 24px">
+          <p style="margin:0;color:#ffffff;font-size:18px;font-weight:700">🐷 Gestor Financeiro</p>
+        </div>
+        <div style="padding:28px 24px">
+          <h1 style="margin:0 0 12px;font-size:20px;color:#18181b">Exclusão de conta</h1>
+          <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:#52525b">
+            Use o código abaixo para confirmar a exclusão da sua conta. Esta ação é irreversível. Ele expira em 10 minutos.
+          </p>
+          <div style="background:#fef2f2;border:1px dashed #ef4444;border-radius:12px;padding:20px;text-align:center">
+            <span style="font-size:32px;font-weight:800;letter-spacing:8px;color:#dc2626">${code}</span>
+          </div>
+          <p style="margin:20px 0 0;font-size:12px;line-height:1.6;color:#a1a1aa">
+            Se você não pediu para excluir a conta, pode ignorar este e-mail.
+          </p>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+export async function sendDeleteAccountCode(to: string, code: string): Promise<void> {
+  const subject = 'Código para exclusão de conta'
+  const html = buildDeleteHtml(code)
+  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+    try {
+      await sendViaSmtpRaw(to, subject, html)
+      return
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erro desconhecido'
+      throw new Error(`Falha ao enviar o e-mail (SMTP): ${message}`)
+    }
+  }
+  if (process.env.RESEND_API_KEY) {
+    await sendViaResendRaw(to, subject, html)
+    return
+  }
+  console.log(`[email-dev] Código de exclusão para ${to}: ${code}`)
+}
+
 async function sendViaSmtpRaw(to: string, subject: string, html: string): Promise<void> {
   const transporter = createTransport({
     host: process.env.SMTP_HOST,

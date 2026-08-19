@@ -5,6 +5,8 @@ import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { ensureDefaultData } from '@/lib/defaults'
+import { generateVerificationCode, storeVerificationCode } from '@/lib/verification'
+import { sendVerificationCode } from '@/lib/email'
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -21,7 +23,7 @@ const googleProvider =
         Google({
           clientId: process.env.GOOGLE_CLIENT_ID,
           clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-          checks: ['state'],
+          checks: [],
         }),
       ]
     : []
@@ -75,15 +77,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 email,
                 password: '',
                 image: user.image ?? null,
-                emailVerified: new Date(),
+                emailVerified: null,
               },
             })
             await ensureDefaultData(dbUser.id)
+
+            try {
+              const code = generateVerificationCode()
+              await storeVerificationCode(dbUser.id, code)
+              await sendVerificationCode(email, code)
+            } catch (err) {
+              console.error('[google-verify] Failed to send verification email:', err)
+            }
           } else if (!dbUser.emailVerified) {
-            dbUser = await prisma.user.update({
-              where: { id: dbUser.id },
-              data: { emailVerified: new Date() },
-            })
+            if (!dbUser.verificationCode || !dbUser.verificationSentAt) {
+              try {
+                const code = generateVerificationCode()
+                await storeVerificationCode(dbUser.id, code)
+                await sendVerificationCode(email, code)
+              } catch (err) {
+                console.error('[google-verify] Failed to send verification email:', err)
+              }
+            }
           }
           token.id = dbUser.id
         } else {
