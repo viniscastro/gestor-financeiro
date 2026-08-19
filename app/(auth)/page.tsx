@@ -18,9 +18,7 @@ export default async function AuthPage() {
         }}
       />
       <div className="relative">
-        <AuthForm
-          googleEnabled={Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET)}
-        />
+        <AuthForm />
       </div>
     </div>
   )
