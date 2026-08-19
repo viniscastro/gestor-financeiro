@@ -81,7 +81,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               },
             })
             await ensureDefaultData(dbUser.id)
+          }
 
+          if (!dbUser.emailVerified) {
             try {
               const code = generateVerificationCode()
               await storeVerificationCode(dbUser.id, code)
@@ -89,17 +91,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             } catch (err) {
               console.error('[google-verify] Failed to send verification email:', err)
             }
-          } else if (!dbUser.emailVerified) {
-            if (!dbUser.verificationCode || !dbUser.verificationSentAt) {
-              try {
-                const code = generateVerificationCode()
-                await storeVerificationCode(dbUser.id, code)
-                await sendVerificationCode(email, code)
-              } catch (err) {
-                console.error('[google-verify] Failed to send verification email:', err)
-              }
-            }
           }
+
           token.id = dbUser.id
         } else {
           token.id = user.id

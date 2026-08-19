@@ -11,9 +11,29 @@ export default async function AccountPage() {
   const session = await auth()
   if (!session?.user?.id) redirect('/')
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-  })
+  let user: {
+    name: string | null
+    email: string
+    image: string | null
+    emailVerified: Date | null
+    createdAt: Date
+    password: string | null
+  } | null = null
+  try {
+    user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        name: true,
+        email: true,
+        image: true,
+        emailVerified: true,
+        createdAt: true,
+        password: true,
+      },
+    })
+  } catch (err) {
+    console.error('[account] prisma error:', err)
+  }
   if (!user) redirect('/')
 
   return (
@@ -27,7 +47,7 @@ export default async function AccountPage() {
 
       <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900/60">
         <div className="flex flex-wrap items-center gap-5">
-          <AvatarUpload name={user.name} image={user.image} />
+          <AvatarUpload name={user.name ?? ''} image={user.image} />
           <div className="min-w-0">
             <p className="text-base font-semibold text-zinc-900 dark:text-white">
               {user.name}
