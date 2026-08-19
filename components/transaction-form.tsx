@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Info, LoaderCircle, TrendingDown, TrendingUp, X } from 'lucide-react'
+import CurrencyInput from '@/components/currency-input'
 import type { TransactionType } from '@/lib/categories'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 
@@ -182,30 +183,14 @@ function TransactionFormBody({
               <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Valor (R$)
               </label>
-              <input
+              <CurrencyInput
                 id="amount"
-                type="number"
-                inputMode="decimal"
-                step="0.01"
-                min="0"
                 placeholder="0,00"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                onBlur={(e) => {
-                  let value = e.target.value.replace(/[R$\s]/g, '').replace(/\./g, '')
-                  if (value) {
-                    const num = Number(value)
-                    if (!isNaN(num)) {
-                      setAmount((num / 100).toFixed(2).replace('.', ','))
-                    }
-                  }
-                }}
+                onChange={setAmount}
                 required
                 className={inputClass}
               />
-              <small className="text-xs text-zinc-500 mt-1">
-                Digite o valor em centavos (ex: 8000 = R$ 80,00) ou formato completo (8.000,00)
-              </small>
             </div>
             <div>
               <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">

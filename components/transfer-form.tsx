@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { ArrowRightLeft, LoaderCircle, X } from 'lucide-react'
+import CurrencyInput from '@/components/currency-input'
 import type { AccountDto } from '@/lib/types'
 
 type Props = {
@@ -126,27 +127,14 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
               <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Valor (R$)
               </label>
-              <input
+              <CurrencyInput
                 id="amount"
-                type="number"
-                inputMode="decimal"
-step="0.01"
-                    min="0"
-                    placeholder="0,00"
-                    value={amount}
-onChange={(e) => setAmount(e.target.value)}
-                    onBlur={(e) => {
-                      let value = e.target.value.replace(/[R$\s]/g, '').replace(/\./g, '')
-                      if (value) {
-                        const num = Number(value)
-                        if (!isNaN(num)) {
-                          setAmount((num / 100).toFixed(2).replace('.', ','))
-                        }
-                      }
-                    }}
-                    required
-                    className={inputClass}
-                  />
+                placeholder="0,00"
+                value={amount}
+                onChange={setAmount}
+                required
+                className={inputClass}
+              />
             </div>
             <div>
               <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
