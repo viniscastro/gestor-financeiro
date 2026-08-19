@@ -296,11 +296,15 @@ export default function BudgetsManager() {
                   id="amount"
                   type="number"
                   inputMode="decimal"
-                  step="0.01"
-                  min="0"
-                  placeholder="0,00"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+step="0.01"
+                    min="0"
+                    placeholder="0,00"
+                    value={amount}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/[R$\s]/g, '').replace(/\./g, '')
+                      value = (Number(value) / 100).toFixed(2).replace('.', ',')
+                      setAmount(value)
+                    }}
                   required
                   className={inputClass}
                 />
