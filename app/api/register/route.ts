@@ -38,37 +38,53 @@ export async function POST(request: NextRequest) {
   const existing = await prisma.user.findUnique({
     where: { email: normalizedEmail },
   })
-  if (existing) {
-    return NextResponse.json(
-      { error: 'Este e-mail já está cadastrado' },
-      { status: 409 }
-    )
-  }
 
   const code = generateVerificationCode()
   const passwordHash = await bcrypt.hash(password, 10)
   const codeHash = await bcrypt.hash(code, 10)
   const now = new Date()
 
-  const created = await prisma.user.create({
-    data: {
-      name,
-      email: normalizedEmail,
-      password: passwordHash,
-      emailVerified: null,
-      verificationCode: codeHash,
-      verificationExpires: new Date(now.getTime() + CODE_TTL_MS),
-      verificationSentAt: now,
-    },
-  })
+  let created: { id: string }
+  const isNew = !existing || !existing.password
+  if (existing) {
+    if (existing.password) {
+      return NextResponse.json(
+        { error: 'Este e-mail já está cadastrado' },
+        { status: 409 }
+      )
+    }
+    created = await prisma.user.update({
+      where: { id: existing.id },
+      data: {
+        name,
+        password: passwordHash,
+        emailVerified: null,
+        verificationCode: codeHash,
+        verificationExpires: new Date(now.getTime() + CODE_TTL_MS),
+        verificationSentAt: now,
+      },
+    })
+  } else {
+    created = await prisma.user.create({
+      data: {
+        name,
+        email: normalizedEmail,
+        password: passwordHash,
+        emailVerified: null,
+        verificationCode: codeHash,
+        verificationExpires: new Date(now.getTime() + CODE_TTL_MS),
+        verificationSentAt: now,
+      },
+    })
+  }
 
-  await ensureDefaultData(created.id)
+  if (isNew) await ensureDefaultData(created.id)
 
   try {
     await sendVerificationCode(normalizedEmail, code)
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Erro desconhecido'
-    await prisma.user.deleteMany({ where: { email: normalizedEmail } })
+    if (isNew) await prisma.user.deleteMany({ where: { email: normalizedEmail } })
     return NextResponse.json({ error: message }, { status: 500 })
   }
 

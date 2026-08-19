@@ -69,18 +69,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (account && user?.email) {
         if (account.provider === 'google') {
           const email = user.email.toLowerCase()
-          let dbUser = await prisma.user.findUnique({ where: { email } })
-          if (!dbUser) {
-            dbUser = await prisma.user.create({
-              data: {
-                name: user.name ?? email.split('@')[0],
-                email,
-                password: '',
-                image: user.image ?? null,
-                emailVerified: null,
-              },
-            })
-            await ensureDefaultData(dbUser.id)
+          const dbUser = await prisma.user.findUnique({ where: { email } })
+
+          if (!dbUser || !dbUser.password) {
+            console.log(`[auth] Google login blocked for ${email}: no prior registration`)
+            return token
           }
 
           if (!dbUser.emailVerified) {
