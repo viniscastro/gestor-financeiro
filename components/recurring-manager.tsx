@@ -456,10 +456,15 @@ export default function RecurringManager() {
                     min="0"
                     placeholder="0,00"
                     value={amount}
-                    onChange={(e) => {
+                    onChange={(e) => setAmount(e.target.value)}
+                    onBlur={(e) => {
                       let value = e.target.value.replace(/[R$\s]/g, '').replace(/\./g, '')
-                      value = (Number(value) / 100).toFixed(2).replace('.', ',')
-                      setAmount(value)
+                      if (value) {
+                        const num = Number(value)
+                        if (!isNaN(num)) {
+                          setAmount((num / 100).toFixed(2).replace('.', ','))
+                        }
+                      }
                     }}
                     required
                     className={inputClass}

@@ -300,14 +300,19 @@ step="0.01"
                     min="0"
                     placeholder="0,00"
                     value={amount}
-                    onChange={(e) => {
+onChange={(e) => setAmount(e.target.value)}
+                    onBlur={(e) => {
                       let value = e.target.value.replace(/[R$\s]/g, '').replace(/\./g, '')
-                      value = (Number(value) / 100).toFixed(2).replace('.', ',')
-                      setAmount(value)
+                      if (value) {
+                        const num = Number(value)
+                        if (!isNaN(num)) {
+                          setAmount((num / 100).toFixed(2).replace('.', ','))
+                        }
+                      }
                     }}
-                  required
-                  className={inputClass}
-                />
+                    required
+                    className={inputClass}
+                  />
               </div>
               {formError && (
                 <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
