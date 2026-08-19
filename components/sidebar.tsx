@@ -91,7 +91,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
         })}
       </nav>
 
-      <div className="mt-6 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+<div className="mt-6 border-t border-zinc-200 pt-4 dark:border-zinc-800">
         <Link href="/account" className="mb-3 flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-zinc-100 dark:hover:bg-zinc-800/70">
           <Avatar name={user.name} image={user.image} />
           <div className="min-w-0">

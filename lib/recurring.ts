@@ -13,25 +13,11 @@ export function startOfDay(date: Date): Date {
   return d
 }
 
-function lastDayOfMonth(year: number, month: number): number {
-  return new Date(year, month + 1, 0).getDate()
-}
-
 export function nextOccurrence(dayOfMonth: number, from: Date): Date {
-  const clamp = (year: number, month: number) =>
-    Math.min(dayOfMonth, lastDayOfMonth(year, month))
-  let date = new Date(
-    from.getFullYear(),
-    from.getMonth(),
-    clamp(from.getFullYear(), from.getMonth())
-  )
-  if (date < startOfDay(from)) {
-    const next = new Date(from.getFullYear(), from.getMonth() + 1, 1)
-    date = new Date(
-      next.getFullYear(),
-      next.getMonth(),
-      clamp(next.getFullYear(), next.getMonth())
-    )
+  const date = new Date(from.getFullYear(), from.getMonth(), dayOfMonth)
+  if (date <= startOfDay(from)) {
+    const nextMonth = new Date(from.getFullYear(), from.getMonth() + 1, 1)
+    return new Date(nextMonth.getFullYear(), nextMonth.getMonth(), dayOfMonth)
   }
   return date
 }
@@ -50,11 +36,11 @@ export async function materializeRecurring(userId: string): Promise<void> {
 
   const now = new Date()
   const key = monthKey(now)
-  const lastDay = lastDayOfMonth(now.getFullYear(), now.getMonth())
 
   for (const rule of rules) {
     if (rule.lastMaterializedMonth === key) continue
 
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
     const date = new Date(
       now.getFullYear(),
       now.getMonth(),

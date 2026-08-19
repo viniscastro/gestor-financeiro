@@ -21,7 +21,6 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 ## ✨ Funcionalidades
 
 - 🔐 **Autenticação completa** — cadastro e login com e-mail/senha, senha criptografada com **bcrypt** e sessão segura via **JWT**
-- 🥇 **Login com Google** — entrada com um clique via OAuth (credenciais no Google Cloud Console)
 - ✉️ **Confirmação de e-mail** — código de 6 dígitos enviado por e-mail, com expiração de 10 min, reenvio com cooldown e bloqueio de login até a conta ser verificada
 - 🔑 **Redefinição de senha** — fluxo em 3 telas (`/forgot-password` → código → nova senha), com cooldown no reenvio, expiração em 10 min e anti-enumeração (retorna `200` mesmo se o e-mail não existir)
 - 👁️ **Mostrar/ocultar senha** — toggle com ícone de olho nos campos de senha (login, cadastro e redefinição)
@@ -61,7 +60,7 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 | UI              | [Tailwind CSS](https://tailwindcss.com) 4 · [Lucide](https://lucide.dev) |
 | Gráficos        | [Recharts](https://recharts.org) 3.10.1                |
 | Banco de dados  | [PostgreSQL](https://www.postgresql.org) 17 · [Prisma](https://www.prisma.io) 7.9.1 (driver adapter `pg`) |
-| Autenticação    | [NextAuth.js](https://next-auth.js.org) 5 (beta) · [bcryptjs](https://github.com/dcodeIO/bcrypt.js) · [Google OAuth](https://console.cloud.google.com) |
+| Autenticação    | [NextAuth.js](https://next-auth.js.org) 5 (beta) · [bcryptjs](https://github.com/dcodeIO/bcrypt.js) |
 | E-mails         | [Nodemailer](https://nodemailer.com) (SMTP/Gmail) · [Resend](https://resend.com) |
 | Validação       | [Zod](https://zod.dev) 4                               |
 | Notificações    | [Sonner](https://sonner.sh) (toast com undo)           |

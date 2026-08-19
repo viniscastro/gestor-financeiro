@@ -6,16 +6,16 @@ import { Monitor, Moon, Sun } from 'lucide-react'
 const STORAGE_KEY = 'gf-theme'
 const emptySubscribe = () => () => {}
 
-type StoredTheme = 'light' | 'dark' | 'system'
+type StoredTheme = 'light' | 'dark'
 
 function readStoredTheme(): StoredTheme {
-  if (typeof window === 'undefined') return 'system'
+  if (typeof window === 'undefined') return 'light'
   const v = window.localStorage.getItem(STORAGE_KEY)
-  if (v === 'light' || v === 'dark' || v === 'system') return v
-  return 'system'
+  if (v === 'light' || v === 'dark') return v
+  return 'light'
 }
 
-const CYCLE: StoredTheme[] = ['light', 'dark', 'system']
+const CYCLE: StoredTheme[] = ['light', 'dark']
 
 export default function ThemeToggle() {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
@@ -25,7 +25,7 @@ export default function ThemeToggle() {
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
 
     function apply() {
-      const dark = theme === 'dark' || (theme === 'system' && mq.matches)
+      const dark = theme === 'dark'
       document.documentElement.classList.toggle('dark', dark)
     }
 
@@ -42,8 +42,8 @@ export default function ThemeToggle() {
     setTheme(CYCLE[(idx + 1) % CYCLE.length])
   }
 
-  const icons = { light: Sun, dark: Moon, system: Monitor }
-  const labels = { light: 'Tema claro', dark: 'Tema escuro', system: 'Tema automático' }
+  const icons = { light: Sun, dark: Moon }
+  const labels = { light: 'Tema claro', dark: 'Tema escuro' }
   const Icon = icons[theme]
 
   return (
