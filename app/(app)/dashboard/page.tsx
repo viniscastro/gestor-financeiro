@@ -10,7 +10,7 @@ import { prisma } from '@/lib/prisma'
 import { formatBRL, formatDate } from '@/lib/format'
 import { getUpcomingBills } from '@/lib/recurring'
 import DashboardCards from '@/components/dashboard-cards'
-import DashboardCardEditor from '@/components/dashboard-card-editor'
+import DashboardCardEditor, { type DashboardCardId } from '@/components/dashboard-card-editor'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,7 +19,7 @@ export default async function DashboardPage() {
   if (!session?.user?.id) redirect('/')
   const userId = session.user.id
 
-  const [accounts, transactions, recent, budgets, goals, recurringRules, topCategories] = await Promise.all([
+  const [accounts, transactions, recent, budgets, goals, recurringRules, topCategories, user] = await Promise.all([
     prisma.account.findMany({
       where: { userId },
       include: {
@@ -62,6 +62,10 @@ export default async function DashboardPage() {
     prisma.category.findMany({
       where: { userId },
       select: { id: true, name: true, color: true },
+    }),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { dashboardCards: true },
     }),
   ])
 
@@ -196,6 +200,16 @@ export default async function DashboardPage() {
     },
   ]
 
+  const parsedCards: DashboardCardId[] | null = (() => {
+    try {
+      if (user?.dashboardCards) {
+        const parsed = JSON.parse(user.dashboardCards)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+      }
+    } catch {}
+    return null
+  })()
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
@@ -206,7 +220,7 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <DashboardCards cards={cards} />
+      <DashboardCards cards={cards} initialCards={parsedCards} />
       <DashboardCardEditor />
 
       {accounts.length > 1 && (

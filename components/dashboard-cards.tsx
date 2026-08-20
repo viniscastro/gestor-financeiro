@@ -31,8 +31,8 @@ type CardData = {
   accent: string
 }
 
-export default function DashboardCards({ cards }: { cards: CardData[] }) {
-  const { isVisible } = useDashboardCards()
+export default function DashboardCards({ cards, initialCards }: { cards: CardData[]; initialCards?: DashboardCardId[] | null }) {
+  const { isVisible } = useDashboardCards(initialCards)
   const [, forceUpdate] = useState(0)
 
   useEffect(() => {

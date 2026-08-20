@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import { usePathname } from 'next/navigation'
 import { Moon, Sun, SlidersHorizontal } from 'lucide-react'
 
@@ -10,28 +10,24 @@ type StoredTheme = 'light' | 'dark'
 
 const CYCLE: StoredTheme[] = ['light', 'dark']
 
-function getInitialTheme(): StoredTheme {
-  if (typeof window === 'undefined') return 'light'
-  const serverTheme = (window as unknown as Record<string, unknown>).__GF_THEME__
-  if (serverTheme === 'dark' || serverTheme === 'light') return serverTheme
-  return 'light'
-}
-
-export default function HeaderActions() {
+export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme?: StoredTheme }) {
   const pathname = usePathname()
   const isDashboard = pathname === '/dashboard'
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
-  const [theme, setTheme] = useState<StoredTheme>(getInitialTheme)
+  const [theme, setTheme] = useState<StoredTheme>(defaultTheme)
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
+  }, [theme])
+
+  const persistTheme = useCallback((t: StoredTheme) => {
     fetch('/api/user/preferences', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ theme }),
+      body: JSON.stringify({ theme: t }),
     }).catch(() => {})
-  }, [theme])
+  }, [])
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -48,7 +44,9 @@ export default function HeaderActions() {
 
   function cycle() {
     const idx = CYCLE.indexOf(theme)
-    setTheme(CYCLE[(idx + 1) % CYCLE.length])
+    const next = CYCLE[(idx + 1) % CYCLE.length]
+    setTheme(next)
+    persistTheme(next)
   }
 
   const icons = { light: Sun, dark: Moon }

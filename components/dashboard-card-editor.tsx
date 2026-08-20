@@ -19,10 +19,9 @@ export const CARD_IDS = [
 
 export type DashboardCardId = (typeof CARD_IDS)[number]['id']
 
-function loadVisible(): DashboardCardId[] {
+function loadVisible(initialCards?: DashboardCardId[] | null): DashboardCardId[] {
+  if (initialCards && initialCards.length > 0) return initialCards
   if (typeof window === 'undefined') return CARD_IDS.map((c) => c.id)
-  const serverCards = (window as unknown as Record<string, unknown>).__GF_CARDS__
-  if (Array.isArray(serverCards) && serverCards.length > 0) return serverCards as DashboardCardId[]
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
@@ -60,13 +59,13 @@ function getServerSnapshot() {
   return CARD_IDS.map((c) => c.id)
 }
 
-export function useDashboardCards() {
+export function useDashboardCards(initialCards?: DashboardCardId[] | null) {
   const visible = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     if (!initialized) {
-      currentVisible = loadVisible()
+      currentVisible = loadVisible(initialCards)
       initialized = true
     }
     setMounted(true)

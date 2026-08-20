@@ -28,6 +28,7 @@ type SessionUser = {
   name?: string | null
   email?: string | null
   image?: string | null
+  theme?: string | null
 }
 
 const NAV_ITEMS = [
@@ -122,7 +123,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
   return (
     <>
       <div className="fixed right-4 top-4 z-50">
-        <HeaderActions />
+        <HeaderActions defaultTheme={user.theme === 'dark' ? 'dark' : 'light'} />
       </div>
 
       <button
