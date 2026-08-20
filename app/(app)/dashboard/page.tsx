@@ -14,6 +14,8 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { formatBRL, formatDate } from '@/lib/format'
 import { getUpcomingBills } from '@/lib/recurring'
+import DashboardCards from '@/components/dashboard-cards'
+import DashboardCardEditor from '@/components/dashboard-card-editor'
 
 export const dynamic = 'force-dynamic'
 
@@ -138,6 +140,7 @@ export default async function DashboardPage() {
 
   const cards = [
     {
+      id: 'saldo' as const,
       label: 'Saldo total',
       value: formatBRL(totalBalance),
       icon: Wallet,
@@ -147,24 +150,28 @@ export default async function DashboardPage() {
           : 'text-rose-600 bg-rose-500/15 dark:text-rose-400',
     },
     {
+      id: 'entradas' as const,
       label: 'Entradas no mês',
       value: formatBRL(monthIncome),
       icon: TrendingUp,
       accent: 'text-emerald-600 bg-emerald-500/15 dark:text-emerald-400',
     },
     {
+      id: 'saidas' as const,
       label: 'Saídas no mês',
       value: formatBRL(monthExpense),
       icon: TrendingDown,
       accent: 'text-rose-600 bg-rose-500/15 dark:text-rose-400',
     },
     {
+      id: 'guardado' as const,
       label: 'Guardado (metas)',
       value: formatBRL(totalSaved),
       icon: Flag,
       accent: 'text-sky-600 bg-sky-500/15 dark:text-sky-400',
     },
     {
+      id: 'recorrentes' as const,
       label: 'Recorrentes (mês)',
       value: formatBRL(Math.abs(monthlyRecurring)),
       icon: Repeat,
@@ -182,28 +189,8 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-6 gap-4">
-        {cards.map((card, i) => (
-          <div
-            key={card.label}
-            className={`rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60 ${
-              i < 3 ? 'col-span-2' : 'col-span-3'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
-                {card.label}
-              </p>
-              <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${card.accent}`}>
-                <card.icon className="h-5 w-5" />
-              </div>
-            </div>
-            <p className="mt-2 text-2xl font-bold text-zinc-900 dark:text-white">
-              {card.value}
-            </p>
-          </div>
-        ))}
-      </div>
+      <DashboardCards cards={cards} />
+      <DashboardCardEditor />
 
       {accounts.length > 1 && (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
