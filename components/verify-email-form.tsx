@@ -87,10 +87,10 @@ export default function VerifyEmailForm({
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/15">
           <PiggyBank className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
         </div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
           Confirme seu e-mail
         </h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300">
           Enviamos um código de 6 dígitos para validar sua conta
         </p>
       </div>
@@ -101,10 +101,10 @@ export default function VerifyEmailForm({
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/15">
               <MailCheck className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <h2 className="text-lg font-bold text-zinc-900 dark:text-white">
+            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
               E-mail confirmado!
             </h2>
-            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300">
               {isLoggedIn ? 'Redirecionando...' : 'Sua conta foi verificada. Agora é só entrar.'}
             </p>
             {isLoggedIn ? (

@@ -65,7 +65,7 @@ export default function DeleteAccountForm({ email }: { email: string }) {
           <h2 className="text-base font-semibold text-rose-600 dark:text-rose-400">
             Excluir conta
           </h2>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-500 dark:text-zinc-300">
             Remove sua conta ({email}) e todas as transações permanentemente.
           </p>
         </div>

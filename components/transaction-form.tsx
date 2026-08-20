@@ -119,15 +119,15 @@ function TransactionFormBody({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-zinc-900 dark:text-white">
+          <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
             {transaction ? 'Editar transação' : 'Nova transação'}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+            className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
             aria-label="Fechar"
           >
             <X className="h-5 w-5" />
@@ -142,7 +142,7 @@ function TransactionFormBody({
               className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                 type === 'INCOME'
                   ? 'bg-emerald-500 text-white shadow'
-                  : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
               }`}
             >
               <TrendingUp className="h-4 w-4" />
@@ -154,7 +154,7 @@ function TransactionFormBody({
               className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                 type === 'EXPENSE'
                   ? 'bg-rose-500 text-white shadow'
-                  : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
               }`}
             >
               <TrendingDown className="h-4 w-4" />

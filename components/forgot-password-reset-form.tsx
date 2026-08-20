@@ -72,10 +72,10 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/15">
           <PiggyBank className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
         </div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
           {done ? 'Senha redefinida!' : 'Redefinir senha'}
         </h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300">
           {done
             ? 'Você será redirecionado para o login em instantes.'
             : `Defina uma nova senha para ${email}`}
@@ -88,10 +88,10 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/15">
               <KeyRound className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <h2 className="text-lg font-bold text-zinc-900 dark:text-white">
+            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
               Tudo pronto!
             </h2>
-            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300">
               Agora é só entrar com a nova senha.
             </p>
             <Link
@@ -180,7 +180,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
       {!done && (
         <Link
           href="/forgot-password"
-          className="mt-5 flex items-center justify-center gap-1.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
+          className="mt-5 flex items-center justify-center gap-1.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-300 dark:hover:text-zinc-100"
         >
           <ArrowLeft className="h-4 w-4" />
           Voltar

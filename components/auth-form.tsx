@@ -71,10 +71,10 @@ export default function AuthForm() {
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/15">
           <PiggyBank className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
         </div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
           Gestor Financeiro
         </h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300">
           Controle suas entradas e saídas em um só lugar
         </p>
       </div>

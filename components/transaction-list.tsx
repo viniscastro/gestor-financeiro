@@ -13,8 +13,8 @@ type Props = {
 export default function TransactionList({ transactions, onEdit, onDelete }: Props) {
   if (transactions.length === 0) {
     return (
-      <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-800 dark:bg-zinc-900/60">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800/50">
+        <p className="text-sm text-zinc-500 dark:text-zinc-300">
           Nenhuma transação encontrada.
         </p>
         <p className="mt-1 text-xs text-zinc-500">
@@ -32,7 +32,7 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
         return (
           <li
             key={t.id}
-            className="group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:border-zinc-700"
+            className="group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:hover:border-zinc-700"
           >
             <div
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${
@@ -85,7 +85,7 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
                 <button
                   type="button"
                   onClick={() => onEdit(t)}
-                  className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                  className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
                   aria-label="Editar"
                 >
                   <Pencil className="h-4 w-4" />
@@ -94,7 +94,7 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
               <button
                 type="button"
                 onClick={() => onDelete(t.id)}
-                className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-400 dark:hover:text-rose-400"
+                className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400"
                 aria-label="Excluir"
               >
                 <Trash2 className="h-4 w-4" />

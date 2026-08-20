@@ -46,36 +46,39 @@ export default function DashboardCards({ cards }: { cards: CardData[] }) {
   const visibleCards = cards.filter((c) => isVisible(c.id))
   const count = visibleCards.length
 
-  function gridCols() {
-    if (count <= 3) return `grid-cols-${count}`
-    if (count === 4) return 'grid-cols-2'
-    return 'grid-cols-6'
+  function gridClass() {
+    if (count === 1) return 'grid grid-cols-1'
+    if (count === 2) return 'grid grid-cols-1 sm:grid-cols-2'
+    if (count === 3) return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+    if (count === 4) return 'grid grid-cols-1 sm:grid-cols-2'
+    return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
   }
 
-  function span(i: number) {
-    if (count <= 3) return ''
-    if (count === 4) return ''
-    return i < 3 ? 'col-span-2' : 'col-span-3'
+  function spanClass(i: number) {
+    if (count <= 4) return ''
+    if (count === 5) return i < 3 ? 'sm:col-span-2 lg:col-span-1' : ''
+    if (count === 6) return i < 3 ? 'lg:col-span-1' : 'lg:col-span-1'
+    return ''
   }
 
   return (
-    <div className={`grid gap-4 ${gridCols()}`}>
+    <div className={gridClass()}>
       {visibleCards.map((card, i) => {
         const Icon = ICONS[card.id]
         return (
           <div
             key={card.id}
-            className={`rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60 ${span(i)}`}
+            className={`rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800/50 sm:p-5 ${spanClass(i)}`}
           >
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+              <p className="text-[10px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-300 sm:text-xs">
                 {card.label}
               </p>
-              <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${card.accent}`}>
-                <Icon className="h-5 w-5" />
+              <div className={`flex h-8 w-8 items-center justify-center rounded-xl sm:h-9 sm:w-9 ${card.accent}`}>
+                <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
             </div>
-            <p className="mt-2 text-2xl font-bold text-zinc-900 dark:text-white">
+            <p className="mt-2 text-xl font-bold text-zinc-900 dark:text-zinc-50 sm:text-2xl">
               {card.value}
             </p>
           </div>

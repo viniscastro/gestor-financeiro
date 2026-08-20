@@ -147,8 +147,8 @@ export default function CategoriesManager() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Categorias</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Categorias</h1>
+          <p className="text-sm text-zinc-500 dark:text-zinc-300">
             Gerencie as categorias de entradas e saídas
           </p>
         </div>
@@ -175,7 +175,7 @@ export default function CategoriesManager() {
           className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
             tab === 'INCOME'
               ? 'bg-emerald-500 text-white shadow'
-              : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+              : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
           }`}
         >
           <TrendingUp className="h-4 w-4" />
@@ -187,7 +187,7 @@ export default function CategoriesManager() {
           className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
             tab === 'EXPENSE'
               ? 'bg-rose-500 text-white shadow'
-              : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+              : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
           }`}
         >
           <TrendingDown className="h-4 w-4" />
@@ -196,18 +196,18 @@ export default function CategoriesManager() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-800 dark:bg-zinc-900/60">
+        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800/50">
           <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-800 dark:bg-zinc-900/60">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800/50">
           <Tags className="mx-auto h-10 w-10 text-zinc-400" />
-          <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
             Nenhuma categoria {tab === 'EXPENSE' ? 'de saída' : 'de entrada'}.
           </p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900/60">
+        <div className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/50">
           <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
             {filtered.map((cat) => (
               <li
@@ -227,7 +227,7 @@ export default function CategoriesManager() {
                   <button
                     type="button"
                     onClick={() => openEdit(cat)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                    className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
                     aria-label="Editar"
                   >
                     <Pencil className="h-4 w-4" />
@@ -235,7 +235,7 @@ export default function CategoriesManager() {
                   <button
                     type="button"
                     onClick={() => handleDelete(cat)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-400 dark:hover:text-rose-400"
+                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400"
                     aria-label="Excluir"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -253,8 +253,8 @@ export default function CategoriesManager() {
             className="absolute inset-0 bg-black/60"
             onClick={() => setModalOpen(false)}
           />
-          <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
-            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-white">
+          <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
+            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
               {editing ? 'Editar categoria' : 'Nova categoria'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -281,7 +281,7 @@ export default function CategoriesManager() {
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     newType === 'INCOME'
                       ? 'bg-emerald-500 text-white shadow'
-                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
                   }`}
                 >
                   <TrendingUp className="h-4 w-4" />
@@ -293,7 +293,7 @@ export default function CategoriesManager() {
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     newType === 'EXPENSE'
                       ? 'bg-rose-500 text-white shadow'
-                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
                   }`}
                 >
                   <TrendingDown className="h-4 w-4" />
@@ -334,7 +334,7 @@ export default function CategoriesManager() {
                       className={`flex h-9 w-9 items-center justify-center rounded-lg transition ${
                         newIcon === ic
                           ? 'bg-emerald-500/15 text-emerald-600 ring-2 ring-emerald-500 dark:text-emerald-400'
-                          : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
+                          : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800'
                       }`}
                       aria-label={ic}
                     >

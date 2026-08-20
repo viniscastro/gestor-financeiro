@@ -141,8 +141,8 @@ export default function BudgetsManager() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Orçamentos</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Orçamentos</h1>
+          <p className="text-sm text-zinc-500 dark:text-zinc-300">
             Defina limites mensais por categoria
           </p>
         </div>
@@ -164,13 +164,13 @@ export default function BudgetsManager() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-800 dark:bg-zinc-900/60">
+        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800/50">
           <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : budgets.length === 0 ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-800 dark:bg-zinc-900/60">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800/50">
           <Target className="mx-auto h-10 w-10 text-zinc-400" />
-          <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
             Nenhum orçamento definido. Crie um para começar a acompanhar seus gastos.
           </p>
         </div>
@@ -185,7 +185,7 @@ export default function BudgetsManager() {
             return (
               <li
                 key={budget.id}
-                className="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60"
+                className="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800/50"
               >
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
@@ -200,7 +200,7 @@ export default function BudgetsManager() {
                         className="h-4 w-4"
                       />
                     </div>
-                    <p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">
+                    <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                       {budget.categoryName}
                     </p>
                   </div>
@@ -208,7 +208,7 @@ export default function BudgetsManager() {
                     <button
                       type="button"
                       onClick={() => openEdit(budget)}
-                      className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                      className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
                       aria-label="Editar"
                     >
                       <Pencil className="h-4 w-4" />
@@ -216,7 +216,7 @@ export default function BudgetsManager() {
                     <button
                       type="button"
                       onClick={() => handleDelete(budget.id)}
-                      className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-400 dark:hover:text-rose-400"
+                      className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400"
                       aria-label="Excluir"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -256,8 +256,8 @@ export default function BudgetsManager() {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60" onClick={() => setModalOpen(false)} />
-          <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
-            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-white">
+          <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
+            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
               {editing ? 'Editar orçamento' : 'Novo orçamento'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">

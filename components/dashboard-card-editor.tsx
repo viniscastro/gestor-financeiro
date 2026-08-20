@@ -106,15 +106,15 @@ export default function DashboardCardEditor() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
-      <div className="relative w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="relative w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-zinc-900 dark:text-white">
+          <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
             Editar cards
           </h2>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+            className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
           >
             <X className="h-5 w-5" />
           </button>
@@ -131,7 +131,7 @@ export default function DashboardCardEditor() {
                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                   active
                     ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200'
+                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200'
                 }`}
               >
                 {active ? (
@@ -151,7 +151,7 @@ export default function DashboardCardEditor() {
             type="button"
             onClick={resetAll}
             disabled={allVisible}
-            className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 transition hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 disabled:opacity-40"
+            className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 transition hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200 disabled:opacity-40"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             Mostrar todos

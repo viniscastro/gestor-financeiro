@@ -54,7 +54,7 @@ function ChartTooltip({
 }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
+    <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
       <p className="mb-1 font-medium text-zinc-700 dark:text-zinc-300">{label}</p>
       {payload.map((entry: TooltipEntry) => (
         <p key={String(entry.dataKey)} style={{ color: entry.color }}>
@@ -75,7 +75,7 @@ function PieTooltip({
   if (!active || !payload?.length) return null
   const entry = payload[0]
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
+    <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
       <p style={{ color: entry.payload?.color }}>{entry.name}</p>
       <p className="text-zinc-700 dark:text-zinc-300">{formatBRL(Number(entry.value))}</p>
     </div>
@@ -128,8 +128,8 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
-      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
-        <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-white">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800/50">
+        <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-zinc-50">
           Entradas vs. Saídas
         </h2>
         <p className="mb-4 text-xs text-zinc-500">Últimos 6 meses</p>
@@ -168,8 +168,8 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
         )}
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
-        <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-white">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800/50">
+        <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-zinc-50">
           Gastos por categoria
         </h2>
         <p className="mb-4 text-xs text-zinc-500">

@@ -148,8 +148,8 @@ export default function AccountsManager() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Contas</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Contas</h1>
+          <p className="text-sm text-zinc-500 dark:text-zinc-300">
             Gerencie suas contas e saldos
           </p>
         </div>
@@ -163,11 +163,11 @@ export default function AccountsManager() {
         </button>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900/60">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
         <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
           Saldo total
         </p>
-        <p className="mt-1 text-2xl font-bold text-zinc-900 dark:text-white">
+        <p className="mt-1 text-2xl font-bold text-zinc-900 dark:text-zinc-50">
           {formatBRL(totalBalance)}
         </p>
       </div>
@@ -179,13 +179,13 @@ export default function AccountsManager() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-800 dark:bg-zinc-900/60">
+        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800/50">
           <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : accounts.length === 0 ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-800 dark:bg-zinc-900/60">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800/50">
           <Wallet className="mx-auto h-10 w-10 text-zinc-400" />
-          <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
             Nenhuma conta criada ainda.
           </p>
         </div>
@@ -194,7 +194,7 @@ export default function AccountsManager() {
           {accounts.map((account) => (
             <div
               key={account.id}
-              className="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60"
+              className="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800/50"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -205,7 +205,7 @@ export default function AccountsManager() {
                     <Wallet className="h-5 w-5" style={{ color: account.color }} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-zinc-900 dark:text-white">
+                    <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                       {account.name}
                     </p>
                     <p className="text-xs text-zinc-500">{account.type}</p>
@@ -215,7 +215,7 @@ export default function AccountsManager() {
                   <button
                     type="button"
                     onClick={() => openEdit(account)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                    className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
                     aria-label="Editar"
                   >
                     <Pencil className="h-4 w-4" />
@@ -223,7 +223,7 @@ export default function AccountsManager() {
                   <button
                     type="button"
                     onClick={() => handleDelete(account)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-400 dark:hover:text-rose-400"
+                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400"
                     aria-label="Excluir"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -253,8 +253,8 @@ export default function AccountsManager() {
             className="absolute inset-0 bg-black/60"
             onClick={() => setModalOpen(false)}
           />
-          <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
-            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-white">
+          <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
+            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
               {editing ? 'Editar conta' : 'Nova conta'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">

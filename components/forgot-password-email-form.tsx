@@ -47,10 +47,10 @@ export default function ForgotPasswordEmailForm() {
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/15">
           <PiggyBank className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
         </div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
           Esqueceu a senha?
         </h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300">
           Informe seu e-mail e enviaremos um código de verificação
         </p>
       </div>
@@ -99,7 +99,7 @@ export default function ForgotPasswordEmailForm() {
 
       <Link
         href="/"
-        className="mt-5 flex items-center justify-center gap-1.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
+        className="mt-5 flex items-center justify-center gap-1.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-300 dark:hover:text-zinc-100"
       >
         <ArrowLeft className="h-4 w-4" />
         Voltar para o login

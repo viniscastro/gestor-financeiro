@@ -12,10 +12,10 @@
 
 .dark {
   color-scheme: dark;
-  --background: #09090b;
-  --foreground: #f4f4f5;
+  --background: #0e0e12;
+  --foreground: #e4e4e7;
   --chart-grid: #27272a;
-  --chart-axis: #71717a;
+  --chart-axis: #a1a1aa;
 }
 
 @theme inline {

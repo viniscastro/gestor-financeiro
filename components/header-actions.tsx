@@ -63,7 +63,7 @@ export default function HeaderActions() {
         onClick={cycle}
         title={labels[theme]}
         aria-label={`Alternar tema (atual: ${labels[theme]})`}
-        className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+        className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
       >
         <Icon className="h-5 w-5" />
       </button>
@@ -75,14 +75,14 @@ export default function HeaderActions() {
       <button
         type="button"
         onClick={() => setMenuOpen((o) => !o)}
-        className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+        className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
         aria-label="Menu"
       >
         <SlidersHorizontal className="h-5 w-5" />
       </button>
 
       {menuOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
           <button
             type="button"
             onClick={cycle}
@@ -91,7 +91,7 @@ export default function HeaderActions() {
             <Icon className="h-4 w-4" />
             {labels[theme]}
           </button>
-          <div className="border-t border-zinc-100 dark:border-zinc-800" />
+          <div className="border-t border-zinc-100 dark:border-zinc-700" />
           <button
             type="button"
             onClick={() => {

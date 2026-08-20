@@ -197,10 +197,10 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Dashboard</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 sm:text-2xl">Dashboard</h1>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 sm:text-sm">
           {session.user.name ? `Olá, ${session.user.name.split(' ')[0]}!` : 'Olá!'} Veja seu
           resumo financeiro.
         </p>
@@ -221,7 +221,7 @@ export default async function DashboardPage() {
               <Link
                 key={account.id}
                 href="/accounts"
-                className="rounded-2xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:border-zinc-700"
+                className="rounded-2xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-800/50 dark:hover:border-zinc-700"
               >
                 <div className="flex items-center gap-2">
                   <span
@@ -235,7 +235,7 @@ export default async function DashboardPage() {
                 <p
                   className={`mt-1.5 text-lg font-bold ${
                     balance >= 0
-                      ? 'text-zinc-900 dark:text-white'
+                      ? 'text-zinc-900 dark:text-zinc-50'
                       : 'text-rose-600 dark:text-rose-400'
                   }`}
                 >
@@ -270,8 +270,8 @@ export default async function DashboardPage() {
       )}
 
       {topCats.length > 0 && (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
-          <h2 className="mb-3 text-base font-semibold text-zinc-900 dark:text-white">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-800/50">
+          <h2 className="mb-3 text-base font-semibold text-zinc-900 dark:text-zinc-50">
             Top categorias (mês)
           </h2>
           <ul className="space-y-2.5">
@@ -331,9 +331,9 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-800/50">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-zinc-900 dark:text-white">
+          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
             Transações recentes
           </h2>
           <Link

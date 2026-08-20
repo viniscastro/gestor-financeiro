@@ -26,10 +26,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+    <div className="min-h-screen bg-zinc-50 dark:bg-[#0e0e12]">
       <Sidebar user={user} />
       <main className="min-h-screen lg:pl-64">
-        <div className="mx-auto max-w-5xl p-6 pt-20 lg:pt-10">{children}</div>
+        <div className="mx-auto max-w-5xl px-4 py-16 pt-20 sm:px-6 sm:py-20 lg:px-6 lg:pt-10">{children}</div>
       </main>
     </div>
   )
