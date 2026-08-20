@@ -55,7 +55,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
   const nav = (
     <>
       <div className="mb-8 flex items-center gap-3 px-2">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/15">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900">
           <PiggyBank className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
         </div>
         <span className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
@@ -81,7 +81,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
               onClick={() => setOpen(false)}
               className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                 active
-                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                  ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400'
                   : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
               }`}
             >

@@ -243,8 +243,8 @@ export default function GoalsManager() {
                     <div
                       className={`flex h-10 w-10 items-center justify-center rounded-xl ${
                         done
-                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
-                          : 'bg-sky-500/15 text-sky-600 dark:text-sky-400'
+                          ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400'
+                          : 'bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-sky-400'
                       }`}
                     >
                       <Flag className="h-5 w-5" />

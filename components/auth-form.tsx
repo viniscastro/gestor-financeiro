@@ -68,7 +68,7 @@ export default function AuthForm() {
   return (
     <div className="w-full max-w-md">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/15">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900">
           <PiggyBank className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
         </div>
         <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">

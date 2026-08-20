@@ -84,7 +84,7 @@ export default function VerifyEmailForm({
   return (
     <div className="w-full max-w-md">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/15">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900">
           <PiggyBank className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
         </div>
         <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
@@ -98,7 +98,7 @@ export default function VerifyEmailForm({
       <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl backdrop-blur dark:border-white/10 dark:bg-zinc-900 dark:shadow-2xl">
         {sent ? (
           <div className="py-4 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/15">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900">
               <MailCheck className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
             <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">

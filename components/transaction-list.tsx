@@ -37,10 +37,10 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
             <div
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${
                 isTransfer
-                  ? 'bg-sky-500/15 text-sky-600 dark:text-sky-400'
+                  ? 'bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-sky-400'
                   : isIncome
-                    ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
-                    : 'bg-rose-500/15 text-rose-600 dark:text-rose-400'
+                    ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-400'
               }`}
             >
               {isTransfer ? <ArrowRightLeft className="h-4 w-4" /> : isIncome ? '+' : '–'}

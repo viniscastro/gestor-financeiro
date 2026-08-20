@@ -319,8 +319,8 @@ export default function RecurringManager() {
                 <div
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
                     isIncome
-                      ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
-                      : 'bg-rose-500/15 text-rose-600 dark:text-rose-400'
+                      ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400'
+                      : 'bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-400'
                   }`}
                 >
                   {isIncome ? (

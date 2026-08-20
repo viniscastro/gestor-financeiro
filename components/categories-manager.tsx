@@ -333,7 +333,7 @@ export default function CategoriesManager() {
                       onClick={() => setNewIcon(ic)}
                       className={`flex h-9 w-9 items-center justify-center rounded-lg transition ${
                         newIcon === ic
-                          ? 'bg-emerald-500/15 text-emerald-600 ring-2 ring-emerald-500 dark:text-emerald-400'
+                          ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-600 ring-2 ring-emerald-500 dark:text-emerald-400'
                           : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800'
                       }`}
                       aria-label={ic}
