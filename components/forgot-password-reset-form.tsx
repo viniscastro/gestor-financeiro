@@ -82,7 +82,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
         </p>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white/80 p-6 shadow-xl backdrop-blur dark:border-white/10 dark:bg-zinc-900/70 dark:shadow-2xl">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl backdrop-blur dark:border-white/10 dark:bg-zinc-900 dark:shadow-2xl">
         {done ? (
           <div className="py-4 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/15">

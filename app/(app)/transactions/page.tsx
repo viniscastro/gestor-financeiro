@@ -236,19 +236,19 @@ export default function TransactionsPage() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
           <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Entradas</p>
           <p className="mt-1 text-lg font-bold text-emerald-600 dark:text-emerald-400">
             {formatBRL(totals.income)}
           </p>
         </div>
-        <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
           <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Saídas</p>
           <p className="mt-1 text-lg font-bold text-rose-600 dark:text-rose-400">
             {formatBRL(totals.expense)}
           </p>
         </div>
-        <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
           <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Resultado</p>
           <p
             className={`mt-1 text-lg font-bold ${
@@ -337,7 +337,7 @@ export default function TransactionsPage() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800/50">
+        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800">
           <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : (

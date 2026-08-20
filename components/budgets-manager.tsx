@@ -164,11 +164,11 @@ export default function BudgetsManager() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800/50">
+        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800">
           <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : budgets.length === 0 ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800/50">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
           <Target className="mx-auto h-10 w-10 text-zinc-400" />
           <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
             Nenhum orçamento definido. Crie um para começar a acompanhar seus gastos.
@@ -185,7 +185,7 @@ export default function BudgetsManager() {
             return (
               <li
                 key={budget.id}
-                className="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800/50"
+                className="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800"
               >
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">

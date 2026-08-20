@@ -13,7 +13,7 @@ type Props = {
 export default function TransactionList({ transactions, onEdit, onDelete }: Props) {
   if (transactions.length === 0) {
     return (
-      <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800/50">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
         <p className="text-sm text-zinc-500 dark:text-zinc-300">
           Nenhuma transação encontrada.
         </p>
@@ -32,7 +32,7 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
         return (
           <li
             key={t.id}
-            className="group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:hover:border-zinc-700"
+            className="group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-700"
           >
             <div
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${

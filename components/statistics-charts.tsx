@@ -128,7 +128,7 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
-      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800/50">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
         <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-zinc-50">
           Entradas vs. Saídas
         </h2>
@@ -168,7 +168,7 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
         )}
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800/50">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
         <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-zinc-50">
           Gastos por categoria
         </h2>

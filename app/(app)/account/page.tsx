@@ -45,7 +45,7 @@ export default async function AccountPage() {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800/50">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
         <div className="flex flex-wrap items-center gap-5">
           <AvatarUpload name={user.name ?? ''} image={user.image} />
           <div className="min-w-0">

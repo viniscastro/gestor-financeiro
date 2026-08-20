@@ -8,6 +8,7 @@ import {
   Pencil,
   Plus,
   Trash2,
+  Wallet,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatBRL } from '@/lib/format'
@@ -27,6 +28,9 @@ export default function GoalsManager() {
   const [targetDate, setTargetDate] = useState('')
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
+  const [topupGoalId, setTopupGoalId] = useState<string | null>(null)
+  const [topupAmount, setTopupAmount] = useState('')
+  const [topupLoading, setTopupLoading] = useState(false)
 
   async function reload() {
     try {
@@ -142,6 +146,34 @@ export default function GoalsManager() {
     })
   }
 
+  async function handleTopup(goal: SavingsGoalDto) {
+    const add = Number(topupAmount)
+    if (!add || add <= 0) return
+    setTopupLoading(true)
+    try {
+      const res = await fetch(`/api/goals/${goal.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: goal.name,
+          targetAmount: goal.targetAmount / 100,
+          currentAmount: goal.currentAmount / 100 + add,
+          targetDate: goal.targetDate,
+        }),
+      })
+      if (!res.ok) {
+        toast.error('Erro ao adicionar saldo.')
+        return
+      }
+      setTopupGoalId(null)
+      setTopupAmount('')
+      await reload()
+      toast.success(`R$ ${add.toFixed(2)} adicionado à meta "${goal.name}"`)
+    } finally {
+      setTopupLoading(false)
+    }
+  }
+
   function formatDate(value: string): string {
     const [y, m, d] = value.split('-')
     if (!y || !m || !d) return value
@@ -172,7 +204,7 @@ export default function GoalsManager() {
         </button>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
         <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Guardado</p>
         <p className="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
           {formatBRL(totalSaved)}
@@ -186,11 +218,11 @@ export default function GoalsManager() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800/50">
+        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800">
           <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : goals.length === 0 ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800/50">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
           <Flag className="mx-auto h-10 w-10 text-zinc-400" />
           <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
             Nenhuma meta criada ainda. Ex.: viagem, reserva de emergência, entrada do
@@ -204,7 +236,7 @@ export default function GoalsManager() {
             return (
               <div
                 key={goal.id}
-                className="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800/50"
+                className="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
@@ -269,6 +301,56 @@ export default function GoalsManager() {
                     </p>
                   )}
                 </div>
+
+                {!done && (
+                  <>
+                    {topupGoalId === goal.id ? (
+                      <div className="mt-3 flex items-center gap-2">
+                        <div className="relative flex-1">
+                          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">R$</span>
+                          <input
+                            type="number"
+                            min="0.01"
+                            step="0.01"
+                            value={topupAmount}
+                            onChange={(e) => setTopupAmount(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') { e.preventDefault(); handleTopup(goal) }
+                              if (e.key === 'Escape') setTopupGoalId(null)
+                            }}
+                            autoFocus
+                            className="w-full rounded-lg border border-emerald-500 bg-white py-2 pl-10 pr-3 text-sm text-zinc-900 outline-none focus:ring-2 focus:ring-emerald-500/20 dark:border-emerald-700 dark:bg-zinc-900 dark:text-zinc-100"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleTopup(goal)}
+                          disabled={topupLoading || !topupAmount}
+                          className="flex h-9 items-center gap-1.5 rounded-lg bg-emerald-500 px-3 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:opacity-50"
+                        >
+                          {topupLoading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                          Guardar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setTopupGoalId(null)}
+                          className="flex h-9 items-center rounded-lg border border-zinc-300 px-3 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => { setTopupGoalId(goal.id); setTopupAmount('') }}
+                        className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-emerald-300 px-3 py-2 text-sm font-medium text-emerald-600 transition hover:bg-emerald-50 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/20"
+                      >
+                        <Wallet className="h-4 w-4" />
+                        Adicionar saldo
+                      </button>
+                    )}
+                  </>
+                )}
               </div>
             )
           })}
