@@ -1,16 +1,20 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
-import { Check, Eye, EyeOff, RotateCcw, SlidersHorizontal, X } from 'lucide-react'
+import { useEffect, useState, useCallback, useSyncExternalStore } from 'react'
+import { Check, Eye, EyeOff, RotateCcw, X } from 'lucide-react'
 
 const STORAGE_KEY = 'gf-dashboard-cards'
+const EVENT = 'gf-cards-change'
 
-const CARD_IDS = [
+export const CARD_IDS = [
   { id: 'saldo', label: 'Saldo total' },
   { id: 'entradas', label: 'Entradas no mês' },
   { id: 'saidas', label: 'Saídas no mês' },
   { id: 'guardado', label: 'Guardado (metas)' },
   { id: 'recorrentes', label: 'Recorrentes (mês)' },
+  { id: 'proximo-vencimento', label: 'Próximo vencimento' },
+  { id: 'fluxo', label: 'Fluxo do mês' },
+  { id: 'orcamento', label: 'Orçamentos estourados' },
 ] as const
 
 export type DashboardCardId = (typeof CARD_IDS)[number]['id']
@@ -29,21 +33,40 @@ function loadVisible(): DashboardCardId[] {
 
 function saveVisible(ids: DashboardCardId[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ids))
+  window.dispatchEvent(new Event(EVENT))
+}
+
+let currentVisible: DashboardCardId[] = CARD_IDS.map((c) => c.id)
+let initialized = false
+
+function subscribe(callback: () => void) {
+  const handler = () => callback()
+  window.addEventListener(EVENT, handler)
+  return () => window.removeEventListener(EVENT, handler)
+}
+
+function getSnapshot() {
+  return currentVisible
+}
+
+function getServerSnapshot() {
+  return CARD_IDS.map((c) => c.id)
 }
 
 export function useDashboardCards() {
-  const [visible, setVisible] = useState<DashboardCardId[]>(() =>
-    CARD_IDS.map((c) => c.id)
-  )
+  const visible = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setVisible(loadVisible())
+    if (!initialized) {
+      currentVisible = loadVisible()
+      initialized = true
+    }
     setMounted(true)
   }, [])
 
   const isVisible = useCallback(
-    (id: DashboardCardId) => !mounted || visible.includes(id),
+    (id: DashboardCardId) => !mounted || currentVisible.includes(id),
     [mounted, visible]
   )
 
@@ -52,11 +75,7 @@ export function useDashboardCards() {
 
 export default function DashboardCardEditor() {
   const [open, setOpen] = useState(false)
-  const [visible, setVisible] = useState<DashboardCardId[]>([])
-
-  useEffect(() => {
-    setVisible(loadVisible())
-  }, [])
+  const visible = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 
   useEffect(() => {
     function handleToggle() {
@@ -67,21 +86,17 @@ export default function DashboardCardEditor() {
   }, [])
 
   function toggle(id: DashboardCardId) {
-    setVisible((prev) => {
-      const next = prev.includes(id)
-        ? prev.filter((x) => x !== id)
-        : [...prev, id]
-      saveVisible(next)
-      window.dispatchEvent(new Event('dashboard-cards-changed'))
-      return next
-    })
+    const next = visible.includes(id)
+      ? visible.filter((x) => x !== id)
+      : [...visible, id]
+    currentVisible = next
+    saveVisible(next)
   }
 
   function resetAll() {
     const all = CARD_IDS.map((c) => c.id)
-    setVisible(all)
+    currentVisible = all
     saveVisible(all)
-    window.dispatchEvent(new Event('dashboard-cards-changed'))
   }
 
   const allVisible = visible.length === CARD_IDS.length

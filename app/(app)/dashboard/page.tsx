@@ -133,6 +133,10 @@ export default async function DashboardPage() {
     .sort((a, b) => b.spent - a.spent)
     .slice(0, 5)
 
+  const monthFlow = monthIncome - monthExpense
+
+  const nextBill = upcoming[0]
+
   const cards = [
     {
       id: 'saldo' as const,
@@ -166,6 +170,29 @@ export default async function DashboardPage() {
       label: 'Recorrentes (mês)',
       value: formatBRL(Math.abs(monthlyRecurring)),
       accent: 'text-violet-600 bg-violet-500/15 dark:text-violet-400',
+    },
+    {
+      id: 'proximo-vencimento' as const,
+      label: 'Próximo vencimento',
+      value: nextBill ? formatBRL(nextBill.amountCents) : '—',
+      accent: 'text-amber-600 bg-amber-500/15 dark:text-amber-400',
+    },
+    {
+      id: 'fluxo' as const,
+      label: 'Fluxo do mês',
+      value: formatBRL(monthFlow),
+      accent:
+        monthFlow >= 0
+          ? 'text-emerald-600 bg-emerald-500/15 dark:text-emerald-400'
+          : 'text-rose-600 bg-rose-500/15 dark:text-rose-400',
+    },
+    {
+      id: 'orcamento' as const,
+      label: 'Orçamentos estourados',
+      value: overBudget.length === 0 ? 'Nenhum' : `${overBudget.length} estourado${overBudget.length > 1 ? 's' : ''}`,
+      accent: overBudget.length > 0
+        ? 'text-rose-600 bg-rose-500/15 dark:text-rose-400'
+        : 'text-emerald-600 bg-emerald-500/15 dark:text-emerald-400',
     },
   ]
 

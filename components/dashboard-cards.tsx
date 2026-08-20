@@ -1,7 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Wallet, TrendingUp, TrendingDown, Flag, Repeat } from 'lucide-react'
+import {
+  Wallet,
+  TrendingUp,
+  TrendingDown,
+  Flag,
+  Repeat,
+  AlarmClock,
+  ArrowUpDown,
+  Target,
+} from 'lucide-react'
 import { useDashboardCards, type DashboardCardId } from '@/components/dashboard-card-editor'
 
 const ICONS: Record<DashboardCardId, React.ElementType> = {
@@ -10,6 +19,9 @@ const ICONS: Record<DashboardCardId, React.ElementType> = {
   saidas: TrendingDown,
   guardado: Flag,
   recorrentes: Repeat,
+  'proximo-vencimento': AlarmClock,
+  fluxo: ArrowUpDown,
+  orcamento: Target,
 }
 
 type CardData = {
@@ -21,22 +33,17 @@ type CardData = {
 
 export default function DashboardCards({ cards }: { cards: CardData[] }) {
   const { isVisible } = useDashboardCards()
-  const [mounted, setMounted] = useState(false)
   const [, forceUpdate] = useState(0)
 
   useEffect(() => {
-    setMounted(true)
     function onChange() {
       forceUpdate((n) => n + 1)
     }
-    window.addEventListener('dashboard-cards-changed', onChange)
-    return () => window.removeEventListener('dashboard-cards-changed', onChange)
+    window.addEventListener('gf-cards-change', onChange)
+    return () => window.removeEventListener('gf-cards-change', onChange)
   }, [])
 
-  const visibleCards = mounted
-    ? cards.filter((c) => isVisible(c.id))
-    : cards
-
+  const visibleCards = cards.filter((c) => isVisible(c.id))
   const count = visibleCards.length
 
   function gridCols() {
