@@ -1,32 +1,24 @@
-'use client'
+import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
-import { useServerInsertedHTML } from 'next/navigation'
+export default async function ServerPreferencesScript() {
+  const session = await auth()
+  if (!session?.user?.id) return null
 
-interface Props {
-  theme: string
-  dashboardCards: string | null
-}
-
-export default function ServerPreferencesScript({ theme, dashboardCards }: Props) {
-  useServerInsertedHTML(() => {
-    const dark = theme === 'dark'
-    const classes = dark ? ' class="dark"' : ''
-    const htmlAttrs = dark ? ' data-theme="dark"' : ''
-    const cardsScript = dashboardCards
-      ? `<script>window.__GF_CARDS__=${dashboardCards}</script>`
-      : ''
-
-    return (
-      <>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){document.documentElement.classList.toggle('dark',${dark});window.__GF_THEME__='${theme}';})()`,
-          }}
-        />
-        {cardsScript}
-      </>
-    )
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { theme: true, dashboardCards: true },
   })
+  if (!user) return null
 
-  return null
+  const dark = user.theme === 'dark'
+  const cardsJson = user.dashboardCards ?? 'null'
+
+  return (
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `(function(){document.documentElement.classList.toggle('dark',${dark});window.__GF_THEME__=${JSON.stringify(user.theme)};window.__GF_CARDS__=${cardsJson};})()`,
+      }}
+    />
+  )
 }
