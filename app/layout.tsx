@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 import ThemeInitScript from "@/components/theme-init-script";
-import ThemeToggle from "@/components/theme-toggle";
 import PwaRegister from "@/components/pwa-register";
 
 const geistSans = Geist({
@@ -53,7 +52,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full" suppressHydrationWarning>
         <ThemeInitScript />
         {children}
-        <ThemeToggle />
         <PwaRegister />
         <Toaster
           position="bottom-right"

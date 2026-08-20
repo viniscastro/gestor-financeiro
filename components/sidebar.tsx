@@ -21,6 +21,7 @@ import {
   X,
 } from 'lucide-react'
 import Avatar from '@/components/avatar'
+import HeaderActions from '@/components/header-actions'
 
 type SessionUser = {
   id: string
@@ -120,6 +121,10 @@ export default function Sidebar({ user }: { user: SessionUser }) {
 
   return (
     <>
+      <div className="fixed right-4 top-4 z-50">
+        <HeaderActions />
+      </div>
+
       <button
         type="button"
         onClick={() => setOpen(true)}
