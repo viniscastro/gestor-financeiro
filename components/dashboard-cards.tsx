@@ -46,12 +46,12 @@ export default function DashboardCards({ cards }: { cards: CardData[] }) {
   const visibleCards = cards.filter((c) => isVisible(c.id))
   const count = visibleCards.length
 
-  function renderCard(card: CardData, className?: string) {
+  function renderCard(card: CardData, spanClass: string) {
     const Icon = ICONS[card.id]
     return (
       <div
         key={card.id}
-        className={`rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800/50 sm:p-5 ${className ?? ''}`}
+        className={`${spanClass} rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800/50 sm:p-5`}
       >
         <div className="flex items-center justify-between">
           <p className="text-[10px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-300 sm:text-xs">
@@ -68,28 +68,27 @@ export default function DashboardCards({ cards }: { cards: CardData[] }) {
     )
   }
 
-  if (count === 5) {
-    const top = visibleCards.slice(0, 3)
-    const bottom = visibleCards.slice(3)
-    return (
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
-        {top.map((c) => renderCard(c, 'lg:col-span-2'))}
-        {bottom.map((c) => renderCard(c, 'lg:col-span-3'))}
-      </div>
-    )
+  const rows: CardData[][] = []
+  let remaining = [...visibleCards]
+  while (remaining.length > 0) {
+    const take = remaining.length <= 2 ? remaining.length : Math.min(3, remaining.length)
+    rows.push(remaining.splice(0, take))
   }
 
-  function gridClass() {
-    if (count === 1) return 'grid grid-cols-1 gap-3'
-    if (count === 2) return 'grid grid-cols-1 gap-3 sm:grid-cols-2'
-    if (count === 3) return 'grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3'
-    if (count === 4) return 'grid grid-cols-1 gap-3 sm:grid-cols-2'
-    return 'grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3'
+  const spanByRowLen: Record<number, string> = {
+    1: 'sm:col-span-12 lg:col-span-12',
+    2: 'sm:col-span-6 lg:col-span-6',
+    3: 'sm:col-span-4 lg:col-span-4',
+    4: 'sm:col-span-3 lg:col-span-3',
   }
 
   return (
-    <div className={gridClass()}>
-      {visibleCards.map((c) => renderCard(c))}
+    <div className="space-y-3">
+      {rows.map((row, ri) => (
+        <div key={ri} className="grid grid-cols-12 gap-3">
+          {row.map((c) => renderCard(c, spanByRowLen[row.length] ?? 'sm:col-span-4 lg:col-span-4'))}
+        </div>
+      ))}
     </div>
   )
 }
