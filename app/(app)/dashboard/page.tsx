@@ -221,7 +221,7 @@ export default async function DashboardPage() {
               <Link
                 key={account.id}
                 href="/accounts"
-                className="rounded-2xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-800/50 dark:hover:border-zinc-700"
+                className="rounded-2xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800/50 dark:hover:border-zinc-700"
               >
                 <div className="flex items-center gap-2">
                   <span
@@ -270,7 +270,7 @@ export default async function DashboardPage() {
       )}
 
       {topCats.length > 0 && (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-800/50">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800/50">
           <h2 className="mb-3 text-base font-semibold text-zinc-900 dark:text-zinc-50">
             Top categorias (mês)
           </h2>
@@ -331,7 +331,7 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-800/50">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800/50">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
             Transações recentes

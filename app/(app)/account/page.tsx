@@ -45,7 +45,7 @@ export default async function AccountPage() {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900/60">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800/50">
         <div className="flex flex-wrap items-center gap-5">
           <AvatarUpload name={user.name ?? ''} image={user.image} />
           <div className="min-w-0">
@@ -55,7 +55,7 @@ export default async function AccountPage() {
             <p className="text-sm text-zinc-500 dark:text-zinc-400">{user.email}</p>
           </div>
         </div>
-        <dl className="mt-6 grid gap-4 border-t border-zinc-200 pt-4 text-sm sm:grid-cols-2 dark:border-zinc-800">
+        <dl className="mt-6 grid gap-4 border-t border-zinc-200 pt-4 text-sm sm:grid-cols-2 dark:border-zinc-700">
           <div>
             <dt className="text-zinc-500">E-mail confirmado</dt>
             <dd className="mt-0.5 text-zinc-700 dark:text-zinc-200">
