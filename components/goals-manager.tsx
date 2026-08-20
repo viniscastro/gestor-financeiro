@@ -16,6 +16,78 @@ import type { SavingsGoalDto } from '@/lib/types'
 import CurrencyInput from '@/components/currency-input'
 import DatePicker from '@/components/date-picker'
 
+function TopupToast({ t, goal, onDone }: { t: string | number; goal: SavingsGoalDto; onDone: () => void }) {
+  const [amount, setAmount] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function handleTopup() {
+    const add = Number(amount)
+    if (!add || add <= 0) return
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/goals/${goal.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: goal.name,
+          targetAmount: goal.targetAmount / 100,
+          currentAmount: goal.currentAmount / 100 + add,
+          targetDate: goal.targetDate,
+        }),
+      })
+      if (!res.ok) {
+        toast.error('Erro ao adicionar saldo.')
+        return
+      }
+      toast.dismiss(t)
+      await onDone()
+      toast.success(`R$ ${add.toFixed(2)} adicionado à meta "${goal.name}"`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
+      <Wallet className="h-5 w-5 shrink-0 text-emerald-500 dark:text-emerald-400" />
+      <div className="flex items-center gap-2">
+        <div className="relative">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">R$</span>
+          <input
+            type="number"
+            min="0.01"
+            step="0.01"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') { e.preventDefault(); handleTopup() }
+            }}
+            autoFocus
+            placeholder="0,00"
+            className="w-32 rounded-lg border border-zinc-300 bg-white py-2 pl-10 pr-3 text-sm text-zinc-900 outline-none transition focus:border-emerald-500 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100"
+          />
+        </div>
+        <button
+          type="button"
+          onClick={handleTopup}
+          disabled={loading || !amount}
+          className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:opacity-50"
+        >
+          {loading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+          Guardar
+        </button>
+        <button
+          type="button"
+          onClick={() => toast.dismiss(t)}
+          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function GoalsManager() {
   const [goals, setGoals] = useState<SavingsGoalDto[]>([])
   const [loading, setLoading] = useState(true)
@@ -28,9 +100,6 @@ export default function GoalsManager() {
   const [targetDate, setTargetDate] = useState('')
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
-  const [topupGoalId, setTopupGoalId] = useState<string | null>(null)
-  const [topupAmount, setTopupAmount] = useState('')
-  const [topupLoading, setTopupLoading] = useState(false)
 
   async function reload() {
     try {
@@ -146,32 +215,10 @@ export default function GoalsManager() {
     })
   }
 
-  async function handleTopup(goal: SavingsGoalDto) {
-    const add = Number(topupAmount)
-    if (!add || add <= 0) return
-    setTopupLoading(true)
-    try {
-      const res = await fetch(`/api/goals/${goal.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: goal.name,
-          targetAmount: goal.targetAmount / 100,
-          currentAmount: goal.currentAmount / 100 + add,
-          targetDate: goal.targetDate,
-        }),
-      })
-      if (!res.ok) {
-        toast.error('Erro ao adicionar saldo.')
-        return
-      }
-      setTopupGoalId(null)
-      setTopupAmount('')
-      await reload()
-      toast.success(`R$ ${add.toFixed(2)} adicionado à meta "${goal.name}"`)
-    } finally {
-      setTopupLoading(false)
-    }
+  function openTopup(goal: SavingsGoalDto) {
+    toast.custom((t) => (
+      <TopupToast t={t} goal={goal} onDone={reload} />
+    ), { duration: Infinity })
   }
 
   function formatDate(value: string): string {
@@ -303,53 +350,14 @@ export default function GoalsManager() {
                 </div>
 
                 {!done && (
-                  <>
-                    {topupGoalId === goal.id ? (
-                      <div className="mt-3 flex items-center gap-2">
-                        <div className="relative flex-1">
-                          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">R$</span>
-                          <input
-                            type="number"
-                            min="0.01"
-                            step="0.01"
-                            value={topupAmount}
-                            onChange={(e) => setTopupAmount(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') { e.preventDefault(); handleTopup(goal) }
-                              if (e.key === 'Escape') setTopupGoalId(null)
-                            }}
-                            autoFocus
-                            className="w-full rounded-lg border border-emerald-500 bg-white py-2 pl-10 pr-3 text-sm text-zinc-900 outline-none focus:ring-2 focus:ring-emerald-500/20 dark:border-emerald-700 dark:bg-zinc-900 dark:text-zinc-100"
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleTopup(goal)}
-                          disabled={topupLoading || !topupAmount}
-                          className="flex h-9 items-center gap-1.5 rounded-lg bg-emerald-500 px-3 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:opacity-50"
-                        >
-                          {topupLoading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                          Guardar
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setTopupGoalId(null)}
-                          className="flex h-9 items-center rounded-lg border border-zinc-300 px-3 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                        >
-                          Cancelar
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => { setTopupGoalId(goal.id); setTopupAmount('') }}
-                        className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-emerald-300 px-3 py-2 text-sm font-medium text-emerald-600 transition hover:bg-emerald-50 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/20"
-                      >
-                        <Wallet className="h-4 w-4" />
-                        Adicionar saldo
-                      </button>
-                    )}
-                  </>
+                  <button
+                    type="button"
+                    onClick={() => openTopup(goal)}
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-emerald-300 px-3 py-2 text-sm font-medium text-emerald-600 transition hover:bg-emerald-50 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/20"
+                  >
+                    <Wallet className="h-4 w-4" />
+                    Adicionar saldo
+                  </button>
                 )}
               </div>
             )
