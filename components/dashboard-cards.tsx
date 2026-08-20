@@ -46,12 +46,12 @@ export default function DashboardCards({ cards }: { cards: CardData[] }) {
   const visibleCards = cards.filter((c) => isVisible(c.id))
   const count = visibleCards.length
 
-  function renderCard(card: CardData) {
+  function renderCard(card: CardData, className?: string) {
     const Icon = ICONS[card.id]
     return (
       <div
         key={card.id}
-        className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800/50 sm:p-5"
+        className={`rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800/50 sm:p-5 ${className ?? ''}`}
       >
         <div className="flex items-center justify-between">
           <p className="text-[10px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-300 sm:text-xs">
@@ -72,28 +72,24 @@ export default function DashboardCards({ cards }: { cards: CardData[] }) {
     const top = visibleCards.slice(0, 3)
     const bottom = visibleCards.slice(3)
     return (
-      <div className="space-y-3">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {top.map(renderCard)}
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 lg:max-w-[66.666%]">
-          {bottom.map(renderCard)}
-        </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
+        {top.map((c) => renderCard(c, 'lg:col-span-2'))}
+        {bottom.map((c) => renderCard(c, 'lg:col-span-3'))}
       </div>
     )
   }
 
   function gridClass() {
-    if (count === 1) return 'grid grid-cols-1'
-    if (count === 2) return 'grid grid-cols-1 sm:grid-cols-2'
-    if (count === 3) return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-    if (count === 4) return 'grid grid-cols-1 sm:grid-cols-2'
-    return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+    if (count === 1) return 'grid grid-cols-1 gap-3'
+    if (count === 2) return 'grid grid-cols-1 gap-3 sm:grid-cols-2'
+    if (count === 3) return 'grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3'
+    if (count === 4) return 'grid grid-cols-1 gap-3 sm:grid-cols-2'
+    return 'grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3'
   }
 
   return (
     <div className={gridClass()}>
-      {visibleCards.map(renderCard)}
+      {visibleCards.map((c) => renderCard(c))}
     </div>
   )
 }
