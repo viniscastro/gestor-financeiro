@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback, useSyncExternalStore } from 'react'
 import { Check, Eye, EyeOff, RotateCcw, X } from 'lucide-react'
 
 const STORAGE_KEY = 'gf-dashboard-cards'
-const COOKIE_NAME = 'gf-dashboard-cards'
 const EVENT = 'gf-cards-change'
 
 export const CARD_IDS = [
@@ -20,18 +19,10 @@ export const CARD_IDS = [
 
 export type DashboardCardId = (typeof CARD_IDS)[number]['id']
 
-function readCookie(name: string): string | null {
-  const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'))
-  return match ? decodeURIComponent(match[1]) : null
-}
-
-function setCookie(name: string, value: string, days = 365) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString()
-  document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires};path=/;SameSite=Lax`
-}
-
 function loadVisible(): DashboardCardId[] {
   if (typeof window === 'undefined') return CARD_IDS.map((c) => c.id)
+  const serverCards = (window as unknown as Record<string, unknown>).__GF_CARDS__
+  if (Array.isArray(serverCards) && serverCards.length > 0) return serverCards as DashboardCardId[]
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
@@ -39,23 +30,17 @@ function loadVisible(): DashboardCardId[] {
       if (Array.isArray(parsed) && parsed.length > 0) return parsed
     }
   } catch {}
-  try {
-    const cv = readCookie(COOKIE_NAME)
-    if (cv) {
-      const parsed = JSON.parse(cv)
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed))
-        return parsed
-      }
-    }
-  } catch {}
   return CARD_IDS.map((c) => c.id)
 }
 
 function saveVisible(ids: DashboardCardId[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ids))
-  setCookie(COOKIE_NAME, JSON.stringify(ids))
   window.dispatchEvent(new Event(EVENT))
+  fetch('/api/user/preferences', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ dashboardCards: ids }),
+  }).catch(() => {})
 }
 
 let currentVisible: DashboardCardId[] = CARD_IDS.map((c) => c.id)

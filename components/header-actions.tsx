@@ -4,51 +4,33 @@ import { useEffect, useState, useSyncExternalStore } from 'react'
 import { usePathname } from 'next/navigation'
 import { Moon, Sun, SlidersHorizontal } from 'lucide-react'
 
-const STORAGE_KEY = 'gf-theme'
-const COOKIE_NAME = 'gf-theme'
 const emptySubscribe = () => () => {}
 
 type StoredTheme = 'light' | 'dark'
 
-function readCookie(name: string): string | null {
-  const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'))
-  return match ? decodeURIComponent(match[1]) : null
-}
+const CYCLE: StoredTheme[] = ['light', 'dark']
 
-function setCookie(name: string, value: string, days = 365) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString()
-  document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires};path=/;SameSite=Lax`
-}
-
-function readStoredTheme(): StoredTheme {
+function getInitialTheme(): StoredTheme {
   if (typeof window === 'undefined') return 'light'
-  const v = window.localStorage.getItem(STORAGE_KEY)
-  if (v === 'light' || v === 'dark') return v
-  const cv = readCookie(COOKIE_NAME)
-  if (cv === 'light' || cv === 'dark') {
-    window.localStorage.setItem(STORAGE_KEY, cv)
-    return cv
-  }
+  const serverTheme = (window as unknown as Record<string, unknown>).__GF_THEME__
+  if (serverTheme === 'dark' || serverTheme === 'light') return serverTheme
   return 'light'
 }
-
-const CYCLE: StoredTheme[] = ['light', 'dark']
 
 export default function HeaderActions() {
   const pathname = usePathname()
   const isDashboard = pathname === '/dashboard'
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
-  const [theme, setTheme] = useState<StoredTheme>(readStoredTheme)
+  const [theme, setTheme] = useState<StoredTheme>(getInitialTheme)
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
-    function apply() {
-      const dark = theme === 'dark'
-      document.documentElement.classList.toggle('dark', dark)
-    }
-    apply()
-    window.localStorage.setItem(STORAGE_KEY, theme)
-    setCookie(COOKIE_NAME, theme)
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+    fetch('/api/user/preferences', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ theme }),
+    }).catch(() => {})
   }, [theme])
 
   useEffect(() => {

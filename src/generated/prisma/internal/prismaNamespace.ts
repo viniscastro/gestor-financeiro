@@ -986,6 +986,8 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   image: 'image',
+  theme: 'theme',
+  dashboardCards: 'dashboardCards',
   emailVerified: 'emailVerified',
   verificationCode: 'verificationCode',
   verificationExpires: 'verificationExpires',
