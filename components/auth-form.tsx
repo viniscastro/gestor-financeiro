@@ -80,31 +80,6 @@ export default function AuthForm() {
       </div>
 
       <div className="rounded-2xl border border-zinc-200 bg-white/80 p-6 shadow-xl backdrop-blur dark:border-white/10 dark:bg-zinc-900/70 dark:shadow-2xl">
-        <div className="mb-6 grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800/80">
-          {(
-            [
-              { id: 'login', label: 'Entrar' },
-              { id: 'register', label: 'Criar conta' },
-            ] as { id: Mode; label: string }[]
-          ).map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => {
-                setMode(tab.id)
-                setError('')
-              }}
-              className={`rounded-md px-3 py-2 text-sm font-medium transition ${
-                mode === tab.id
-                  ? 'border border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                  : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === 'register' && (
             <div>
@@ -183,20 +158,44 @@ export default function AuthForm() {
           </button>
 
           {mode === 'login' && (
-            <div className="text-center">
-              <Link
-                href="/forgot-password"
-                className="text-sm font-medium text-emerald-600 transition hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('register')
+                  setError('')
+                }}
+                className="flex w-full items-center justify-center rounded-lg border border-emerald-500 px-4 py-2.5 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
               >
-                Esqueceu a senha?
-              </Link>
-            </div>
+                Criar conta
+              </button>
+              <div className="text-center">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm font-medium text-emerald-600 transition hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+                >
+                  Esqueceu a senha?
+                </Link>
+              </div>
+            </>
           )}
 
           {mode === 'register' && (
-            <p className="text-center text-xs text-zinc-500">
-              Ao criar a conta, enviaremos um código para confirmar seu e-mail.
-            </p>
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('login')
+                  setError('')
+                }}
+                className="flex w-full items-center justify-center rounded-lg border border-emerald-500 px-4 py-2.5 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
+              >
+                Já tenho conta
+              </button>
+              <p className="text-center text-xs text-zinc-500">
+                Ao criar a conta, enviaremos um código para confirmar seu e-mail.
+              </p>
+            </>
           )}
         </form>
       </div>
