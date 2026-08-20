@@ -22,12 +22,12 @@ export default function CategoriesManager() {
   const [error, setError] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [newName, setNewName] = useState('')
-  const [newType, setNewType] = useState<TransactionType>('EXPENSE')
+  const [newType, setNewType] = useState<TransactionType>('INCOME')
   const [newColor, setNewColor] = useState<string>(CATEGORY_COLORS[0])
   const [newIcon, setNewIcon] = useState<string>(CATEGORY_ICONS[0])
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
-  const [tab, setTab] = useState<TransactionType>('EXPENSE')
+  const [tab, setTab] = useState<TransactionType>('INCOME')
   const [editing, setEditing] = useState<CategoryDto | null>(null)
 
   async function reload() {

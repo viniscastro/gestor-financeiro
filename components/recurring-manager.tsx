@@ -26,7 +26,7 @@ export default function RecurringManager() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<RecurringRuleDto | null>(null)
   const [description, setDescription] = useState('')
-  const [type, setType] = useState<TransactionType>('EXPENSE')
+  const [type, setType] = useState<TransactionType>('INCOME')
   const [amount, setAmount] = useState('')
   const [accountId, setAccountId] = useState('')
   const [categoryId, setCategoryId] = useState('')
@@ -87,7 +87,7 @@ export default function RecurringManager() {
   function openCreate() {
     setEditing(null)
     setDescription('')
-    setType('EXPENSE')
+    setType('INCOME')
     setAmount('')
     setAccountId(accounts[0]?.id ?? '')
     setCategoryId('')
@@ -101,7 +101,7 @@ export default function RecurringManager() {
   function openEdit(rule: RecurringRuleDto) {
     setEditing(rule)
     setDescription(rule.description)
-    setType(rule.type ?? 'EXPENSE')
+    setType(rule.type ?? 'INCOME')
     setAmount((rule.amountCents / 100).toFixed(2))
     setAccountId(rule.accountId)
     setCategoryId(rule.categoryId ?? '')
