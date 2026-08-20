@@ -2,12 +2,7 @@ import { redirect } from 'next/navigation'
 import {
   AlarmClock,
   ArrowLeftRight,
-  Flag,
-  Repeat,
   Target,
-  TrendingDown,
-  TrendingUp,
-  Wallet,
 } from 'lucide-react'
 import Link from 'next/link'
 import { auth } from '@/lib/auth'
@@ -143,7 +138,6 @@ export default async function DashboardPage() {
       id: 'saldo' as const,
       label: 'Saldo total',
       value: formatBRL(totalBalance),
-      icon: Wallet,
       accent:
         totalBalance >= 0
           ? 'text-emerald-600 bg-emerald-500/15 dark:text-emerald-400'
@@ -153,28 +147,24 @@ export default async function DashboardPage() {
       id: 'entradas' as const,
       label: 'Entradas no mês',
       value: formatBRL(monthIncome),
-      icon: TrendingUp,
       accent: 'text-emerald-600 bg-emerald-500/15 dark:text-emerald-400',
     },
     {
       id: 'saidas' as const,
       label: 'Saídas no mês',
       value: formatBRL(monthExpense),
-      icon: TrendingDown,
       accent: 'text-rose-600 bg-rose-500/15 dark:text-rose-400',
     },
     {
       id: 'guardado' as const,
       label: 'Guardado (metas)',
       value: formatBRL(totalSaved),
-      icon: Flag,
       accent: 'text-sky-600 bg-sky-500/15 dark:text-sky-400',
     },
     {
       id: 'recorrentes' as const,
       label: 'Recorrentes (mês)',
       value: formatBRL(Math.abs(monthlyRecurring)),
-      icon: Repeat,
       accent: 'text-violet-600 bg-violet-500/15 dark:text-violet-400',
     },
   ]

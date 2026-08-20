@@ -1,13 +1,21 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Wallet, TrendingUp, TrendingDown, Flag, Repeat } from 'lucide-react'
 import { useDashboardCards, type DashboardCardId } from '@/components/dashboard-card-editor'
+
+const ICONS: Record<DashboardCardId, React.ElementType> = {
+  saldo: Wallet,
+  entradas: TrendingUp,
+  saidas: TrendingDown,
+  guardado: Flag,
+  recorrentes: Repeat,
+}
 
 type CardData = {
   id: DashboardCardId
   label: string
   value: string
-  icon: React.ElementType
   accent: string
 }
 
@@ -45,24 +53,27 @@ export default function DashboardCards({ cards }: { cards: CardData[] }) {
 
   return (
     <div className={`grid gap-4 ${gridCols()}`}>
-      {visibleCards.map((card, i) => (
-        <div
-          key={card.id}
-          className={`rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60 ${span(i)}`}
-        >
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
-              {card.label}
-            </p>
-            <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${card.accent}`}>
-              <card.icon className="h-5 w-5" />
+      {visibleCards.map((card, i) => {
+        const Icon = ICONS[card.id]
+        return (
+          <div
+            key={card.id}
+            className={`rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60 ${span(i)}`}
+          >
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+                {card.label}
+              </p>
+              <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${card.accent}`}>
+                <Icon className="h-5 w-5" />
+              </div>
             </div>
+            <p className="mt-2 text-2xl font-bold text-zinc-900 dark:text-white">
+              {card.value}
+            </p>
           </div>
-          <p className="mt-2 text-2xl font-bold text-zinc-900 dark:text-white">
-            {card.value}
-          </p>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
