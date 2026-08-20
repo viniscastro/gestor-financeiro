@@ -182,11 +182,13 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        {cards.map((card) => (
+      <div className="grid grid-cols-6 gap-4">
+        {cards.map((card, i) => (
           <div
             key={card.label}
-            className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60"
+            className={`rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60 ${
+              i < 3 ? 'col-span-2' : 'col-span-3'
+            }`}
           >
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
