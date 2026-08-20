@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ArrowRightLeft, LoaderCircle, X } from 'lucide-react'
 import CurrencyInput from '@/components/currency-input'
+import DatePicker from '@/components/date-picker'
 import type { AccountDto } from '@/lib/types'
 
 type Props = {
@@ -140,13 +141,10 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
               <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Data
               </label>
-              <input
-                id="date"
-                type="date"
+              <DatePicker
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
+                onChange={setDate}
                 required
-                className={inputClass}
               />
             </div>
           </div>

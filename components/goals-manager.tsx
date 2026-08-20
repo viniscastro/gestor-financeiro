@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 import { formatBRL } from '@/lib/format'
 import type { SavingsGoalDto } from '@/lib/types'
 import CurrencyInput from '@/components/currency-input'
+import DatePicker from '@/components/date-picker'
 
 export default function GoalsManager() {
   const [goals, setGoals] = useState<SavingsGoalDto[]>([])
@@ -318,12 +319,9 @@ export default function GoalsManager() {
                   <label htmlFor="targetDate" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Data alvo
                   </label>
-                  <input
-                    id="targetDate"
-                    type="date"
+                  <DatePicker
                     value={targetDate}
-                    onChange={(e) => setTargetDate(e.target.value)}
-                    className={inputClass}
+                    onChange={setTargetDate}
                   />
                 </div>
               </div>

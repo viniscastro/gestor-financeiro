@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Info, LoaderCircle, TrendingDown, TrendingUp, X } from 'lucide-react'
 import CurrencyInput from '@/components/currency-input'
+import DatePicker from '@/components/date-picker'
 import type { TransactionType } from '@/lib/categories'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 
@@ -178,6 +179,28 @@ function TransactionFormBody({
             />
           </div>
 
+          <div>
+            <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Categoria
+            </label>
+            <select
+              id="category"
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              required
+              className={inputClass}
+            >
+              <option value="" disabled>
+                Selecione...
+              </option>
+              {availableCategories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -196,13 +219,10 @@ function TransactionFormBody({
               <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Data
               </label>
-              <input
-                id="date"
-                type="date"
+              <DatePicker
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
+                onChange={setDate}
                 required
-                className={inputClass}
               />
             </div>
           </div>
@@ -240,28 +260,6 @@ function TransactionFormBody({
               </p>
             </div>
           )}
-
-          <div>
-            <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Categoria
-            </label>
-            <select
-              id="category"
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              required
-              className={inputClass}
-            >
-              <option value="" disabled>
-                Selecione...
-              </option>
-              {availableCategories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
 
           {error && (
             <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">

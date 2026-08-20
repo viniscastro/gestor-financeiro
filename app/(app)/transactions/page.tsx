@@ -9,6 +9,7 @@ import TransactionList from '@/components/transaction-list'
 import TransferForm from '@/components/transfer-form'
 import { downloadCsv, formatCentsPtBR, formatBRL, formatDate, toCsv } from '@/lib/format'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
+import DatePicker from '@/components/date-picker'
 
 type TypeFilter = 'ALL' | 'INCOME' | 'EXPENSE'
 
@@ -215,7 +216,7 @@ export default function TransactionsPage() {
           <button
             type="button"
             onClick={() => setTransferOpen(true)}
-            className="flex items-center gap-2 rounded-lg border border-sky-300 bg-sky-500/10 px-4 py-2.5 text-sm font-semibold text-sky-600 transition hover:bg-sky-500/20 dark:border-sky-700 dark:text-sky-400"
+            className="flex items-center gap-2 rounded-lg border border-sky-300 bg-transparent px-4 py-2.5 text-sm font-semibold text-sky-600 transition hover:bg-sky-50 dark:border-sky-700 dark:text-sky-400 dark:hover:bg-sky-950"
           >
             <ArrowRightLeft className="h-4 w-4" />
             Transferir
@@ -317,21 +318,15 @@ export default function TransactionsPage() {
             </option>
           ))}
         </select>
-        <input
-          type="date"
+        <DatePicker
           value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-          placeholder="De"
-          title="Data inicial"
-          className={selectClass + ' min-w-[140px]'}
+          onChange={setDateFrom}
+          className="min-w-[140px]"
         />
-        <input
-          type="date"
+        <DatePicker
           value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
-          placeholder="Até"
-          title="Data final"
-          className={selectClass + ' min-w-[140px]'}
+          onChange={setDateTo}
+          className="min-w-[140px]"
         />
       </div>
 
