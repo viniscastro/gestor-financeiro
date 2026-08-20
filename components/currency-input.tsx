@@ -19,6 +19,7 @@ type Props = {
   placeholder?: string
   className?: string
   required?: boolean
+  autoFocus?: boolean
 }
 
 export default function CurrencyInput({
@@ -28,6 +29,7 @@ export default function CurrencyInput({
   placeholder = 'R$0,00',
   className,
   required,
+  autoFocus,
 }: Props) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value)
@@ -69,6 +71,7 @@ export default function CurrencyInput({
       onFocus={handleFocus}
       onBlur={handleBlur}
       required={required}
+      autoFocus={autoFocus}
       className={className}
     />
   )

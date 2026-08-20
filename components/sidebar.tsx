@@ -82,7 +82,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
               className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                 active
                   ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
-                  : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100'
+                  : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
               }`}
             >
               <item.icon className="h-5 w-5" />
@@ -93,7 +93,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
       </nav>
 
 <div className="mt-6 border-t border-zinc-200 pt-4 dark:border-zinc-700">
-        <Link href="/account" className="mb-3 flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-zinc-100 dark:hover:bg-zinc-800/70">
+        <Link href="/account" className="mb-3 flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-zinc-100 dark:hover:bg-zinc-800">
           <Avatar name={user.name} image={user.image} />
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-200">

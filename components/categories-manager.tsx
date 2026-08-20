@@ -168,7 +168,7 @@ export default function CategoriesManager() {
         </p>
       )}
 
-      <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800/80">
+      <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
         <button
           type="button"
           onClick={() => setTab('INCOME')}
@@ -212,7 +212,7 @@ export default function CategoriesManager() {
             {filtered.map((cat) => (
               <li
                 key={cat.id}
-                className="group flex items-center gap-3 px-4 py-3 transition hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
+                className="group flex items-center gap-3 px-4 py-3 transition hover:bg-zinc-50 dark:hover:bg-zinc-800"
               >
                 <div
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
@@ -274,7 +274,7 @@ export default function CategoriesManager() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800/80">
+              <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
                 <button
                   type="button"
                   onClick={() => setNewType('INCOME')}

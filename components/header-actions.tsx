@@ -86,7 +86,7 @@ export default function HeaderActions() {
           <button
             type="button"
             onClick={cycle}
-            className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800/70"
+            className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             <Icon className="h-4 w-4" />
             {labels[theme]}
@@ -98,7 +98,7 @@ export default function HeaderActions() {
               setMenuOpen(false)
               window.dispatchEvent(new CustomEvent('toggle-dashboard-editor'))
             }}
-            className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800/70"
+            className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             <SlidersHorizontal className="h-4 w-4" />
             Editar cards

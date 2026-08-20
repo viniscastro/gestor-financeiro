@@ -131,7 +131,7 @@ export default function DashboardCardEditor() {
                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                   active
                     ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-200'
+                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-200'
                 }`}
               >
                 {active ? (

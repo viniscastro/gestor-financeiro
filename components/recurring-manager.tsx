@@ -401,7 +401,7 @@ export default function RecurringManager() {
               {editing ? 'Editar recorrência' : 'Nova recorrência'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800/80">
+              <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
                 <button
                   type="button"
                   onClick={() => switchType('INCOME')}
