@@ -1,10 +1,41 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { DayPicker } from 'react-day-picker'
+import { DayPicker, useDayPicker, type MonthCaptionProps, type NavProps } from 'react-day-picker'
 import { ptBR } from 'date-fns/locale'
 import { format, parse } from 'date-fns'
-import { CalendarIcon } from 'lucide-react'
+import { CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react'
+
+function MonthHeader(props: MonthCaptionProps) {
+  const { goToMonth, nextMonth, previousMonth } = useDayPicker()
+  return (
+    <div className="flex h-8 items-center justify-between px-1">
+      <button
+        type="button"
+        onClick={() => previousMonth && goToMonth(previousMonth)}
+        disabled={!previousMonth}
+        className="inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700"
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+      <span className="text-sm font-semibold capitalize text-zinc-900 dark:text-zinc-100">
+        {format(props.calendarMonth.date, 'MMMM yyyy', { locale: ptBR })}
+      </span>
+      <button
+        type="button"
+        onClick={() => nextMonth && goToMonth(nextMonth)}
+        disabled={!nextMonth}
+        className="inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700"
+      >
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </div>
+  )
+}
+
+function HiddenNav(_props: NavProps) {
+  return <></>
+}
 
 type Props = {
   value: string
@@ -59,15 +90,13 @@ export default function DatePicker({ value, onChange, required, className }: Pro
             defaultMonth={selected}
             showOutsideDays
             fixedWeeks
+            components={{
+              MonthCaption: MonthHeader,
+              Nav: HiddenNav,
+            }}
             classNames={{
               root: 'p-1',
               months: 'flex flex-col sm:flex-row gap-2',
-              month_caption: 'flex justify-center items-center h-8 text-sm font-semibold text-zinc-900 dark:text-zinc-100',
-              nav: 'flex items-center justify-between gap-1',
-              button_previous:
-                'inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-700',
-              button_next:
-                'inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-700',
               month_grid: 'w-full border-collapse',
               weekdays: 'flex',
               weekday:
