@@ -401,22 +401,6 @@ export default function RecurringManager() {
               {editing ? 'Editar recorrência' : 'Nova recorrência'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Descrição
-                </label>
-                <input
-                  id="description"
-                  type="text"
-                  placeholder="Ex: Aluguel, Netflix..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  required
-                  maxLength={100}
-                  className={inputClass}
-                />
-              </div>
-
               <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800/80">
                 <button
                   type="button"
@@ -442,6 +426,41 @@ export default function RecurringManager() {
                   <TrendingDown className="h-4 w-4" />
                   Saída
                 </button>
+              </div>
+
+              <div>
+                <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Descrição
+                </label>
+                <input
+                  id="description"
+                  type="text"
+                  placeholder="Ex: Aluguel, Netflix..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                  maxLength={100}
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Categoria
+                </label>
+                <select
+                  id="category"
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">Sem categoria</option>
+                  {availableCategories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -492,25 +511,6 @@ export default function RecurringManager() {
                   {accounts.map((a) => (
                     <option key={a.id} value={a.id}>
                       {a.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Categoria
-                </label>
-                <select
-                  id="category"
-                  value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value)}
-                  className={inputClass}
-                >
-                  <option value="">Sem categoria</option>
-                  {availableCategories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
                     </option>
                   ))}
                 </select>
