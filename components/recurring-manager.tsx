@@ -420,18 +420,6 @@ export default function RecurringManager() {
               <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800/80">
                 <button
                   type="button"
-                  onClick={() => switchType('EXPENSE')}
-                  className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
-                    type === 'EXPENSE'
-                      ? 'bg-rose-500 text-white shadow'
-                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
-                  }`}
-                >
-                  <TrendingDown className="h-4 w-4" />
-                  Saída
-                </button>
-                <button
-                  type="button"
                   onClick={() => switchType('INCOME')}
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     type === 'INCOME'
@@ -441,6 +429,18 @@ export default function RecurringManager() {
                 >
                   <TrendingUp className="h-4 w-4" />
                   Entrada
+                </button>
+                <button
+                  type="button"
+                  onClick={() => switchType('EXPENSE')}
+                  className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+                    type === 'EXPENSE'
+                      ? 'bg-rose-500 text-white shadow'
+                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  }`}
+                >
+                  <TrendingDown className="h-4 w-4" />
+                  Saída
                 </button>
               </div>
 

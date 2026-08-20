@@ -25,7 +25,7 @@ export default function CurrencyInput({
   id,
   value,
   onChange,
-  placeholder = '0,00',
+  placeholder = 'R$0,00',
   className,
   required,
 }: Props) {
