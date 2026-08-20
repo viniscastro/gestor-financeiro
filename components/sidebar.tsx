@@ -64,7 +64,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="ml-auto rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white lg:hidden"
+          className="ml-auto rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white lg:hidden"
           aria-label="Fechar menu"
         >
           <X className="h-5 w-5" />
@@ -106,7 +106,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
           type="button"
           onClick={handleSignOut}
           disabled={signingOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-500 transition hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400 disabled:opacity-60"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-500 transition hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:bg-red-500/10 dark:hover:text-rose-400 disabled:opacity-60"
         >
           {signingOut ? (
             <LoaderCircle className="h-5 w-5 animate-spin" />
@@ -128,7 +128,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed left-4 top-4 z-40 rounded-lg border border-zinc-200 bg-white p-2 text-zinc-600 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 lg:hidden"
+        className="fixed left-4 top-4 z-40 rounded-lg border border-zinc-200 bg-white p-2 text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white lg:hidden"
         aria-label="Abrir menu"
       >
         <Menu className="h-5 w-5" />
