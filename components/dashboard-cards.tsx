@@ -76,10 +76,8 @@ export default function DashboardCards({ cards }: { cards: CardData[] }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {top.map(renderCard)}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="hidden lg:block" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 lg:max-w-[66.666%]">
           {bottom.map(renderCard)}
-          <div className="hidden lg:block" />
         </div>
       </div>
     )
