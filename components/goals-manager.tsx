@@ -12,6 +12,7 @@ import {
 import { toast } from 'sonner'
 import { formatBRL } from '@/lib/format'
 import type { SavingsGoalDto } from '@/lib/types'
+import CurrencyInput from '@/components/currency-input'
 
 export default function GoalsManager() {
   const [goals, setGoals] = useState<SavingsGoalDto[]>([])
@@ -73,8 +74,8 @@ export default function GoalsManager() {
   function openEdit(goal: SavingsGoalDto) {
     setEditing(goal)
     setName(goal.name)
-    setTargetAmount((goal.targetAmount / 100).toFixed(2))
-    setCurrentAmount((goal.currentAmount / 100).toFixed(2))
+    setTargetAmount(String(goal.targetAmount / 100))
+    setCurrentAmount(String(goal.currentAmount / 100))
     setTargetDate(goal.targetDate ?? '')
     setFormError('')
     setModalOpen(true)
@@ -305,15 +306,10 @@ export default function GoalsManager() {
                   <label htmlFor="target" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Valor da meta (R$)
                   </label>
-                  <input
+                  <CurrencyInput
                     id="target"
-                    type="number"
-                    inputMode="decimal"
-                    step="0.01"
-                    min="0.01"
-                    placeholder="0,00"
                     value={targetAmount}
-                    onChange={(e) => setTargetAmount(e.target.value)}
+                    onChange={setTargetAmount}
                     required
                     className={inputClass}
                   />
@@ -336,15 +332,10 @@ export default function GoalsManager() {
                 <label htmlFor="current" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Valor guardado (R$)
                 </label>
-                <input
+                <CurrencyInput
                   id="current"
-                  type="number"
-                  inputMode="decimal"
-                  step="0.01"
-                  min="0"
-                  placeholder="0,00"
                   value={currentAmount}
-                  onChange={(e) => setCurrentAmount(e.target.value)}
+                  onChange={setCurrentAmount}
                   className={inputClass}
                 />
               </div>

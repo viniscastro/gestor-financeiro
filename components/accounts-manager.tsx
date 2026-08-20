@@ -7,6 +7,7 @@ import { CATEGORY_COLORS } from '@/lib/categories'
 import { formatBRL } from '@/lib/format'
 import type { AccountDto } from '@/lib/types'
 import { toast } from 'sonner'
+import CurrencyInput from '@/components/currency-input'
 
 export default function AccountsManager() {
   const [accounts, setAccounts] = useState<AccountDto[]>([])
@@ -70,7 +71,7 @@ export default function AccountsManager() {
     setName(account.name)
     setType(account.type)
     setColor(account.color)
-    setInitialBalance((account.initialBalance / 100).toFixed(2))
+    setInitialBalance(String(account.initialBalance / 100))
     setFormError('')
     setModalOpen(true)
   }
@@ -312,14 +313,10 @@ export default function AccountsManager() {
                 <label htmlFor="initialBalance" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Saldo inicial (R$)
                 </label>
-                <input
+                <CurrencyInput
                   id="initialBalance"
-                  type="number"
-                  inputMode="decimal"
-                  step="0.01"
-                  placeholder="0,00"
                   value={initialBalance}
-                  onChange={(e) => setInitialBalance(e.target.value)}
+                  onChange={setInitialBalance}
                   className={inputClass}
                 />
               </div>
