@@ -61,7 +61,7 @@ export default function DashboardCards({ cards, initialCards }: { cards: CardDat
             <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
         </div>
-        <p className="mt-2 text-xl font-bold text-zinc-900 dark:text-zinc-50 sm:text-2xl">
+        <p className="mt-2 text-lg font-bold text-zinc-900 dark:text-zinc-50 sm:text-2xl">
           {card.value}
         </p>
       </div>
