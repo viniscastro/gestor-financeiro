@@ -80,7 +80,7 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
               {isIncome ? '+' : '–'} {formatBRL(t.amount)}
             </p>
 
-            <div className="flex shrink-0 gap-1 opacity-0 transition group-hover:opacity-100">
+            <div className="flex shrink-0 gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
               {!isTransfer && (
                 <button
                   type="button"

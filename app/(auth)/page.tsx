@@ -10,7 +10,7 @@ export default async function AuthPage() {
   if (session?.user?.id) redirect('/dashboard')
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-4">
+    <div className="relative flex min-h-screen items-center justify-center overflow-y-auto p-4">
       <div
         className="pointer-events-none absolute inset-0"
         style={{

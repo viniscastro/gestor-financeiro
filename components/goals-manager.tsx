@@ -258,7 +258,7 @@ export default function GoalsManager() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-1 opacity-0 transition group-hover:opacity-100">
+                  <div className="flex gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
                     <button
                       type="button"
                       onClick={() => openEdit(goal)}
@@ -347,12 +347,12 @@ export default function GoalsManager() {
       )}
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
           <div
             className="absolute inset-0 bg-black/60"
             onClick={() => setModalOpen(false)}
           />
-          <div className="relative w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
+          <div className="relative my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
             <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
               {editing ? 'Editar meta' : 'Nova meta'}
             </h2>
@@ -373,7 +373,7 @@ export default function GoalsManager() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="target" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Valor da meta (R$)

@@ -76,10 +76,10 @@ export default function DashboardCards({ cards, initialCards }: { cards: CardDat
   }
 
   const spanByRowLen: Record<number, string> = {
-    1: 'sm:col-span-12 lg:col-span-12',
-    2: 'sm:col-span-6 lg:col-span-6',
-    3: 'sm:col-span-4 lg:col-span-4',
-    4: 'sm:col-span-3 lg:col-span-3',
+    1: 'col-span-12',
+    2: 'col-span-6',
+    3: 'col-span-4',
+    4: 'col-span-3',
   }
 
   return (

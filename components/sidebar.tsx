@@ -126,6 +126,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
         <HeaderActions defaultTheme={user.theme === 'dark' ? 'dark' : 'light'} />
       </div>
 
+      {!open && (
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -134,13 +135,14 @@ export default function Sidebar({ user }: { user: SessionUser }) {
       >
         <Menu className="h-5 w-5" />
       </button>
+      )}
 
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-[#0e0e12] lg:flex">
         {nav}
       </aside>
 
       {open && (
-        <div className="fixed inset-0 z-30 lg:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
           <aside className="absolute inset-y-0 left-0 flex w-64 flex-col border-r border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-[#0e0e12]">
             {nav}
