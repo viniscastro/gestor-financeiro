@@ -148,38 +148,38 @@ export default async function DashboardPage() {
       value: formatBRL(totalBalance),
       accent:
         totalBalance >= 0
-          ? 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900 dark:text-emerald-400'
-          : 'text-rose-600 bg-rose-100 dark:bg-rose-900 dark:text-rose-400',
+          ? 'bg-emerald-500 text-white'
+          : 'bg-rose-500 text-white',
     },
     {
       id: 'entradas' as const,
       label: 'Entradas no mês',
       value: formatBRL(monthIncome),
-      accent: 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900 dark:text-emerald-400',
+      accent: 'bg-emerald-500 text-white',
     },
     {
       id: 'saidas' as const,
       label: 'Saídas no mês',
       value: formatBRL(monthExpense),
-      accent: 'text-rose-600 bg-rose-100 dark:bg-rose-900 dark:text-rose-400',
+      accent: 'bg-rose-500 text-white',
     },
     {
       id: 'guardado' as const,
       label: 'Guardado (metas)',
       value: formatBRL(totalSaved),
-      accent: 'text-sky-600 bg-sky-100 dark:bg-sky-900 dark:text-sky-400',
+      accent: 'bg-sky-500 text-white',
     },
     {
       id: 'recorrentes' as const,
       label: 'Recorrentes (mês)',
       value: formatBRL(Math.abs(monthlyRecurring)),
-      accent: 'text-violet-600 bg-violet-100 dark:bg-violet-900 dark:text-violet-400',
+      accent: 'bg-violet-500 text-white',
     },
     {
       id: 'proximo-vencimento' as const,
       label: 'Próximo vencimento',
       value: nextBill ? formatBRL(nextBill.amountCents) : '—',
-      accent: 'text-amber-600 bg-amber-100 dark:bg-amber-900 dark:text-amber-400',
+      accent: 'bg-amber-500 text-white',
     },
     {
       id: 'fluxo' as const,
@@ -187,16 +187,16 @@ export default async function DashboardPage() {
       value: formatBRL(monthFlow),
       accent:
         monthFlow >= 0
-          ? 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900 dark:text-emerald-400'
-          : 'text-rose-600 bg-rose-100 dark:bg-rose-900 dark:text-rose-400',
+          ? 'bg-emerald-500 text-white'
+          : 'bg-rose-500 text-white',
     },
     {
       id: 'orcamento' as const,
       label: 'Orçamentos estourados',
       value: overBudget.length === 0 ? 'Nenhum' : `${overBudget.length} estourado${overBudget.length > 1 ? 's' : ''}`,
       accent: overBudget.length > 0
-        ? 'text-rose-600 bg-rose-100 dark:bg-rose-900 dark:text-rose-400'
-        : 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900 dark:text-emerald-400',
+        ? 'bg-rose-500 text-white'
+        : 'bg-emerald-500 text-white',
     },
   ]
 
@@ -373,10 +373,10 @@ export default async function DashboardPage() {
                   <div
                     className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${
                       isTransfer
-                        ? 'bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-sky-400'
+                        ? 'bg-sky-500 text-white'
                         : isIncome
-                          ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400'
-                          : 'bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-400'
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-rose-500 text-white'
                     }`}
                   >
                     {isTransfer ? '⇄' : isIncome ? '+' : '–'}

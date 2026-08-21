@@ -84,7 +84,7 @@ export default function AuthForm() {
           {mode === 'register' && (
             <div>
               <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Nome
+                Nome <span className="text-rose-500">*</span>
               </label>
               <input
                 id="name"
@@ -101,7 +101,7 @@ export default function AuthForm() {
 
           <div>
             <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              E-mail
+              E-mail <span className="text-rose-500">*</span>
             </label>
             <input
               id="email"
@@ -117,7 +117,7 @@ export default function AuthForm() {
 
           <div>
             <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Senha
+              Senha <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
               <input
@@ -165,7 +165,7 @@ export default function AuthForm() {
                   setMode('register')
                   setError('')
                 }}
-                className="flex w-full items-center justify-center rounded-lg border border-emerald-500 px-4 py-2.5 text-sm font-medium text-emerald-600 transition hover:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
+                className="flex w-full items-center justify-center rounded-lg border border-emerald-500 px-4 py-2.5 text-sm font-medium text-emerald-600 transition hover:bg-emerald-500 hover:text-white dark:text-emerald-400 dark:hover:text-white"
               >
                 Criar conta
               </button>

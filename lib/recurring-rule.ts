@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { TRANSACTION_TYPES } from '@/lib/categories'
 import type { RecurringKind, RecurringRuleDto, TransactionType } from '@/lib/types'
-import { nextOccurrence } from '@/lib/recurring'
+import { nextOccurrenceStr } from '@/lib/recurring'
 
 const base = {
   description: z.string().trim().min(1, 'Informe a descrição').max(100),
@@ -85,6 +85,6 @@ export function toRecurringRuleDto(rule: {
     active: rule.active,
     notifyDaysBefore: rule.notifyDaysBefore,
     position: rule.position,
-    nextDate: nextOccurrence(rule.dayOfMonth, new Date()).toISOString(),
+    nextDate: nextOccurrenceStr(rule.dayOfMonth, new Date()),
   }
 }

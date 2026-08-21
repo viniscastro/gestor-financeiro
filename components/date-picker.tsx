@@ -1,41 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { DayPicker, useDayPicker, type MonthCaptionProps, type NavProps } from 'react-day-picker'
+import { DayPicker } from 'react-day-picker'
 import { ptBR } from 'date-fns/locale'
 import { format, parse } from 'date-fns'
 import { CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react'
-
-function MonthHeader(props: MonthCaptionProps) {
-  const { goToMonth, nextMonth, previousMonth } = useDayPicker()
-  return (
-    <div className="flex h-8 items-center justify-between px-1">
-      <button
-        type="button"
-        onClick={() => previousMonth && goToMonth(previousMonth)}
-        disabled={!previousMonth}
-        className="inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700"
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </button>
-      <span className="text-sm font-semibold capitalize text-zinc-900 dark:text-zinc-100">
-        {format(props.calendarMonth.date, 'MMMM yyyy', { locale: ptBR })}
-      </span>
-      <button
-        type="button"
-        onClick={() => nextMonth && goToMonth(nextMonth)}
-        disabled={!nextMonth}
-        className="inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700"
-      >
-        <ChevronRight className="h-4 w-4" />
-      </button>
-    </div>
-  )
-}
-
-function HiddenNav(_props: NavProps) {
-  return <></>
-}
 
 type Props = {
   value: string
@@ -81,7 +50,7 @@ export default function DatePicker({ value, onChange, required, className }: Pro
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 rounded-xl border border-zinc-200 bg-white p-2 shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
+        <div className="absolute right-0 z-50 mt-1 rounded-xl border border-zinc-200 bg-white p-3 shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
           <DayPicker
             mode="single"
             selected={selected}
@@ -90,26 +59,30 @@ export default function DatePicker({ value, onChange, required, className }: Pro
             defaultMonth={selected}
             showOutsideDays
             fixedWeeks
-            components={{
-              MonthCaption: MonthHeader,
-              Nav: HiddenNav,
-            }}
             classNames={{
-              root: 'p-1',
-              months: 'flex flex-col sm:flex-row gap-2',
+              root: 'p-0',
+              months: 'flex flex-col',
+              month: 'w-full',
+              month_caption: 'flex h-10 items-center justify-between px-1 mb-2',
+              caption_label: 'text-sm font-semibold capitalize text-zinc-900 dark:text-zinc-100',
+              nav: 'flex items-center gap-1',
+              button_previous:
+                'inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700',
+              button_next:
+                'inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700',
+              chevron: 'h-4 w-4',
               month_grid: 'w-full border-collapse',
-              weekdays: 'flex',
+              weekdays: 'flex mb-1',
               weekday:
-                'w-9 h-9 text-[11px] font-medium text-zinc-400 dark:text-zinc-500 flex items-center justify-center',
-              week: 'flex w-full mt-0.5',
+                'w-11 h-8 text-[11px] font-medium text-zinc-400 dark:text-zinc-500 flex items-center justify-center',
+              week: 'flex w-full',
               day_button:
-                'relative flex h-9 w-9 items-center justify-center rounded-lg text-sm text-zinc-900 transition hover:bg-emerald-100 dark:text-zinc-100 dark:hover:bg-emerald-900/30',
-              day: 'w-9 h-9 p-0',
+                'relative flex h-11 w-11 items-center justify-center rounded-lg text-sm text-zinc-900 transition hover:bg-emerald-100 dark:text-zinc-100 dark:hover:bg-emerald-900/30',
+              day: 'w-11 h-11 p-0',
               selected:
                 'bg-emerald-500 text-white hover:bg-emerald-500 dark:bg-emerald-600 dark:text-white dark:hover:bg-emerald-600',
               today: 'font-bold text-emerald-600 dark:text-emerald-400',
-              outside:
-                'text-zinc-300 dark:text-zinc-600',
+              outside: 'text-zinc-300 dark:text-zinc-600',
               disabled: 'text-zinc-300 dark:text-zinc-600',
             }}
           />

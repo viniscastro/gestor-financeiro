@@ -17,6 +17,7 @@ export function toCategoryDto(category: {
   type: string
   color: string
   icon: string
+  position: number
 }): CategoryDto {
   return {
     id: category.id,
@@ -24,5 +25,6 @@ export function toCategoryDto(category: {
     type: category.type as TransactionType,
     color: category.color,
     icon: category.icon,
+    position: category.position,
   }
 }

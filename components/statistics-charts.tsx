@@ -120,7 +120,7 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
           type="button"
           onClick={exportCsv}
           disabled={!hasMonthly && !hasCategories}
-          className="flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-600 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          className="flex items-center gap-2 rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
         >
           <Download className="h-4 w-4" />
           Exportar CSV

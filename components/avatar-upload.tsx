@@ -99,7 +99,7 @@ export default function AvatarUpload({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={saving}
-            className={`${baseButton} border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800`}
+            className={`${baseButton} rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600`}
           >
             <Camera className="h-4 w-4" />
             Trocar foto
@@ -109,7 +109,7 @@ export default function AvatarUpload({
               type="button"
               onClick={() => saveImage(null)}
               disabled={saving}
-              className={`${baseButton} border border-zinc-300 bg-white text-rose-600 hover:bg-rose-500/10 dark:border-zinc-700 dark:bg-zinc-900 dark:text-rose-400 dark:hover:bg-rose-500/10`}
+              className={`${baseButton} border border-zinc-300 bg-white text-rose-600 hover:bg-red-500 hover:text-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-rose-400 dark:hover:bg-red-500 dark:hover:text-white`}
             >
               <Trash2 className="h-4 w-4" />
               Remover

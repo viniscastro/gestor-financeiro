@@ -133,8 +133,13 @@ export async function DELETE(_request: NextRequest, ctx: Params) {
   const { id } = await ctx.params
 
   try {
-    await prisma.recurringRule.delete({
-      where: { id, userId: session.user.id },
+    await prisma.$transaction(async (tx) => {
+      await tx.transaction.deleteMany({
+        where: { recurringId: id, userId: session.user!.id },
+      })
+      await tx.recurringRule.delete({
+        where: { id, userId: session.user!.id },
+      })
     })
     return NextResponse.json({ ok: true })
   } catch {

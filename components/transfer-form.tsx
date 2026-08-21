@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ArrowRightLeft, LoaderCircle, X } from 'lucide-react'
 import CurrencyInput from '@/components/currency-input'
 import DatePicker from '@/components/date-picker'
+import Select, { type SelectOption } from '@/components/select'
 import type { AccountDto } from '@/lib/types'
 
 type Props = {
@@ -79,54 +80,46 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="fromAccount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Da conta
+              Da conta <span className="text-rose-500">*</span>
             </label>
-            <select
-              id="fromAccount"
+            <Select
               value={fromAccountId}
-              onChange={(e) => setFromAccountId(e.target.value)}
+              onChange={setFromAccountId}
+              options={[
+                { value: '', label: 'Selecione...', disabled: true },
+                ...accounts.map((a) => ({ value: a.id, label: a.name })),
+              ]}
+              placeholder="Selecione..."
+              id="fromAccount"
               required
               className={inputClass}
-            >
-              <option value="" disabled>
-                Selecione...
-              </option>
-              {accounts.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div>
             <label htmlFor="toAccount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Para a conta
+              Para a conta <span className="text-rose-500">*</span>
             </label>
-            <select
-              id="toAccount"
+            <Select
               value={toAccountId}
-              onChange={(e) => setToAccountId(e.target.value)}
+              onChange={setToAccountId}
+              options={[
+                { value: '', label: 'Selecione...', disabled: true },
+                ...accounts
+                  .filter((a) => a.id !== fromAccountId)
+                  .map((a) => ({ value: a.id, label: a.name })),
+              ]}
+              placeholder="Selecione..."
+              id="toAccount"
               required
               className={inputClass}
-            >
-              <option value="" disabled>
-                Selecione...
-              </option>
-              {accounts
-                .filter((a) => a.id !== fromAccountId)
-                .map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.name}
-                  </option>
-                ))}
-            </select>
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Valor (R$)
+                Valor (R$) <span className="text-rose-500">*</span>
               </label>
               <CurrencyInput
                 id="amount"
@@ -139,7 +132,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
             </div>
             <div>
               <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Data
+                Data <span className="text-rose-500">*</span>
               </label>
               <DatePicker
                 value={date}

@@ -58,8 +58,8 @@ export default function DeleteAccountForm({ email }: { email: string }) {
   return (
     <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-6">
       <div className="mb-4 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-100 dark:bg-red-900">
-          <Trash2 className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500">
+          <Trash2 className="h-5 w-5 text-white" />
         </div>
         <div>
           <h2 className="text-base font-semibold text-rose-600 dark:text-rose-400">
@@ -118,7 +118,7 @@ export default function DeleteAccountForm({ email }: { email: string }) {
               htmlFor="delete-code"
               className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
             >
-              Código de confirmação
+              Código de confirmação <span className="text-rose-500">*</span>
             </label>
             <input
               id="delete-code"

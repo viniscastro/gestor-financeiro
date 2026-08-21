@@ -34,6 +34,7 @@ export type CategoryDto = {
   type: TransactionType
   color: string
   icon: string
+  position: number
 }
 
 export type BudgetDto = {
@@ -48,6 +49,7 @@ export type BudgetDto = {
 export type SavingsGoalDto = {
   id: string
   name: string
+  icon: string | null
   targetAmount: number
   currentAmount: number
   percent: number

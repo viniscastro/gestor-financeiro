@@ -11,14 +11,7 @@ export async function GET() {
 
   const categories = await prisma.category.findMany({
     where: { userId: session.user.id },
-  })
-
-  categories.sort((a, b) => {
-    if (a.type !== b.type) return a.type === 'EXPENSE' ? -1 : 1
-    const aLast = a.name.trim().toLowerCase() === 'outros'
-    const bLast = b.name.trim().toLowerCase() === 'outros'
-    if (aLast !== bLast) return aLast ? 1 : -1
-    return a.name.localeCompare(b.name, 'pt-BR')
+    orderBy: { position: 'asc' },
   })
 
   return NextResponse.json(categories.map(toCategoryDto))
@@ -75,4 +68,34 @@ export async function POST(request: NextRequest) {
   })
 
   return NextResponse.json(toCategoryDto(category), { status: 201 })
+}
+
+export async function PATCH(request: NextRequest) {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+  }
+
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+  }
+
+  const { ids } = body as { ids?: string[] }
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+  }
+
+  const updates = ids.map((id, index) =>
+    prisma.category.update({
+      where: { id, userId: session.user.id },
+      data: { position: index },
+    })
+  )
+
+  await prisma.$transaction(updates)
+
+  return NextResponse.json({ ok: true })
 }

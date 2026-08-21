@@ -6,16 +6,16 @@ import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import {
   ArrowLeftRight,
-  ChartPie,
-  Flag,
+  Calculator,
+  LayoutGrid,
   LayoutDashboard,
   LoaderCircle,
   LogOut,
   Menu,
   PiggyBank,
+  PieChart,
   Repeat,
   Settings,
-  Tags,
   Target,
   Wallet,
   X,
@@ -35,11 +35,11 @@ const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/transactions', label: 'Transações', icon: ArrowLeftRight },
   { href: '/accounts', label: 'Contas', icon: Wallet },
-  { href: '/categories', label: 'Categorias', icon: Tags },
-  { href: '/budgets', label: 'Orçamentos', icon: Target },
-  { href: '/goals', label: 'Metas', icon: Flag },
+  { href: '/categories', label: 'Categorias', icon: LayoutGrid },
+  { href: '/budgets', label: 'Orçamentos', icon: Calculator },
+  { href: '/goals', label: 'Metas', icon: Target },
   { href: '/recurring', label: 'Recorrentes', icon: Repeat },
-  { href: '/stats', label: 'Estatísticas', icon: ChartPie },
+  { href: '/stats', label: 'Estatísticas', icon: PieChart },
   { href: '/account', label: 'Conta', icon: Settings },
 ]
 
@@ -107,7 +107,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
           type="button"
           onClick={handleSignOut}
           disabled={signingOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-500 transition hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:bg-red-500/10 dark:hover:text-rose-400 disabled:opacity-60"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-500 transition hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white disabled:opacity-60"
         >
           {signingOut ? (
             <LoaderCircle className="h-5 w-5 animate-spin" />

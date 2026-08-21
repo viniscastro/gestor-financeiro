@@ -1,13 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { LoaderCircle, Pencil, Plus, Trash2, Wallet } from 'lucide-react'
+import { ArrowRightLeft, LoaderCircle, Pencil, Plus, Trash2, Wallet } from 'lucide-react'
 import { ACCOUNT_TYPES } from '@/lib/categories'
+import ConfirmDialog from '@/components/confirm-dialog'
+import TransferForm from '@/components/transfer-form'
 import { CATEGORY_COLORS } from '@/lib/categories'
 import { formatBRL } from '@/lib/format'
 import type { AccountDto } from '@/lib/types'
 import { toast } from 'sonner'
 import CurrencyInput from '@/components/currency-input'
+import Select from '@/components/select'
 
 export default function AccountsManager() {
   const [accounts, setAccounts] = useState<AccountDto[]>([])
@@ -21,6 +24,9 @@ export default function AccountsManager() {
   const [initialBalance, setInitialBalance] = useState('')
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmTarget, setConfirmTarget] = useState<AccountDto | null>(null)
+  const [transferOpen, setTransferOpen] = useState(false)
 
   async function reload() {
     try {
@@ -108,7 +114,15 @@ export default function AccountsManager() {
   }
 
   async function handleDelete(account: AccountDto) {
-    const res = await fetch(`/api/accounts/${account.id}`, { method: 'DELETE' })
+    setConfirmTarget(account)
+    setConfirmOpen(true)
+  }
+
+  async function confirmDelete() {
+    if (!confirmTarget) return
+    const res = await fetch(`/api/accounts/${confirmTarget.id}`, { method: 'DELETE' })
+    setConfirmOpen(false)
+    setConfirmTarget(null)
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))
       toast.error(data.error ?? 'Erro ao excluir a conta.')
@@ -118,7 +132,7 @@ export default function AccountsManager() {
     toast.success('Conta excluída', {
       action: {
         label: 'Desfazer',
-        onClick: () => undoCreate(account),
+        onClick: () => undoCreate(confirmTarget!),
       },
     })
   }
@@ -153,14 +167,26 @@ export default function AccountsManager() {
             Gerencie suas contas e saldos
           </p>
         </div>
-        <button
-          type="button"
-          onClick={openCreate}
-          className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
-        >
-          <Plus className="h-4 w-4" />
-          Nova conta
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setTransferOpen(true)}
+            disabled={accounts.length < 2}
+            title={accounts.length < 2 ? 'Crie pelo menos 2 contas para transferir' : undefined}
+            className="flex items-center gap-2 rounded-lg border border-sky-300 bg-transparent px-4 py-2.5 text-sm font-semibold text-sky-600 transition hover:bg-sky-500 hover:text-white dark:border-sky-700 dark:text-sky-400 dark:hover:bg-sky-500 dark:hover:text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
+          >
+            <ArrowRightLeft className="h-4 w-4" />
+            Transferir
+          </button>
+          <button
+            type="button"
+            onClick={openCreate}
+            className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600"
+          >
+            <Plus className="h-4 w-4" />
+            Nova conta
+          </button>
+        </div>
       </div>
 
       <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
@@ -200,9 +226,9 @@ export default function AccountsManager() {
                 <div className="flex items-center gap-3">
                   <div
                     className="flex h-10 w-10 items-center justify-center rounded-xl"
-                    style={{ backgroundColor: `${account.color}22` }}
+                    style={{ backgroundColor: account.color }}
                   >
-                    <Wallet className="h-5 w-5" style={{ color: account.color }} />
+                    <Wallet className="h-5 w-5 text-white" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -223,7 +249,7 @@ export default function AccountsManager() {
                   <button
                     type="button"
                     onClick={() => handleDelete(account)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400"
+                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
                     aria-label="Excluir"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -260,7 +286,7 @@ export default function AccountsManager() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Nome
+                  Nome <span className="text-rose-500">*</span>
                 </label>
                 <input
                   id="name"
@@ -277,18 +303,13 @@ export default function AccountsManager() {
                 <label htmlFor="type" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Tipo
                 </label>
-                <select
-                  id="type"
+                <Select
                   value={type}
-                  onChange={(e) => setType(e.target.value)}
+                  onChange={setType}
+                  options={ACCOUNT_TYPES.map((t) => ({ value: t.id, label: t.label }))}
+                  id="type"
                   className={inputClass}
-                >
-                  {ACCOUNT_TYPES.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -337,6 +358,22 @@ export default function AccountsManager() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Excluir conta"
+        message={`Tem certeza que deseja excluir a conta "${confirmTarget?.name ?? ''}"? Essa ação não pode ser desfeita.`}
+        onConfirm={confirmDelete}
+        onCancel={() => { setConfirmOpen(false); setConfirmTarget(null) }}
+      />
+      <TransferForm
+        open={transferOpen}
+        accounts={accounts}
+        onClose={() => setTransferOpen(false)}
+        onDone={() => {
+          setTransferOpen(false)
+          reload()
+        }}
+      />
     </div>
   )
 }

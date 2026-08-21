@@ -1026,6 +1026,7 @@ export const CategoryScalarFieldEnum = {
   type: 'type',
   color: 'color',
   icon: 'icon',
+  position: 'position',
   createdAt: 'createdAt'
 } as const
 
@@ -1090,6 +1091,7 @@ export const SavingsGoalScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   name: 'name',
+  icon: 'icon',
   targetAmount: 'targetAmount',
   currentAmount: 'currentAmount',
   accountId: 'accountId',

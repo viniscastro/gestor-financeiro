@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Info, LoaderCircle, TrendingDown, TrendingUp, X } from 'lucide-react'
 import CurrencyInput from '@/components/currency-input'
 import DatePicker from '@/components/date-picker'
+import Select, { type SelectOption } from '@/components/select'
 import type { TransactionType } from '@/lib/categories'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 
@@ -117,6 +118,15 @@ function TransactionFormBody({
   const inputClass =
     'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
 
+  const categoryOptions: SelectOption[] = [
+    { value: '', label: 'Selecione...', disabled: true },
+    ...availableCategories.map((c) => ({ value: c.id, label: c.name })),
+  ]
+  const accountOptions: SelectOption[] = [
+    { value: '', label: 'Selecione...', disabled: true },
+    ...accounts.map((a) => ({ value: a.id, label: a.name })),
+  ]
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
@@ -165,7 +175,7 @@ function TransactionFormBody({
 
           <div>
             <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Descrição
+              Descrição <span className="text-rose-500">*</span>
             </label>
             <input
               id="description"
@@ -181,30 +191,22 @@ function TransactionFormBody({
 
           <div>
             <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Categoria
+              Categoria <span className="text-rose-500">*</span>
             </label>
-            <select
-              id="category"
+            <Select
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
+              onChange={setCategoryId}
+              options={categoryOptions}
+              id="category"
               required
               className={inputClass}
-            >
-              <option value="" disabled>
-                Selecione...
-              </option>
-              {availableCategories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Valor (R$)
+            <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Valor (R$) <span className="text-rose-500">*</span>
               </label>
               <CurrencyInput
                 id="amount"
@@ -217,7 +219,7 @@ function TransactionFormBody({
             </div>
             <div>
               <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Data
+                Data <span className="text-rose-500">*</span>
               </label>
               <DatePicker
                 value={date}
@@ -229,24 +231,16 @@ function TransactionFormBody({
 
           <div>
             <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Conta
+              Conta <span className="text-rose-500">*</span>
             </label>
-            <select
-              id="account"
+            <Select
               value={accountId}
-              onChange={(e) => setAccountId(e.target.value)}
+              onChange={setAccountId}
+              options={accountOptions}
+              id="account"
               required
               className={inputClass}
-            >
-              <option value="" disabled>
-                Selecione...
-              </option>
-              {accounts.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           {showTransferHint && (

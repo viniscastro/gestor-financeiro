@@ -127,7 +127,7 @@ export default function VerifyEmailForm({
           <>
             <div className="mb-4">
               <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                E-mail
+                E-mail <span className="text-rose-500">*</span>
               </label>
               <input
                 id="email"
@@ -143,7 +143,7 @@ export default function VerifyEmailForm({
             <form onSubmit={handleVerify} className="space-y-4">
               <div>
                 <label htmlFor="code" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Código de confirmação
+                  Código de confirmação <span className="text-rose-500">*</span>
                 </label>
                 <input
                   id="code"

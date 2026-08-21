@@ -40,6 +40,7 @@ export type SavingsGoalMinAggregateOutputType = {
   id: string | null
   userId: string | null
   name: string | null
+  icon: string | null
   targetAmount: number | null
   currentAmount: number | null
   accountId: string | null
@@ -52,6 +53,7 @@ export type SavingsGoalMaxAggregateOutputType = {
   id: string | null
   userId: string | null
   name: string | null
+  icon: string | null
   targetAmount: number | null
   currentAmount: number | null
   accountId: string | null
@@ -64,6 +66,7 @@ export type SavingsGoalCountAggregateOutputType = {
   id: number
   userId: number
   name: number
+  icon: number
   targetAmount: number
   currentAmount: number
   accountId: number
@@ -88,6 +91,7 @@ export type SavingsGoalMinAggregateInputType = {
   id?: true
   userId?: true
   name?: true
+  icon?: true
   targetAmount?: true
   currentAmount?: true
   accountId?: true
@@ -100,6 +104,7 @@ export type SavingsGoalMaxAggregateInputType = {
   id?: true
   userId?: true
   name?: true
+  icon?: true
   targetAmount?: true
   currentAmount?: true
   accountId?: true
@@ -112,6 +117,7 @@ export type SavingsGoalCountAggregateInputType = {
   id?: true
   userId?: true
   name?: true
+  icon?: true
   targetAmount?: true
   currentAmount?: true
   accountId?: true
@@ -211,6 +217,7 @@ export type SavingsGoalGroupByOutputType = {
   id: string
   userId: string
   name: string
+  icon: string | null
   targetAmount: number
   currentAmount: number
   accountId: string | null
@@ -246,6 +253,7 @@ export type SavingsGoalWhereInput = {
   id?: Prisma.StringFilter<"SavingsGoal"> | string
   userId?: Prisma.StringFilter<"SavingsGoal"> | string
   name?: Prisma.StringFilter<"SavingsGoal"> | string
+  icon?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
   targetAmount?: Prisma.IntFilter<"SavingsGoal"> | number
   currentAmount?: Prisma.IntFilter<"SavingsGoal"> | number
   accountId?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
@@ -260,6 +268,7 @@ export type SavingsGoalOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  icon?: Prisma.SortOrderInput | Prisma.SortOrder
   targetAmount?: Prisma.SortOrder
   currentAmount?: Prisma.SortOrder
   accountId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -277,6 +286,7 @@ export type SavingsGoalWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.SavingsGoalWhereInput | Prisma.SavingsGoalWhereInput[]
   userId?: Prisma.StringFilter<"SavingsGoal"> | string
   name?: Prisma.StringFilter<"SavingsGoal"> | string
+  icon?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
   targetAmount?: Prisma.IntFilter<"SavingsGoal"> | number
   currentAmount?: Prisma.IntFilter<"SavingsGoal"> | number
   accountId?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
@@ -291,6 +301,7 @@ export type SavingsGoalOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  icon?: Prisma.SortOrderInput | Prisma.SortOrder
   targetAmount?: Prisma.SortOrder
   currentAmount?: Prisma.SortOrder
   accountId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -311,6 +322,7 @@ export type SavingsGoalScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"SavingsGoal"> | string
   userId?: Prisma.StringWithAggregatesFilter<"SavingsGoal"> | string
   name?: Prisma.StringWithAggregatesFilter<"SavingsGoal"> | string
+  icon?: Prisma.StringNullableWithAggregatesFilter<"SavingsGoal"> | string | null
   targetAmount?: Prisma.IntWithAggregatesFilter<"SavingsGoal"> | number
   currentAmount?: Prisma.IntWithAggregatesFilter<"SavingsGoal"> | number
   accountId?: Prisma.StringNullableWithAggregatesFilter<"SavingsGoal"> | string | null
@@ -322,6 +334,7 @@ export type SavingsGoalScalarWhereWithAggregatesInput = {
 export type SavingsGoalCreateInput = {
   id?: string
   name: string
+  icon?: string | null
   targetAmount: number
   currentAmount?: number
   targetDate?: Date | string | null
@@ -335,6 +348,7 @@ export type SavingsGoalUncheckedCreateInput = {
   id?: string
   userId: string
   name: string
+  icon?: string | null
   targetAmount: number
   currentAmount?: number
   accountId?: string | null
@@ -346,6 +360,7 @@ export type SavingsGoalUncheckedCreateInput = {
 export type SavingsGoalUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -359,6 +374,7 @@ export type SavingsGoalUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -371,6 +387,7 @@ export type SavingsGoalCreateManyInput = {
   id?: string
   userId: string
   name: string
+  icon?: string | null
   targetAmount: number
   currentAmount?: number
   accountId?: string | null
@@ -382,6 +399,7 @@ export type SavingsGoalCreateManyInput = {
 export type SavingsGoalUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -393,6 +411,7 @@ export type SavingsGoalUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -415,6 +434,7 @@ export type SavingsGoalCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  icon?: Prisma.SortOrder
   targetAmount?: Prisma.SortOrder
   currentAmount?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
@@ -432,6 +452,7 @@ export type SavingsGoalMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  icon?: Prisma.SortOrder
   targetAmount?: Prisma.SortOrder
   currentAmount?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
@@ -444,6 +465,7 @@ export type SavingsGoalMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  icon?: Prisma.SortOrder
   targetAmount?: Prisma.SortOrder
   currentAmount?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
@@ -544,6 +566,7 @@ export type SavingsGoalUncheckedUpdateManyWithoutAccountNestedInput = {
 export type SavingsGoalCreateWithoutUserInput = {
   id?: string
   name: string
+  icon?: string | null
   targetAmount: number
   currentAmount?: number
   targetDate?: Date | string | null
@@ -555,6 +578,7 @@ export type SavingsGoalCreateWithoutUserInput = {
 export type SavingsGoalUncheckedCreateWithoutUserInput = {
   id?: string
   name: string
+  icon?: string | null
   targetAmount: number
   currentAmount?: number
   accountId?: string | null
@@ -596,6 +620,7 @@ export type SavingsGoalScalarWhereInput = {
   id?: Prisma.StringFilter<"SavingsGoal"> | string
   userId?: Prisma.StringFilter<"SavingsGoal"> | string
   name?: Prisma.StringFilter<"SavingsGoal"> | string
+  icon?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
   targetAmount?: Prisma.IntFilter<"SavingsGoal"> | number
   currentAmount?: Prisma.IntFilter<"SavingsGoal"> | number
   accountId?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
@@ -607,6 +632,7 @@ export type SavingsGoalScalarWhereInput = {
 export type SavingsGoalCreateWithoutAccountInput = {
   id?: string
   name: string
+  icon?: string | null
   targetAmount: number
   currentAmount?: number
   targetDate?: Date | string | null
@@ -619,6 +645,7 @@ export type SavingsGoalUncheckedCreateWithoutAccountInput = {
   id?: string
   userId: string
   name: string
+  icon?: string | null
   targetAmount: number
   currentAmount?: number
   targetDate?: Date | string | null
@@ -655,6 +682,7 @@ export type SavingsGoalUpdateManyWithWhereWithoutAccountInput = {
 export type SavingsGoalCreateManyUserInput = {
   id?: string
   name: string
+  icon?: string | null
   targetAmount: number
   currentAmount?: number
   accountId?: string | null
@@ -666,6 +694,7 @@ export type SavingsGoalCreateManyUserInput = {
 export type SavingsGoalUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -677,6 +706,7 @@ export type SavingsGoalUpdateWithoutUserInput = {
 export type SavingsGoalUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -688,6 +718,7 @@ export type SavingsGoalUncheckedUpdateWithoutUserInput = {
 export type SavingsGoalUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -700,6 +731,7 @@ export type SavingsGoalCreateManyAccountInput = {
   id?: string
   userId: string
   name: string
+  icon?: string | null
   targetAmount: number
   currentAmount?: number
   targetDate?: Date | string | null
@@ -710,6 +742,7 @@ export type SavingsGoalCreateManyAccountInput = {
 export type SavingsGoalUpdateWithoutAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -722,6 +755,7 @@ export type SavingsGoalUncheckedUpdateWithoutAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -733,6 +767,7 @@ export type SavingsGoalUncheckedUpdateManyWithoutAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -746,6 +781,7 @@ export type SavingsGoalSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   userId?: boolean
   name?: boolean
+  icon?: boolean
   targetAmount?: boolean
   currentAmount?: boolean
   accountId?: boolean
@@ -760,6 +796,7 @@ export type SavingsGoalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   userId?: boolean
   name?: boolean
+  icon?: boolean
   targetAmount?: boolean
   currentAmount?: boolean
   accountId?: boolean
@@ -774,6 +811,7 @@ export type SavingsGoalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   userId?: boolean
   name?: boolean
+  icon?: boolean
   targetAmount?: boolean
   currentAmount?: boolean
   accountId?: boolean
@@ -788,6 +826,7 @@ export type SavingsGoalSelectScalar = {
   id?: boolean
   userId?: boolean
   name?: boolean
+  icon?: boolean
   targetAmount?: boolean
   currentAmount?: boolean
   accountId?: boolean
@@ -796,7 +835,7 @@ export type SavingsGoalSelectScalar = {
   updatedAt?: boolean
 }
 
-export type SavingsGoalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "targetAmount" | "currentAmount" | "accountId" | "targetDate" | "createdAt" | "updatedAt", ExtArgs["result"]["savingsGoal"]>
+export type SavingsGoalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "icon" | "targetAmount" | "currentAmount" | "accountId" | "targetDate" | "createdAt" | "updatedAt", ExtArgs["result"]["savingsGoal"]>
 export type SavingsGoalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   account?: boolean | Prisma.SavingsGoal$accountArgs<ExtArgs>
@@ -820,6 +859,7 @@ export type $SavingsGoalPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     userId: string
     name: string
+    icon: string | null
     targetAmount: number
     currentAmount: number
     accountId: string | null
@@ -1254,6 +1294,7 @@ export interface SavingsGoalFieldRefs {
   readonly id: Prisma.FieldRef<"SavingsGoal", 'String'>
   readonly userId: Prisma.FieldRef<"SavingsGoal", 'String'>
   readonly name: Prisma.FieldRef<"SavingsGoal", 'String'>
+  readonly icon: Prisma.FieldRef<"SavingsGoal", 'String'>
   readonly targetAmount: Prisma.FieldRef<"SavingsGoal", 'Int'>
   readonly currentAmount: Prisma.FieldRef<"SavingsGoal", 'Int'>
   readonly accountId: Prisma.FieldRef<"SavingsGoal", 'String'>

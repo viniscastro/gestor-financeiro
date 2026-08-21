@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react'
 import { LoaderCircle, Pencil, Plus, Target, Trash2 } from 'lucide-react'
 import CategoryIcon from '@/components/category-icon'
+import ConfirmDialog from '@/components/confirm-dialog'
 import CurrencyInput from '@/components/currency-input'
+import Select from '@/components/select'
 import { toast } from 'sonner'
 import { formatBRL } from '@/lib/format'
 import type { BudgetDto, CategoryDto } from '@/lib/types'
@@ -19,6 +21,8 @@ export default function BudgetsManager() {
   const [amount, setAmount] = useState('')
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmTarget, setConfirmTarget] = useState<BudgetDto | null>(null)
 
   async function reload() {
     try {
@@ -119,7 +123,16 @@ export default function BudgetsManager() {
 
   async function handleDelete(id: string) {
     const budget = budgets.find((b) => b.id === id)
-    const res = await fetch(`/api/budgets/${id}`, { method: 'DELETE' })
+    if (!budget) return
+    setConfirmTarget(budget)
+    setConfirmOpen(true)
+  }
+
+  async function confirmDelete() {
+    if (!confirmTarget) return
+    const res = await fetch(`/api/budgets/${confirmTarget.id}`, { method: 'DELETE' })
+    setConfirmOpen(false)
+    setConfirmTarget(null)
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))
       toast.error(data.error ?? 'Erro ao excluir o orçamento.')
@@ -128,7 +141,7 @@ export default function BudgetsManager() {
     toast.success('Orçamento excluído', {
       action: {
         label: 'Desfazer',
-        onClick: () => undoCreate(budget!),
+        onClick: () => undoCreate(confirmTarget!),
       },
     })
     await reload()
@@ -191,13 +204,13 @@ export default function BudgetsManager() {
                   <div className="flex min-w-0 items-center gap-3">
                     <div
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-                      style={{ backgroundColor: `${budget.categoryColor}22` }}
+                      style={{ backgroundColor: budget.categoryColor }}
                     >
                       <CategoryIcon
                         icon={
                           categories.find((c) => c.id === budget.categoryId)?.icon
                         }
-                        className="h-4 w-4"
+                        className="h-4 w-4 text-white"
                       />
                     </div>
                     <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -216,7 +229,7 @@ export default function BudgetsManager() {
                     <button
                       type="button"
                       onClick={() => handleDelete(budget.id)}
-                      className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400"
+                      className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
                       aria-label="Excluir"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -263,35 +276,25 @@ export default function BudgetsManager() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Categoria
+                  Categoria <span className="text-rose-500">*</span>
                 </label>
-                <select
-                  id="category"
+                <Select
                   value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value)}
+                  onChange={setCategoryId}
+                  options={
+                    editing
+                      ? [{ value: editing.categoryId, label: editing.categoryName }]
+                      : available.map((c) => ({ value: c.id, label: c.name }))
+                  }
+                  id="category"
                   required
                   disabled={Boolean(editing)}
                   className={inputClass}
-                >
-                  {editing ? (
-                    <option value={editing.categoryId}>{editing.categoryName}</option>
-                  ) : (
-                    <>
-                      <option value="" disabled>
-                        Selecione...
-                      </option>
-                      {available.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </>
-                  )}
-                </select>
+                />
               </div>
               <div>
                 <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Limite mensal (R$)
+                  Limite mensal (R$) <span className="text-rose-500">*</span>
                 </label>
                 <CurrencyInput
                   id="amount"
@@ -319,6 +322,13 @@ export default function BudgetsManager() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Excluir orçamento"
+        message={`Tem certeza que deseja excluir o orçamento da categoria "${confirmTarget?.categoryName ?? ''}"? Essa ação não pode ser desfeita.`}
+        onConfirm={confirmDelete}
+        onCancel={() => { setConfirmOpen(false); setConfirmTarget(null) }}
+      />
     </div>
   )
 }

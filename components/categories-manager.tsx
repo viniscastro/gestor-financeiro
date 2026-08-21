@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
+  GripVertical,
   LoaderCircle,
   Pencil,
   Plus,
@@ -13,6 +14,7 @@ import {
 import type { TransactionType } from '@/lib/types'
 import type { CategoryDto } from '@/lib/types'
 import CategoryIcon from '@/components/category-icon'
+import ConfirmDialog from '@/components/confirm-dialog'
 import { toast } from 'sonner'
 import { CATEGORY_COLORS, CATEGORY_ICONS } from '@/lib/categories'
 
@@ -29,6 +31,62 @@ export default function CategoriesManager() {
   const [formError, setFormError] = useState('')
   const [tab, setTab] = useState<TransactionType>('INCOME')
   const [editing, setEditing] = useState<CategoryDto | null>(null)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmTarget, setConfirmTarget] = useState<CategoryDto | null>(null)
+  const dragItem = useRef<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+  const [touchDragging, setTouchDragging] = useState(false)
+  const touchCurrentIndex = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (!touchDragging) return
+
+    function onMove(e: TouchEvent) {
+      if (touchCurrentIndex.current === null) return
+      const touch = e.touches[0]
+      const el = document.elementFromPoint(touch.clientX, touch.clientY)
+      const li = el?.closest('li[data-drag-index]') as HTMLElement | null
+      if (li) {
+        const idx = Number(li.getAttribute('data-drag-index'))
+        if (!isNaN(idx)) setDragOverIndex(idx)
+      }
+    }
+
+    function onEnd() {
+      if (dragItem.current !== null && dragOverIndex !== null && dragItem.current !== dragOverIndex) {
+        const updated = [...categories]
+        const [moved] = updated.splice(dragItem.current, 1)
+        updated.splice(dragOverIndex, 0, moved)
+        setCategories(updated)
+        const ids = updated.map((c) => c.id)
+        fetch('/api/categories', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ids }),
+        })
+      }
+      setDragOverIndex(null)
+      dragItem.current = null
+      touchCurrentIndex.current = null
+      setTouchDragging(false)
+    }
+
+    document.addEventListener('touchmove', onMove, { passive: false })
+    document.addEventListener('touchend', onEnd)
+    document.addEventListener('touchcancel', onEnd)
+    return () => {
+      document.removeEventListener('touchmove', onMove)
+      document.removeEventListener('touchend', onEnd)
+      document.removeEventListener('touchcancel', onEnd)
+    }
+  }, [touchDragging, dragOverIndex, categories])
+
+  function handleTouchStart(e: React.TouchEvent, index: number) {
+    e.preventDefault()
+    touchCurrentIndex.current = index
+    dragItem.current = index
+    setTouchDragging(true)
+  }
 
   async function reload() {
     try {
@@ -59,9 +117,7 @@ export default function CategoriesManager() {
       }
     }
     fetchData()
-    return () => {
-      cancelled = true
-    }
+    return () => { cancelled = true }
   }, [])
 
   function openCreate(type: TransactionType) {
@@ -117,7 +173,15 @@ export default function CategoriesManager() {
   }
 
   async function handleDelete(cat: CategoryDto) {
-    const res = await fetch(`/api/categories/${cat.id}`, { method: 'DELETE' })
+    setConfirmTarget(cat)
+    setConfirmOpen(true)
+  }
+
+  async function confirmDelete() {
+    if (!confirmTarget) return
+    const res = await fetch(`/api/categories/${confirmTarget.id}`, { method: 'DELETE' })
+    setConfirmOpen(false)
+    setConfirmTarget(null)
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))
       toast.error(data.error ?? 'Erro ao excluir a categoria.')
@@ -125,7 +189,7 @@ export default function CategoriesManager() {
     }
     await reload()
     toast.success('Categoria excluída', {
-      action: { label: 'Desfazer', onClick: () => undoCreate(cat) },
+      action: { label: 'Desfazer', onClick: () => undoCreate(confirmTarget!) },
     })
   }
 
@@ -136,6 +200,46 @@ export default function CategoriesManager() {
       body: JSON.stringify({ name: cat.name, type: cat.type, color: cat.color, icon: cat.icon }),
     })
     if (res.ok) await reload()
+  }
+
+  function handleDragStart(index: number) {
+    dragItem.current = index
+  }
+
+  function handleDragEnter(index: number) {
+    setDragOverIndex(index)
+  }
+
+  function handleDragEnd() {
+    if (dragItem.current === null || dragOverIndex === null) {
+      setDragOverIndex(null)
+      dragItem.current = null
+      return
+    }
+    if (dragItem.current === dragOverIndex) {
+      setDragOverIndex(null)
+      dragItem.current = null
+      return
+    }
+
+    const updated = [...categories]
+    const [moved] = updated.splice(dragItem.current, 1)
+    updated.splice(dragOverIndex, 0, moved)
+    setCategories(updated)
+
+    const ids = updated.map((c) => c.id)
+    fetch('/api/categories', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids }),
+    })
+
+    setDragOverIndex(null)
+    dragItem.current = null
+  }
+
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault()
   }
 
   const inputClass =
@@ -207,18 +311,32 @@ export default function CategoriesManager() {
           </p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
+        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
           <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
-            {filtered.map((cat) => (
+            {filtered.map((cat, index) => (
               <li
                 key={cat.id}
-                className="group flex items-center gap-3 px-4 py-3 transition hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                data-drag-index={index}
+                draggable
+                onDragStart={() => handleDragStart(index)}
+                onDragEnter={() => handleDragEnter(index)}
+                onDragEnd={handleDragEnd}
+                onDragOver={handleDragOver}
+                className={`group flex items-center gap-3 px-4 py-3 transition hover:bg-zinc-50 dark:hover:bg-zinc-800 ${
+                  dragOverIndex === index ? 'border-t-2 border-t-emerald-500' : ''
+                }`}
               >
                 <div
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-                  style={{ backgroundColor: cat.color + '20', color: cat.color }}
+                  className="touch-none cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                  onTouchStart={(e) => handleTouchStart(e, index)}
                 >
-                  <CategoryIcon icon={cat.icon} className="h-4 w-4" />
+                  <GripVertical className="h-5 w-5" />
+                </div>
+                <div
+                  className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg"
+                  style={{ backgroundColor: cat.color }}
+                >
+                  <CategoryIcon icon={cat.icon} className="h-4 w-4 text-white" />
                 </div>
                 <span className="flex-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">
                   {cat.name}
@@ -235,7 +353,7 @@ export default function CategoriesManager() {
                   <button
                     type="button"
                     onClick={() => handleDelete(cat)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400"
+                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
                     aria-label="Excluir"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -260,7 +378,7 @@ export default function CategoriesManager() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="catName" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Nome
+                  Nome <span className="text-rose-500">*</span>
                 </label>
                 <input
                   id="catName"
@@ -333,7 +451,7 @@ export default function CategoriesManager() {
                       onClick={() => setNewIcon(ic)}
                       className={`flex h-9 w-9 items-center justify-center rounded-lg transition ${
                         newIcon === ic
-                          ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-600 ring-2 ring-emerald-500 dark:text-emerald-400'
+                          ? 'bg-emerald-500 text-white ring-2 ring-emerald-500'
                           : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800'
                       }`}
                       aria-label={ic}
@@ -362,6 +480,13 @@ export default function CategoriesManager() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Excluir categoria"
+        message={`Tem certeza que deseja excluir a categoria "${confirmTarget?.name ?? ''}"? Essa ação não pode ser desfeita.`}
+        onConfirm={confirmDelete}
+        onCancel={() => { setConfirmOpen(false); setConfirmTarget(null) }}
+      />
     </div>
   )
 }

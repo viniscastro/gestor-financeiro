@@ -82,11 +82,13 @@ export async function DELETE(_request: NextRequest, ctx: Params) {
 
   const existing = await prisma.transaction.findFirst({
     where: { id, userId: session.user.id },
-    select: { id: true, transferGroupId: true },
+    select: { id: true, transferGroupId: true, description: true, amount: true },
   })
   if (!existing) {
     return NextResponse.json({ error: 'Transação não encontrada' }, { status: 404 })
   }
+
+  const topupMatch = existing.description?.match(/^Aporte: (.+)$/)
 
   if (existing.transferGroupId) {
     await prisma.transaction.deleteMany({
@@ -99,6 +101,20 @@ export async function DELETE(_request: NextRequest, ctx: Params) {
     await prisma.transaction.delete({
       where: { id, userId: session.user.id },
     })
+  }
+
+  if (topupMatch) {
+    const goalName = topupMatch[1]
+    const goal = await prisma.savingsGoal.findFirst({
+      where: { userId: session.user.id, name: goalName },
+      select: { id: true, currentAmount: true },
+    })
+    if (goal) {
+      await prisma.savingsGoal.update({
+        where: { id: goal.id },
+        data: { currentAmount: Math.max(0, goal.currentAmount - existing.amount) },
+      })
+    }
   }
 
   return NextResponse.json({ ok: true })

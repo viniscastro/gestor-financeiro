@@ -12,7 +12,9 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import ConfirmDialog from '@/components/confirm-dialog'
 import CurrencyInput from '@/components/currency-input'
+import Select, { type SelectOption } from '@/components/select'
 import type { TransactionType } from '@/lib/types'
 import { formatBRL, formatDateLong } from '@/lib/format'
 import type { AccountDto, CategoryDto, RecurringRuleDto } from '@/lib/types'
@@ -35,8 +37,62 @@ export default function RecurringManager() {
   const [active, setActive] = useState(true)
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmTarget, setConfirmTarget] = useState<RecurringRuleDto | null>(null)
   const dragItem = useRef<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+  const [touchDragging, setTouchDragging] = useState(false)
+  const touchCurrentIndex = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (!touchDragging) return
+
+    function onMove(e: TouchEvent) {
+      if (touchCurrentIndex.current === null) return
+      const touch = e.touches[0]
+      const el = document.elementFromPoint(touch.clientX, touch.clientY)
+      const li = el?.closest('li[data-drag-index]') as HTMLElement | null
+      if (li) {
+        const idx = Number(li.getAttribute('data-drag-index'))
+        if (!isNaN(idx)) setDragOverIndex(idx)
+      }
+    }
+
+    function onEnd() {
+      if (dragItem.current !== null && dragOverIndex !== null && dragItem.current !== dragOverIndex) {
+        const updated = [...rules]
+        const [moved] = updated.splice(dragItem.current, 1)
+        updated.splice(dragOverIndex, 0, moved)
+        setRules(updated)
+        const ids = updated.map((r) => r.id)
+        fetch('/api/recurring', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ids }),
+        })
+      }
+      setDragOverIndex(null)
+      dragItem.current = null
+      touchCurrentIndex.current = null
+      setTouchDragging(false)
+    }
+
+    document.addEventListener('touchmove', onMove, { passive: false })
+    document.addEventListener('touchend', onEnd)
+    document.addEventListener('touchcancel', onEnd)
+    return () => {
+      document.removeEventListener('touchmove', onMove)
+      document.removeEventListener('touchend', onEnd)
+      document.removeEventListener('touchcancel', onEnd)
+    }
+  }, [touchDragging, dragOverIndex, rules])
+
+  function handleTouchStart(e: React.TouchEvent, index: number) {
+    e.preventDefault()
+    touchCurrentIndex.current = index
+    dragItem.current = index
+    setTouchDragging(true)
+  }
 
   async function reload() {
     try {
@@ -168,7 +224,16 @@ export default function RecurringManager() {
 
   async function handleDelete(id: string) {
     const rule = rules.find((r) => r.id === id)
-    const res = await fetch(`/api/recurring/${id}`, { method: 'DELETE' })
+    if (!rule) return
+    setConfirmTarget(rule)
+    setConfirmOpen(true)
+  }
+
+  async function confirmDelete() {
+    if (!confirmTarget) return
+    const res = await fetch(`/api/recurring/${confirmTarget.id}`, { method: 'DELETE' })
+    setConfirmOpen(false)
+    setConfirmTarget(null)
     if (!res.ok) {
       toast.error('Erro ao excluir a recorrência.')
       return
@@ -177,7 +242,7 @@ export default function RecurringManager() {
     toast.success('Recorrência excluída', {
       action: {
         label: 'Desfazer',
-        onClick: () => undoCreate(rule!),
+        onClick: () => undoCreate(confirmTarget!),
       },
     })
   }
@@ -297,106 +362,119 @@ export default function RecurringManager() {
           </p>
         </div>
       ) : (
-        <ul className="space-y-2">
-          {rules.map((rule, index) => {
-            const isIncome = rule.type === 'INCOME'
-            return (
-              <li
-                key={rule.id}
-                draggable
-                onDragStart={() => handleDragStart(index)}
-                onDragEnter={() => handleDragEnter(index)}
-                onDragEnd={handleDragEnd}
-                onDragOver={handleDragOver}
-                className={`group flex flex-wrap items-center gap-4 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition dark:border-zinc-700 dark:bg-zinc-800 ${
-                  rule.active ? '' : 'opacity-60'
-                } ${dragOverIndex === index ? 'border-t-2 border-t-emerald-500' : ''}`}
-              >
-                <div className="cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400">
-                  <GripVertical className="h-5 w-5" />
-                </div>
-
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
-                    isIncome
-                      ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400'
-                      : 'bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-400'
-                  }`}
+        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
+          <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+            {rules.map((rule, index) => {
+              const isIncome = rule.type === 'INCOME'
+              return (
+                <li
+                  key={rule.id}
+                  data-drag-index={index}
+                  draggable
+                  onDragStart={() => handleDragStart(index)}
+                  onDragEnter={() => handleDragEnter(index)}
+                  onDragEnd={handleDragEnd}
+                  onDragOver={handleDragOver}
+                  className={`group px-4 py-3 transition ${
+                    rule.active ? '' : 'opacity-60'
+                  } ${dragOverIndex === index ? 'border-t-2 border-t-emerald-500' : ''}`}
                 >
-                  {isIncome ? (
-                    <TrendingUp className="h-4 w-4" />
-                  ) : (
-                    <TrendingDown className="h-4 w-4" />
-                  )}
-                </div>
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="touch-none cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                      onTouchStart={(e) => handleTouchStart(e, index)}
+                    >
+                      <GripVertical className="h-5 w-5" />
+                    </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    {rule.description}
-                  </p>
-                  <p className="text-xs text-zinc-500">
-                    Dia {rule.dayOfMonth} · {rule.accountName}
-                    {rule.categoryName ? ` · ${rule.categoryName}` : ''}
-                  </p>
-                </div>
-
-                <div className="shrink-0 text-right">
-                  <p
-                    className={`text-sm font-semibold ${
-                      isIncome
-                        ? 'text-emerald-600 dark:text-emerald-400'
-                        : 'text-rose-600 dark:text-rose-400'
-                    }`}
-                  >
-                    {isIncome ? '+' : '–'} {formatBRL(rule.amountCents)}
-                  </p>
-                  <p className="text-xs text-zinc-500">
-                    Próximo: {formatDateLong(new Date(rule.nextDate))}
-                  </p>
-                </div>
-
-                <div className="flex shrink-0 items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => toggleActive(rule)}
-                    className={`relative h-6 w-11 rounded-full transition ${
-                      rule.active ? 'bg-emerald-500' : 'bg-zinc-300 dark:bg-zinc-700'
-                    }`}
-                    aria-label={rule.active ? 'Desativar' : 'Ativar'}
-                  >
-                    <span
-                      className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
-                        rule.active ? 'left-[22px]' : 'left-0.5'
+                    <div
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
+                        isIncome
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-rose-500 text-white'
                       }`}
-                    />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => openEdit(rule)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
-                    aria-label="Editar"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(rule.id)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400"
-                    aria-label="Excluir"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </li>
-            )
-          })}
-        </ul>
+                    >
+                      {isIncome ? (
+                        <TrendingUp className="h-4 w-4" />
+                      ) : (
+                        <TrendingDown className="h-4 w-4" />
+                      )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                        {rule.description}
+                      </p>
+                    </div>
+
+                    <p
+                      className={`shrink-0 text-sm font-semibold ${
+                        isIncome
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-rose-600 dark:text-rose-400'
+                      }`}
+                    >
+                      {isIncome ? '+' : '–'} {formatBRL(rule.amountCents)}
+                    </p>
+
+                    <div className="flex shrink-0 items-center gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
+                      <button
+                        type="button"
+                        onClick={() => toggleActive(rule)}
+                        className={`relative h-6 w-11 rounded-full transition ${
+                          rule.active ? 'bg-emerald-500' : 'bg-zinc-300 dark:bg-zinc-700'
+                        }`}
+                        aria-label={rule.active ? 'Desativar' : 'Ativar'}
+                      >
+                        <span
+                          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
+                            rule.active ? 'left-[22px]' : 'left-0.5'
+                          }`}
+                        />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => openEdit(rule)}
+                        className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+                        aria-label="Editar"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(rule.id)}
+                        className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:bg-red-500 dark:hover:text-white"
+                        aria-label="Excluir"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="ml-8 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-zinc-500">
+                    <span>Dia {rule.dayOfMonth}</span>
+                    <span>·</span>
+                    <span>{rule.accountName}</span>
+                    {rule.categoryName && (
+                      <>
+                        <span>·</span>
+                        <span>{rule.categoryName}</span>
+                      </>
+                    )}
+                    <span>·</span>
+                    <span>Próximo: {formatDateLong(new Date(rule.nextDate + 'T12:00:00'))}</span>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
       )}
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
           <div className="absolute inset-0 bg-black/60" onClick={() => setModalOpen(false)} />
-          <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
+          <div className="relative my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
             <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
               {editing ? 'Editar recorrência' : 'Nova recorrência'}
             </h2>
@@ -430,7 +508,7 @@ export default function RecurringManager() {
 
               <div>
                 <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Descrição
+                  Descrição <span className="text-rose-500">*</span>
                 </label>
                 <input
                   id="description"
@@ -448,25 +526,25 @@ export default function RecurringManager() {
                 <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Categoria
                 </label>
-                <select
+                <Select
                   id="category"
                   value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value)}
+                  onChange={setCategoryId}
                   className={inputClass}
-                >
-                  <option value="">Sem categoria</option>
-                  {availableCategories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+                  options={[
+                    { value: '', label: 'Sem categoria' },
+                    ...availableCategories.map((c) => ({
+                      value: c.id,
+                      label: c.name,
+                    })),
+                  ]}
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Valor (R$)
+                    Valor (R$) <span className="text-rose-500">*</span>
                   </label>
                   <CurrencyInput
                     id="amount"
@@ -479,7 +557,7 @@ export default function RecurringManager() {
                 </div>
                 <div>
                   <label htmlFor="day" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Dia do mês
+                    Dia do mês <span className="text-rose-500">*</span>
                   </label>
                   <input
                     id="day"
@@ -496,24 +574,20 @@ export default function RecurringManager() {
 
               <div>
                 <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Conta
+                  Conta <span className="text-rose-500">*</span>
                 </label>
-                <select
+                <Select
                   id="account"
                   value={accountId}
-                  onChange={(e) => setAccountId(e.target.value)}
+                  onChange={setAccountId}
                   required
+                  placeholder="Selecione..."
                   className={inputClass}
-                >
-                  <option value="" disabled>
-                    Selecione...
-                  </option>
-                  {accounts.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.name}
-                    </option>
-                  ))}
-                </select>
+                  options={[
+                    { value: '', label: 'Selecione...', disabled: true },
+                    ...accounts.map((a) => ({ value: a.id, label: a.name })),
+                  ]}
+                />
               </div>
 
               <div>
@@ -561,6 +635,13 @@ export default function RecurringManager() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Excluir recorrência"
+        message={`Tem certeza que deseja excluir a recorrência "${confirmTarget?.description ?? ''}"? Essa ação não pode ser desfeita.`}
+        onConfirm={confirmDelete}
+        onCancel={() => { setConfirmOpen(false); setConfirmTarget(null) }}
+      />
     </div>
   )
 }

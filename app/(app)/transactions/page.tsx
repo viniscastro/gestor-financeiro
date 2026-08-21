@@ -3,13 +3,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { ArrowRightLeft, Download, LoaderCircle, Plus, Search } from 'lucide-react'
+import { Download, LoaderCircle, Plus, Search } from 'lucide-react'
 import TransactionForm from '@/components/transaction-form'
 import TransactionList from '@/components/transaction-list'
-import TransferForm from '@/components/transfer-form'
+import ConfirmDialog from '@/components/confirm-dialog'
 import { downloadCsv, formatCentsPtBR, formatBRL, formatDate, toCsv } from '@/lib/format'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 import DatePicker from '@/components/date-picker'
+import Select, { type SelectOption } from '@/components/select'
 
 type TypeFilter = 'ALL' | 'INCOME' | 'EXPENSE'
 
@@ -27,8 +28,9 @@ export default function TransactionsPage() {
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [formOpen, setFormOpen] = useState(false)
-  const [transferOpen, setTransferOpen] = useState(false)
   const [editing, setEditing] = useState<TransactionDto | null>(null)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmTarget, setConfirmTarget] = useState<TransactionDto | null>(null)
   const router = useRouter()
 
   async function reload() {
@@ -129,7 +131,17 @@ export default function TransactionsPage() {
 
   async function handleDelete(id: string) {
     const tx = transactions.find((t) => t.id === id)
-    const res = await fetch(`/api/transactions/${id}`, { method: 'DELETE' })
+    if (!tx) return
+    setConfirmTarget(tx)
+    setConfirmOpen(true)
+  }
+
+  async function confirmDelete() {
+    if (!confirmTarget) return
+    const tx = confirmTarget
+    const res = await fetch(`/api/transactions/${tx.id}`, { method: 'DELETE' })
+    setConfirmOpen(false)
+    setConfirmTarget(null)
     if (!res.ok) {
       toast.error('Erro ao excluir a transação.')
       return
@@ -139,7 +151,7 @@ export default function TransactionsPage() {
     toast.success('Transação excluída', {
       action: {
         label: 'Desfazer',
-        onClick: () => undoCreate(tx!),
+        onClick: () => undoCreate(tx),
       },
     })
   }
@@ -191,8 +203,26 @@ export default function TransactionsPage() {
     router.refresh()
   }
 
-  const selectClass =
-    'rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition focus:border-emerald-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200'
+  const typeOptions: SelectOption[] = [
+    { value: 'ALL', label: 'Todas' },
+    { value: 'INCOME', label: 'Entradas' },
+    { value: 'EXPENSE', label: 'Saídas' },
+  ]
+
+  const accountOptions = [
+    { value: 'ALL', label: 'Todas as contas' },
+    ...accounts.map((a) => ({ value: a.id, label: a.name })),
+  ]
+
+  const categoryOptions = [
+    { value: 'ALL', label: 'Todas as categorias' },
+    ...categories.map((c) => ({ value: c.id, label: c.name })),
+  ]
+
+  const monthOptions = [
+    { value: 'ALL', label: 'Todos os meses' },
+    ...months.map(([key, label]) => ({ value: key, label })),
+  ]
 
   return (
     <div className="space-y-6">
@@ -208,18 +238,10 @@ export default function TransactionsPage() {
             type="button"
             onClick={exportCsv}
             disabled={filtered.length === 0}
-            className="flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-600 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="flex items-center gap-2 rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
           >
             <Download className="h-4 w-4" />
             Exportar CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => setTransferOpen(true)}
-            className="flex items-center gap-2 rounded-lg border border-sky-300 bg-transparent px-4 py-2.5 text-sm font-semibold text-sky-600 transition hover:bg-sky-50 dark:border-sky-700 dark:text-sky-400 dark:hover:bg-sky-950"
-          >
-            <ArrowRightLeft className="h-4 w-4" />
-            Transferir
           </button>
           <button
             type="button"
@@ -273,51 +295,26 @@ export default function TransactionsPage() {
             className="w-full rounded-lg border border-zinc-300 bg-white py-2 pl-9 pr-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:placeholder:text-zinc-500"
           />
         </div>
-        <select
+        <Select
           value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value as TypeFilter)}
-          className={selectClass}
-        >
-          <option value="ALL">Todas</option>
-          <option value="INCOME">Entradas</option>
-          <option value="EXPENSE">Saídas</option>
-        </select>
-        <select
+          onChange={(v) => setTypeFilter(v as TypeFilter)}
+          options={typeOptions}
+        />
+        <Select
           value={accountFilter}
-          onChange={(e) => setAccountFilter(e.target.value)}
-          className={selectClass}
-        >
-          <option value="ALL">Todas as contas</option>
-          {accounts.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.name}
-            </option>
-          ))}
-        </select>
-        <select
+          onChange={setAccountFilter}
+          options={accountOptions}
+        />
+        <Select
           value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className={selectClass}
-        >
-          <option value="ALL">Todas as categorias</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-        <select
+          onChange={setCategoryFilter}
+          options={categoryOptions}
+        />
+        <Select
           value={monthFilter}
-          onChange={(e) => setMonthFilter(e.target.value)}
-          className={selectClass}
-        >
-          <option value="ALL">Todos os meses</option>
-          {months.map(([key, label]) => (
-            <option key={key} value={key}>
-              {label}
-            </option>
-          ))}
-        </select>
+          onChange={setMonthFilter}
+          options={monthOptions}
+        />
         <DatePicker
           value={dateFrom}
           onChange={setDateFrom}
@@ -363,14 +360,12 @@ export default function TransactionsPage() {
         categories={categories}
       />
 
-      <TransferForm
-        open={transferOpen}
-        accounts={accounts}
-        onClose={() => setTransferOpen(false)}
-        onDone={() => {
-          setTransferOpen(false)
-          handleSaved()
-        }}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Excluir transação"
+        message="Tem certeza que deseja excluir esta transação? Essa ação não pode ser desfeita."
+        onConfirm={confirmDelete}
+        onCancel={() => { setConfirmOpen(false); setConfirmTarget(null) }}
       />
     </div>
   )

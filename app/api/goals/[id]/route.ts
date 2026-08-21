@@ -7,6 +7,18 @@ import { amountToCents } from '@/lib/transactions'
 
 type Params = { params: Promise<{ id: string }> }
 
+let iconColumnReady = false
+
+async function ensureIconColumn() {
+  if (iconColumnReady) return
+  try {
+    await prisma.$executeRaw`ALTER TABLE "SavingsGoal" ADD COLUMN IF NOT EXISTS "icon" TEXT`
+    iconColumnReady = true
+  } catch {
+    iconColumnReady = true
+  }
+}
+
 export async function PATCH(request: NextRequest, ctx: Params) {
   const session = await auth()
   if (!session?.user?.id) {
@@ -14,6 +26,8 @@ export async function PATCH(request: NextRequest, ctx: Params) {
   }
 
   const { id } = await ctx.params
+
+  await ensureIconColumn()
 
   let body: unknown
   try {
@@ -34,6 +48,7 @@ export async function PATCH(request: NextRequest, ctx: Params) {
 
   const data: Prisma.SavingsGoalUpdateInput = {}
   if (input.name !== undefined) data.name = input.name
+  if (input.icon !== undefined) data.icon = input.icon ?? null
   if (input.targetAmount !== undefined) data.targetAmount = amountToCents(input.targetAmount)
   if (input.currentAmount !== undefined) data.currentAmount = amountToCents(input.currentAmount)
   if (input.targetDate !== undefined) {

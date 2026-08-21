@@ -12,31 +12,48 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatBRL } from '@/lib/format'
-import type { SavingsGoalDto } from '@/lib/types'
+import type { AccountDto, SavingsGoalDto } from '@/lib/types'
 import CurrencyInput from '@/components/currency-input'
+import ConfirmDialog from '@/components/confirm-dialog'
 import DatePicker from '@/components/date-picker'
+import Select from '@/components/select'
+import CategoryIcon from '@/components/category-icon'
+import { CATEGORY_ICONS } from '@/lib/categories'
+
+const GOAL_ICONS = CATEGORY_ICONS
 
 export default function GoalsManager() {
   const [goals, setGoals] = useState<SavingsGoalDto[]>([])
+  const [accounts, setAccounts] = useState<AccountDto[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<SavingsGoalDto | null>(null)
   const [name, setName] = useState('')
+  const [icon, setIcon] = useState<string>(CATEGORY_ICONS[0])
   const [targetAmount, setTargetAmount] = useState('')
   const [currentAmount, setCurrentAmount] = useState('')
+  const [accountId, setAccountId] = useState('')
   const [targetDate, setTargetDate] = useState('')
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
-  const [topupGoalId, setTopupGoalId] = useState<string | null>(null)
+  const [topupOpen, setTopupOpen] = useState(false)
+  const [topupGoalId, setTopupGoalId] = useState('')
   const [topupAmount, setTopupAmount] = useState('')
+  const [topupAccountId, setTopupAccountId] = useState('')
   const [topupLoading, setTopupLoading] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmTarget, setConfirmTarget] = useState<SavingsGoalDto | null>(null)
 
   async function reload() {
     try {
-      const res = await fetch('/api/goals', { cache: 'no-store' })
-      if (!res.ok) throw new Error('Erro ao carregar')
-      setGoals((await res.json()) as SavingsGoalDto[])
+      const [gRes, aRes] = await Promise.all([
+        fetch('/api/goals', { cache: 'no-store' }),
+        fetch('/api/accounts', { cache: 'no-store' }),
+      ])
+      if (!gRes.ok || !aRes.ok) throw new Error('Erro ao carregar')
+      setGoals((await gRes.json()) as SavingsGoalDto[])
+      setAccounts((await aRes.json()) as AccountDto[])
       setError('')
     } catch {
       setError('Não foi possível carregar as metas.')
@@ -47,11 +64,16 @@ export default function GoalsManager() {
     let cancelled = false
     async function fetchData() {
       try {
-        const res = await fetch('/api/goals', { cache: 'no-store' })
-        if (!res.ok) throw new Error('Erro ao carregar')
-        const data = (await res.json()) as SavingsGoalDto[]
+        const [gRes, aRes] = await Promise.all([
+          fetch('/api/goals', { cache: 'no-store' }),
+          fetch('/api/accounts', { cache: 'no-store' }),
+        ])
+        if (!gRes.ok || !aRes.ok) throw new Error('Erro ao carregar')
+        const gData = (await gRes.json()) as SavingsGoalDto[]
+        const aData = (await aRes.json()) as AccountDto[]
         if (!cancelled) {
-          setGoals(data)
+          setGoals(gData)
+          setAccounts(aData)
           setError('')
         }
       } catch {
@@ -61,16 +83,16 @@ export default function GoalsManager() {
       }
     }
     fetchData()
-    return () => {
-      cancelled = true
-    }
+    return () => { cancelled = true }
   }, [])
 
   function openCreate() {
     setEditing(null)
     setName('')
+    setIcon(CATEGORY_ICONS[0])
     setTargetAmount('')
     setCurrentAmount('')
+    setAccountId('')
     setTargetDate('')
     setFormError('')
     setModalOpen(true)
@@ -79,11 +101,46 @@ export default function GoalsManager() {
   function openEdit(goal: SavingsGoalDto) {
     setEditing(goal)
     setName(goal.name)
+    setIcon(goal.icon ?? CATEGORY_ICONS[0])
     setTargetAmount(String(goal.targetAmount / 100))
     setCurrentAmount(String(goal.currentAmount / 100))
+    setAccountId('')
     setTargetDate(goal.targetDate ?? '')
     setFormError('')
     setModalOpen(true)
+  }
+
+  function openTopup(goalId?: string) {
+    setTopupGoalId(goalId ?? (goals.find((g) => g.percent < 100)?.id ?? ''))
+    setTopupAmount('')
+    setTopupAccountId(accounts[0]?.id ?? '')
+    setTopupLoading(false)
+    setTopupOpen(true)
+  }
+
+  async function handleTopup() {
+    const goal = goals.find((g) => g.id === topupGoalId)
+    if (!goal) return
+    const add = Number(topupAmount)
+    if (!add || add <= 0 || !topupAccountId) return
+    setTopupLoading(true)
+    try {
+      const res = await fetch(`/api/goals/${goal.id}/topup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ goalId: goal.id, amount: add, accountId: topupAccountId }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        toast.error(data.error ?? 'Erro ao adicionar saldo.')
+        return
+      }
+      setTopupOpen(false)
+      await reload()
+      toast.success(`R$ ${add.toFixed(2)} adicionado à meta "${goal.name}"`)
+    } finally {
+      setTopupLoading(false)
+    }
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -93,8 +150,10 @@ export default function GoalsManager() {
     try {
       const payload = {
         name,
+        icon,
         targetAmount: Number(targetAmount),
         currentAmount: Number(currentAmount || 0),
+        accountId: accountId || null,
         targetDate: targetDate || null,
       }
       const res = await fetch(
@@ -132,46 +191,23 @@ export default function GoalsManager() {
   }
 
   async function handleDelete(goal: SavingsGoalDto) {
-    const res = await fetch(`/api/goals/${goal.id}`, { method: 'DELETE' })
+    setConfirmTarget(goal)
+    setConfirmOpen(true)
+  }
+
+  async function confirmDelete() {
+    if (!confirmTarget) return
+    const res = await fetch(`/api/goals/${confirmTarget.id}`, { method: 'DELETE' })
+    setConfirmOpen(false)
+    setConfirmTarget(null)
     if (!res.ok) {
       toast.error('Erro ao excluir a meta.')
       return
     }
     await reload()
     toast.success('Meta excluída', {
-      action: {
-        label: 'Desfazer',
-        onClick: () => undoCreate(goal),
-      },
+      action: { label: 'Desfazer', onClick: () => undoCreate(confirmTarget!) },
     })
-  }
-
-  async function handleTopup(goal: SavingsGoalDto) {
-    const add = Number(topupAmount)
-    if (!add || add <= 0) return
-    setTopupLoading(true)
-    try {
-      const res = await fetch(`/api/goals/${goal.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: goal.name,
-          targetAmount: goal.targetAmount / 100,
-          currentAmount: goal.currentAmount / 100 + add,
-          targetDate: goal.targetDate,
-        }),
-      })
-      if (!res.ok) {
-        toast.error('Erro ao adicionar saldo.')
-        return
-      }
-      setTopupGoalId(null)
-      setTopupAmount('')
-      await reload()
-      toast.success(`R$ ${add.toFixed(2)} adicionado à meta "${goal.name}"`)
-    } finally {
-      setTopupLoading(false)
-    }
   }
 
   function formatDate(value: string): string {
@@ -185,6 +221,12 @@ export default function GoalsManager() {
 
   const totalSaved = goals.reduce((sum, g) => sum + g.currentAmount, 0)
 
+  const goalOptions = goals
+    .filter((g) => g.percent < 100)
+    .map((g) => ({ value: g.id, label: g.name }))
+
+  const accountOptions = accounts.map((a) => ({ value: a.id, label: a.name }))
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -194,14 +236,26 @@ export default function GoalsManager() {
             Defina objetivos e acompanhe o progresso
           </p>
         </div>
-        <button
-          type="button"
-          onClick={openCreate}
-          className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
-        >
-          <Plus className="h-4 w-4" />
-          Nova meta
-        </button>
+        <div className="flex items-center gap-2">
+          {goals.some((g) => g.percent < 100) && (
+            <button
+              type="button"
+              onClick={() => openTopup()}
+              className="flex items-center gap-2 rounded-lg border border-emerald-500 bg-transparent px-4 py-2.5 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-500 hover:text-white dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-500 dark:hover:text-white"
+            >
+              <Wallet className="h-4 w-4" />
+              Adicionar saldo
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={openCreate}
+            className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
+          >
+            <Plus className="h-4 w-4" />
+            Nova meta
+          </button>
+        </div>
       </div>
 
       <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800">
@@ -243,11 +297,11 @@ export default function GoalsManager() {
                     <div
                       className={`flex h-10 w-10 items-center justify-center rounded-xl ${
                         done
-                          ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400'
-                          : 'bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-sky-400'
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-sky-500 text-white'
                       }`}
                     >
-                      <Flag className="h-5 w-5" />
+                      <CategoryIcon icon={goal.icon ?? CATEGORY_ICONS[0]} className="h-5 w-5" />
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -270,7 +324,7 @@ export default function GoalsManager() {
                     <button
                       type="button"
                       onClick={() => handleDelete(goal)}
-                      className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400"
+                      className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
                       aria-label="Excluir"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -301,48 +355,79 @@ export default function GoalsManager() {
                     </p>
                   )}
                 </div>
-
-                {!done && (
-                  topupGoalId === goal.id ? (
-                    <div className="mt-3 flex items-center gap-2">
-                      <CurrencyInput
-                        value={topupAmount}
-                        onChange={setTopupAmount}
-                        autoFocus
-                        placeholder="Valor (R$)"
-                        className="flex-1 rounded-lg border border-emerald-500 bg-white py-2 px-3 text-sm text-zinc-900 outline-none focus:ring-2 focus:ring-emerald-500/20 dark:border-emerald-700 dark:bg-zinc-900 dark:text-zinc-100"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleTopup(goal)}
-                        disabled={topupLoading || !topupAmount}
-                        className="flex h-9 items-center gap-1.5 rounded-lg bg-emerald-500 px-3 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:opacity-50"
-                      >
-                        {topupLoading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                        Guardar
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setTopupGoalId(null)}
-                        className="flex h-9 items-center rounded-lg border border-zinc-300 px-3 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => { setTopupGoalId(goal.id); setTopupAmount('') }}
-                      className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-emerald-300 px-3 py-2 text-sm font-medium text-emerald-600 transition hover:bg-emerald-50 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/20"
-                    >
-                      <Wallet className="h-4 w-4" />
-                      Adicionar saldo
-                    </button>
-                  )
-                )}
               </div>
             )
           })}
+        </div>
+      )}
+
+      {topupOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setTopupOpen(false)} />
+          <div className="relative my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
+            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
+              Adicionar saldo
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Meta <span className="text-rose-500">*</span>
+                </label>
+                <Select
+                  value={topupGoalId}
+                  onChange={setTopupGoalId}
+                  options={goalOptions.length > 0 ? goalOptions : [{ value: '', label: 'Nenhuma meta disponível' }]}
+                  placeholder="Selecione a meta"
+                  required
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Valor (R$) <span className="text-rose-500">*</span>
+                </label>
+                <CurrencyInput
+                  value={topupAmount}
+                  onChange={setTopupAmount}
+                  autoFocus
+                  placeholder="0,00"
+                  required
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Descontar de <span className="text-rose-500">*</span>
+                </label>
+                <Select
+                  value={topupAccountId}
+                  onChange={setTopupAccountId}
+                  options={accountOptions}
+                  placeholder="Selecione a conta"
+                  required
+                  className={inputClass}
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setTopupOpen(false)}
+                  className="flex-1 rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleTopup}
+                  disabled={topupLoading || !topupAmount || !topupGoalId || !topupAccountId}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {topupLoading && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -359,7 +444,7 @@ export default function GoalsManager() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Nome
+                  Nome <span className="text-rose-500">*</span>
                 </label>
                 <input
                   id="name"
@@ -373,10 +458,32 @@ export default function GoalsManager() {
                 />
               </div>
 
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Ícone
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {GOAL_ICONS.map((ic) => (
+                    <button
+                      key={ic}
+                      type="button"
+                      onClick={() => setIcon(ic)}
+                      className={`flex h-9 w-9 items-center justify-center rounded-lg transition ${
+                        icon === ic
+                          ? 'bg-emerald-500 text-white ring-2 ring-emerald-500'
+                          : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700'
+                      }`}
+                    >
+                      <CategoryIcon icon={ic} className="h-4 w-4" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="target" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Valor da meta (R$)
+                    Valor da meta (R$) <span className="text-rose-500">*</span>
                   </label>
                   <CurrencyInput
                     id="target"
@@ -409,6 +516,21 @@ export default function GoalsManager() {
                 />
               </div>
 
+              {Number(currentAmount) > 0 && (
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Descontar de
+                  </label>
+                  <Select
+                    value={accountId}
+                    onChange={setAccountId}
+                    options={accountOptions}
+                    placeholder="Selecione a conta"
+                    className={inputClass}
+                  />
+                </div>
+              )}
+
               {formError && (
                 <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                   {formError}
@@ -427,6 +549,13 @@ export default function GoalsManager() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Excluir meta"
+        message={`Tem certeza que deseja excluir a meta "${confirmTarget?.name ?? ''}"? Essa ação não pode ser desfeita.`}
+        onConfirm={confirmDelete}
+        onCancel={() => { setConfirmOpen(false); setConfirmTarget(null) }}
+      />
     </div>
   )
 }

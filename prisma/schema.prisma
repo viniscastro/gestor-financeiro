@@ -61,6 +61,7 @@ model Category {
   type           String
   color          String          @default("#78716c")
   icon           String          @default("tag")
+  position       Int             @default(0)
   createdAt      DateTime        @default(now())
   transactions   Transaction[]
   budgets        Budget[]
@@ -139,6 +140,7 @@ model SavingsGoal {
   userId        String
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   name          String
+  icon          String?
   targetAmount  Int
   currentAmount Int       @default(0)
   accountId     String?

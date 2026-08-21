@@ -37,10 +37,10 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
             <div
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${
                 isTransfer
-                  ? 'bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-sky-400'
+                  ? 'bg-sky-500 text-white'
                   : isIncome
-                    ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400'
-                    : 'bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-400'
+                    ? 'bg-emerald-500 text-white'
+                    : 'bg-rose-500 text-white'
               }`}
             >
               {isTransfer ? <ArrowRightLeft className="h-4 w-4" /> : isIncome ? '+' : '–'}
@@ -94,7 +94,7 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
               <button
                 type="button"
                 onClick={() => onDelete(t.id)}
-                className="rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400"
+                className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
                 aria-label="Excluir"
               >
                 <Trash2 className="h-4 w-4" />

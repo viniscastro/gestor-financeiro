@@ -105,7 +105,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
           <form onSubmit={handleReset} className="space-y-4">
             <div>
               <label htmlFor="newPassword" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Nova senha
+                Nova senha <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <LockKeyhole className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
@@ -133,7 +133,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
 
             <div>
               <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Confirmar nova senha
+                Confirmar nova senha <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <LockKeyhole className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
