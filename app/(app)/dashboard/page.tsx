@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import type { Metadata } from 'next'
 import {
   AlarmClock,
   ArrowLeftRight,
@@ -11,6 +12,10 @@ import { formatBRL, formatDate } from '@/lib/format'
 import { getUpcomingBills } from '@/lib/recurring'
 import DashboardCards from '@/components/dashboard-cards'
 import DashboardCardEditor, { type DashboardCardId } from '@/components/dashboard-card-editor'
+
+export const metadata: Metadata = {
+  title: 'Dashboard | Gestor Financeiro',
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -241,6 +246,7 @@ export default async function DashboardPage() {
                   <span
                     className="h-3 w-3 shrink-0 rounded-full"
                     style={{ backgroundColor: account.color }}
+                    aria-hidden="true"
                   />
                   <p className="truncate text-xs font-medium uppercase tracking-wide text-zinc-500">
                     {account.name}
@@ -264,7 +270,7 @@ export default async function DashboardPage() {
       {overBudget.length > 0 && (
         <div className="rounded-2xl border border-rose-200 bg-rose-50 p-5 dark:border-rose-900/50 dark:bg-rose-950/40">
           <div className="mb-2 flex items-center gap-2">
-            <Target className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+            <Target aria-hidden="true" className="h-4 w-4 text-rose-600 dark:text-rose-400" />
             <h2 className="text-base font-semibold text-rose-800 dark:text-rose-300">
               Orçamentos estourados
             </h2>
@@ -316,7 +322,7 @@ export default async function DashboardPage() {
       {upcomingDue.length > 0 && (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 dark:border-amber-900/50 dark:bg-amber-950/40">
           <div className="mb-2 flex items-center gap-2">
-            <AlarmClock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <AlarmClock aria-hidden="true" className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             <h2 className="text-base font-semibold text-amber-800 dark:text-amber-300">
               Contas a vencer
             </h2>
@@ -354,7 +360,7 @@ export default async function DashboardPage() {
             href="/transactions"
             className="flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
           >
-            <ArrowLeftRight className="h-4 w-4" />
+            <ArrowLeftRight aria-hidden="true" className="h-4 w-4" />
             Ver todas
           </Link>
         </div>

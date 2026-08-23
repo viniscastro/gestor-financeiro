@@ -84,7 +84,7 @@ export default function CurrencyInput({
   const display = cents > 0 ? formatCents(cents) : ''
 
   const btnClass =
-    'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-zinc-300 bg-white text-zinc-600 transition hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700'
+    'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-zinc-300 bg-white text-zinc-600 transition hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700'
 
   return (
     <div className="flex items-center gap-1.5">
@@ -94,7 +94,7 @@ export default function CurrencyInput({
         className={btnClass}
         aria-label="Diminuir valor"
       >
-        <Minus className="h-3.5 w-3.5" />
+        <Minus className="h-4 w-4" />
       </button>
       <input
         ref={inputRef}
@@ -121,7 +121,7 @@ export default function CurrencyInput({
         className={btnClass}
         aria-label="Aumentar valor"
       >
-        <Plus className="h-3.5 w-3.5" />
+        <Plus className="h-4 w-4" />
       </button>
     </div>
   )

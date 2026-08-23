@@ -33,7 +33,7 @@ export default function ConfirmDialog({
     <Modal open={open} onClose={onCancel} title={title}>
       <div className="flex items-start gap-4">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-500">
-          <AlertTriangle className="h-5 w-5 text-white" />
+          <AlertTriangle aria-hidden="true" className="h-5 w-5 text-white" />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -46,7 +46,7 @@ export default function ConfirmDialog({
           type="button"
           onClick={onCancel}
           disabled={loading}
-          className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
+          className="rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
         >
           Cancelar
         </button>
@@ -54,9 +54,9 @@ export default function ConfirmDialog({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className={`flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60 ${confirmClass}`}
+          className={`flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60 ${confirmClass}`}
         >
-          {loading && <LoaderCircle className="h-4 w-4 animate-spin" />}
+          {loading && <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />}
           {confirmLabel}
         </button>
       </div>

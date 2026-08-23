@@ -21,17 +21,17 @@ export default function ColorPicker({ value, onChange, className }: Props) {
             key={c}
             type="button"
             onClick={() => onChange(c)}
-            className={`h-7 w-7 shrink-0 rounded-full transition ${
+            className={`h-8 w-8 shrink-0 rounded-full transition ${
               value === c ? 'ring-2 ring-offset-2 ring-zinc-400 dark:ring-offset-zinc-900' : ''
             }`}
             style={{ backgroundColor: c }}
-            aria-label={c}
+            aria-label={`Cor ${c}`}
           />
         ))}
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-dashed transition ${
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-dashed transition ${
             !CATEGORY_COLORS.includes(value as typeof CATEGORY_COLORS[number])
               ? 'border-zinc-400 dark:border-zinc-500'
               : 'border-zinc-300 dark:border-zinc-600'
@@ -42,6 +42,7 @@ export default function ColorPicker({ value, onChange, className }: Props) {
               : undefined
           }
           title="Cor personalizada"
+          aria-label="Cor personalizada"
         >
           {!CATEGORY_COLORS.includes(value as typeof CATEGORY_COLORS[number]) ? null : (
             <Pipette className="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" />

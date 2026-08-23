@@ -34,6 +34,10 @@ export default function TransactionsPage() {
   const [confirmTarget, setConfirmTarget] = useState<TransactionDto | null>(null)
   const router = useRouter()
 
+  useEffect(() => {
+    document.title = 'Transações | Gestor Financeiro'
+  }, [])
+
   async function reload() {
     try {
       const [txRes, accRes, catRes] = await Promise.all([
@@ -150,6 +154,7 @@ export default function TransactionsPage() {
     reload()
     router.refresh()
     toast.success('Transação excluída', {
+      duration: 10000,
       action: {
         label: 'Desfazer',
         onClick: () => undoCreate(tx),
@@ -238,7 +243,7 @@ export default function TransactionsPage() {
             disabled={filtered.length === 0}
             className="flex items-center gap-2 rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
           >
-            <Download className="h-4 w-4" />
+            <Download aria-hidden="true" className="h-4 w-4" />
             Exportar Excel
           </button>
           <button
@@ -249,7 +254,7 @@ export default function TransactionsPage() {
             }}
             className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
           >
-            <Plus className="h-4 w-4" />
+            <Plus aria-hidden="true" className="h-4 w-4" />
             Nova transação
           </button>
         </div>
@@ -284,9 +289,10 @@ export default function TransactionsPage() {
 
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-52">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+          <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
           <input
             type="text"
+            aria-label="Buscar transações"
             placeholder="Buscar por descrição, categoria ou conta..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -297,43 +303,47 @@ export default function TransactionsPage() {
           value={typeFilter}
           onChange={(v) => setTypeFilter(v as TypeFilter)}
           options={typeOptions}
+          className="sm:w-auto min-w-[160px]"
         />
         <Select
           value={accountFilter}
           onChange={setAccountFilter}
           options={accountOptions}
+          className="sm:w-auto min-w-[160px]"
         />
         <Select
           value={categoryFilter}
           onChange={setCategoryFilter}
           options={categoryOptions}
+          className="sm:w-auto min-w-[160px]"
         />
         <Select
           value={monthFilter}
           onChange={setMonthFilter}
           options={monthOptions}
+          className="sm:w-auto min-w-[160px]"
         />
         <DatePicker
           value={dateFrom}
           onChange={setDateFrom}
-          className="min-w-[140px]"
+          className="sm:w-auto min-w-[140px]"
         />
         <DatePicker
           value={dateTo}
           onChange={setDateTo}
-          className="min-w-[140px]"
+          className="sm:w-auto min-w-[140px]"
         />
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+        <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
           {error}
         </p>
       )}
 
       {loading ? (
         <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800">
-          <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
+          <LoaderCircle aria-hidden="true" className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : (
         <TransactionList

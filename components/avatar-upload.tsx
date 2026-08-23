@@ -120,7 +120,7 @@ export default function AvatarUpload({
           JPG, PNG ou WebP de até 2 MB.
         </p>
         {error && (
-          <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+          <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
             {error}
           </p>
         )}

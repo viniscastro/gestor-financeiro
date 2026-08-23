@@ -339,24 +339,24 @@ export default function RecurringManager() {
           onClick={openCreate}
           className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
         >
-          <Plus className="h-4 w-4" />
+          <Plus aria-hidden="true" className="h-4 w-4" />
           Nova recorrência
         </button>
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+        <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
           {error}
         </p>
       )}
 
       {loading ? (
         <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800">
-          <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
+          <LoaderCircle aria-hidden="true" className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : rules.length === 0 ? (
         <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
-          <Repeat className="mx-auto h-10 w-10 text-zinc-400" />
+          <Repeat aria-hidden="true" className="mx-auto h-10 w-10 text-zinc-400" />
           <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
             Nenhuma recorrência criada. Adicione contas como aluguel, assinaturas,
             salário ou aportes mensais.
@@ -383,10 +383,10 @@ export default function RecurringManager() {
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1">
                       <div
-                        className="touch-none cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                        className="flex h-10 w-10 touch-none cursor-grab items-center justify-center text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
                         onTouchStart={(e) => handleTouchStart(e, index)}
                       >
-                        <GripVertical className="h-5 w-5" />
+                        <GripVertical aria-hidden="true" className="h-5 w-5" />
                       </div>
                       <button
                         type="button"
@@ -438,9 +438,9 @@ export default function RecurringManager() {
                       }`}
                     >
                       {isIncome ? (
-                        <TrendingUp className="h-4 w-4" />
+                        <TrendingUp aria-hidden="true" className="h-4 w-4" />
                       ) : (
-                        <TrendingDown className="h-4 w-4" />
+                        <TrendingDown aria-hidden="true" className="h-4 w-4" />
                       )}
                     </div>
 
@@ -463,14 +463,16 @@ export default function RecurringManager() {
                     <div className="flex shrink-0 items-center gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
                       <button
                         type="button"
+                        role="switch"
+                        aria-checked={rule.active}
                         onClick={() => toggleActive(rule)}
-                        className={`relative h-6 w-11 rounded-full transition ${
+                        className={`relative h-7 w-12 rounded-full transition ${
                           rule.active ? 'bg-emerald-500' : 'bg-zinc-300 dark:bg-zinc-700'
                         }`}
-                        aria-label={rule.active ? 'Desativar' : 'Ativar'}
+                        aria-label={`${rule.active ? 'Desativar' : 'Ativar'} recorrência`}
                       >
                         <span
-                          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
+                          className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-all ${
                             rule.active ? 'left-[22px]' : 'left-0.5'
                           }`}
                         />
@@ -481,7 +483,7 @@ export default function RecurringManager() {
                         className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
                         aria-label="Editar"
                       >
-                        <Pencil className="h-4 w-4" />
+                        <Pencil aria-hidden="true" className="h-4 w-4" />
                       </button>
                       <button
                         type="button"
@@ -489,7 +491,7 @@ export default function RecurringManager() {
                         className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:bg-red-500 dark:hover:text-white"
                         aria-label="Excluir"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 aria-hidden="true" className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
@@ -521,9 +523,11 @@ export default function RecurringManager() {
           title={editing ? 'Editar recorrência' : 'Nova recorrência'}
         >
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+              <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
                 <button
                   type="button"
+                  role="tab"
+                  aria-selected={type === 'INCOME'}
                   onClick={() => switchType('INCOME')}
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     type === 'INCOME'
@@ -531,11 +535,13 @@ export default function RecurringManager() {
                       : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
                   }`}
                 >
-                  <TrendingUp className="h-4 w-4" />
+                  <TrendingUp aria-hidden="true" className="h-4 w-4" />
                   Entrada
                 </button>
                 <button
                   type="button"
+                  role="tab"
+                  aria-selected={type === 'EXPENSE'}
                   onClick={() => switchType('EXPENSE')}
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     type === 'EXPENSE'
@@ -543,14 +549,14 @@ export default function RecurringManager() {
                       : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
                   }`}
                 >
-                  <TrendingDown className="h-4 w-4" />
+                  <TrendingDown aria-hidden="true" className="h-4 w-4" />
                   Saída
                 </button>
               </div>
 
               <div>
                 <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Descrição <span className="text-rose-500">*</span>
+                  Descrição <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                 </label>
                 <input
                   id="description"
@@ -583,10 +589,10 @@ export default function RecurringManager() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Valor (R$) <span className="text-rose-500">*</span>
+                    Valor (R$) <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                   </label>
                   <CurrencyInput
                     id="amount"
@@ -599,7 +605,7 @@ export default function RecurringManager() {
                 </div>
                 <div>
                   <label htmlFor="day" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Dia do mês <span className="text-rose-500">*</span>
+                    Dia do mês <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                   </label>
                   <input
                     id="day"
@@ -616,7 +622,7 @@ export default function RecurringManager() {
 
               <div>
                 <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Conta <span className="text-rose-500">*</span>
+                  Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                 </label>
                 <Select
                   id="account"
@@ -660,7 +666,7 @@ export default function RecurringManager() {
               )}
 
               {formError && (
-                <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+                <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                   {formError}
                 </p>
               )}
@@ -670,7 +676,7 @@ export default function RecurringManager() {
                 disabled={saving}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                {saving && <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar alterações' : 'Criar recorrência'}
               </button>
             </form>

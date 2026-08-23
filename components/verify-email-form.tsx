@@ -160,7 +160,7 @@ export default function VerifyEmailForm({
               </div>
 
               {error && (
-                <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+                <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                   {error}
                 </p>
               )}

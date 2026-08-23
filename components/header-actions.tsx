@@ -37,8 +37,17 @@ export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme
         setMenuOpen(false)
       }
     }
-    if (menuOpen) document.addEventListener('click', handleClick)
-    return () => document.removeEventListener('click', handleClick)
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    if (menuOpen) {
+      document.addEventListener('click', handleClick)
+      document.addEventListener('keydown', handleKey)
+    }
+    return () => {
+      document.removeEventListener('click', handleClick)
+      document.removeEventListener('keydown', handleKey)
+    }
   }, [menuOpen])
 
   if (!mounted) return null
@@ -65,7 +74,7 @@ export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme
           aria-label={`Alternar tema (atual: ${labels[theme]})`}
           className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
         >
-          <Icon className="h-5 w-5" />
+          <Icon aria-hidden="true" className="h-5 w-5" />
         </button>
       </div>
     )
@@ -80,8 +89,10 @@ export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme
           onClick={() => setMenuOpen((o) => !o)}
           className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
           aria-label="Menu"
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
         >
-          <SlidersHorizontal className="h-5 w-5" />
+          <SlidersHorizontal aria-hidden="true" className="h-5 w-5" />
         </button>
 
         {menuOpen && (
@@ -91,7 +102,7 @@ export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme
               onClick={cycle}
               className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
-              <Icon className="h-4 w-4" />
+              <Icon aria-hidden="true" className="h-4 w-4" />
               {labels[theme]}
             </button>
             <div className="border-t border-zinc-100 dark:border-zinc-700" />
@@ -103,7 +114,7 @@ export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme
               }}
               className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
-              <SlidersHorizontal className="h-4 w-4" />
+              <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
               Editar cards
             </button>
           </div>

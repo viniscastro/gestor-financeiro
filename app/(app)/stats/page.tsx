@@ -1,7 +1,12 @@
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import type { Metadata } from 'next'
 import StatisticsCharts from '@/components/statistics-charts'
+
+export const metadata: Metadata = {
+  title: 'Estatísticas | Gestor Financeiro',
+}
 
 export const dynamic = 'force-dynamic'
 

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Bell, Check, CheckCheck, CircleAlert, Download, Info, Sparkles, Trash2 } from 'lucide-react'
-import { formatBRL } from '@/lib/format'
+import { formatBRL, formatDate } from '@/lib/format'
 
 type Notification = {
   id: string
@@ -63,8 +63,17 @@ export default function NotificationBell() {
         setOpen(false)
       }
     }
-    if (open) document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    if (open) {
+      document.addEventListener('mousedown', handleClick)
+      document.addEventListener('keydown', handleKey)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('keydown', handleKey)
+    }
   }, [open])
 
   async function markAsRead(ids: string[]) {
@@ -103,9 +112,10 @@ export default function NotificationBell() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
-        aria-label="Notificações"
+        aria-label={unread > 0 ? `${unread} notificações não lidas` : 'Notificações'}
+        aria-expanded={open}
       >
-        <Bell className="h-5 w-5" />
+        <Bell aria-hidden="true" className="h-5 w-5" />
         {unread > 0 && (
           <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
             {unread > 99 ? '99+' : unread}
@@ -114,11 +124,11 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800 sm:w-96">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[22rem] max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800 sm:w-96">
           <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3 dark:border-zinc-700">
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               Notificações
-            </h3>
+            </h2>
             <div className="flex gap-1">
               {unread > 0 && (
                 <button
@@ -126,8 +136,9 @@ export default function NotificationBell() {
                   onClick={markAllAsRead}
                   className="rounded-lg p-1.5 text-zinc-400 transition hover:bg-zinc-100 hover:text-emerald-500 dark:hover:bg-zinc-700"
                   title="Marcar todas como lidas"
+                  aria-label="Marcar todas como lidas"
                 >
-                  <CheckCheck className="h-4 w-4" />
+                  <CheckCheck aria-hidden="true" className="h-4 w-4" />
                 </button>
               )}
               {notifications.length > 0 && (
@@ -136,17 +147,18 @@ export default function NotificationBell() {
                   onClick={clearAll}
                   className="rounded-lg p-1.5 text-zinc-400 transition hover:bg-zinc-100 hover:text-red-500 dark:hover:bg-zinc-700"
                   title="Limpar todas"
+                  aria-label="Limpar todas"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 aria-hidden="true" className="h-4 w-4" />
                 </button>
               )}
             </div>
           </div>
 
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-[50vh] sm:max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
-                <Bell className="mb-2 h-8 w-8" />
+                <Bell aria-hidden="true" className="mb-2 h-8 w-8" />
                 <p className="text-sm">Nenhuma notificação</p>
               </div>
             ) : (
@@ -164,28 +176,32 @@ export default function NotificationBell() {
                       <div className="absolute left-1.5 top-4 h-1.5 w-1.5 rounded-full bg-emerald-500" />
                     )}
                     <div className={`mt-0.5 shrink-0 ${config.color}`}>
-                      <Icon className="h-4 w-4" />
+                      <Icon aria-hidden="true" className="h-4 w-4" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                         {n.title}
                       </p>
-                      <p className="mt-0.5 line-clamp-2 text-xs text-zinc-500 dark:text-zinc-400">
+                      <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
                         {n.message}
                       </p>
-                      <p className="mt-1 text-[10px] text-zinc-500">
+                      <p
+                        className="mt-1 text-[10px] text-zinc-500"
+                        title={formatDate(new Date(n.createdAt))}
+                      >
                         {timeAgo(n.createdAt)}
                       </p>
                     </div>
-                    <div className="flex shrink-0 gap-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100">
+                    <div className="flex shrink-0 gap-0.5 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
                       {!n.read && (
                         <button
                           type="button"
                           onClick={() => markAsRead([n.id])}
                           className="rounded p-1 text-zinc-400 transition hover:bg-zinc-200 hover:text-emerald-500 dark:hover:bg-zinc-600"
                           title="Marcar como lida"
+                          aria-label="Marcar como lida"
                         >
-                          <Check className="h-3.5 w-3.5" />
+                          <Check aria-hidden="true" className="h-3.5 w-3.5" />
                         </button>
                       )}
                       <button
@@ -193,8 +209,9 @@ export default function NotificationBell() {
                         onClick={() => deleteNotification(n.id)}
                         className="rounded p-1 text-zinc-400 transition hover:bg-zinc-200 hover:text-red-500 dark:hover:bg-zinc-600"
                         title="Excluir"
+                        aria-label="Excluir notificação"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 aria-hidden="true" className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>

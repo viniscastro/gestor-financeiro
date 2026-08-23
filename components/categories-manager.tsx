@@ -263,20 +263,22 @@ export default function CategoriesManager() {
           onClick={() => openCreate(tab)}
           className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
         >
-          <Plus className="h-4 w-4" />
+          <Plus aria-hidden="true" className="h-4 w-4" />
           Nova categoria
         </button>
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+        <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
           {error}
         </p>
       )}
 
-      <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+      <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
         <button
           type="button"
+          role="tab"
+          aria-selected={tab === 'INCOME'}
           onClick={() => setTab('INCOME')}
           className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
             tab === 'INCOME'
@@ -284,11 +286,13 @@ export default function CategoriesManager() {
               : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
           }`}
         >
-          <TrendingUp className="h-4 w-4" />
+                  <TrendingUp aria-hidden="true" className="h-4 w-4" />
           Entrada
         </button>
         <button
           type="button"
+          role="tab"
+          aria-selected={tab === 'EXPENSE'}
           onClick={() => setTab('EXPENSE')}
           className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
             tab === 'EXPENSE'
@@ -296,18 +300,18 @@ export default function CategoriesManager() {
               : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
           }`}
         >
-          <TrendingDown className="h-4 w-4" />
+                  <TrendingDown aria-hidden="true" className="h-4 w-4" />
           Saída
         </button>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800">
-          <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
+          <LoaderCircle aria-hidden="true" className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
-          <Tags className="mx-auto h-10 w-10 text-zinc-400" />
+          <Tags aria-hidden="true" className="mx-auto h-10 w-10 text-zinc-400" />
           <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
             Nenhuma categoria {tab === 'EXPENSE' ? 'de saída' : 'de entrada'}.
           </p>
@@ -330,10 +334,10 @@ export default function CategoriesManager() {
               >
                 <div className="flex items-center gap-1">
                   <div
-                    className="touch-none cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                    className="flex h-10 w-10 touch-none cursor-grab items-center justify-center text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
                     onTouchStart={(e) => handleTouchStart(e, index)}
                   >
-                    <GripVertical className="h-5 w-5" />
+                    <GripVertical aria-hidden="true" className="h-5 w-5" />
                   </div>
                   <button
                     type="button"
@@ -392,7 +396,7 @@ export default function CategoriesManager() {
                     className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
                     aria-label="Editar"
                   >
-                    <Pencil className="h-4 w-4" />
+                    <Pencil aria-hidden="true" className="h-4 w-4" />
                   </button>
                   <button
                     type="button"
@@ -400,7 +404,7 @@ export default function CategoriesManager() {
                     className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
                     aria-label="Excluir"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 aria-hidden="true" className="h-4 w-4" />
                   </button>
                 </div>
               </li>
@@ -418,7 +422,7 @@ export default function CategoriesManager() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="catName" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Nome <span className="text-rose-500">*</span>
+                  Nome <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                 </label>
                 <input
                   id="catName"
@@ -432,9 +436,11 @@ export default function CategoriesManager() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+              <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
                 <button
                   type="button"
+                  role="tab"
+                  aria-selected={newType === 'INCOME'}
                   onClick={() => setNewType('INCOME')}
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     newType === 'INCOME'
@@ -442,11 +448,13 @@ export default function CategoriesManager() {
                       : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
                   }`}
                 >
-                  <TrendingUp className="h-4 w-4" />
+          <TrendingUp aria-hidden="true" className="h-4 w-4" />
                   Entrada
                 </button>
                 <button
                   type="button"
+                  role="tab"
+                  aria-selected={newType === 'EXPENSE'}
                   onClick={() => setNewType('EXPENSE')}
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     newType === 'EXPENSE'
@@ -454,7 +462,7 @@ export default function CategoriesManager() {
                       : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
                   }`}
                 >
-                  <TrendingDown className="h-4 w-4" />
+          <TrendingDown aria-hidden="true" className="h-4 w-4" />
                   Saída
                 </button>
               </div>
@@ -481,7 +489,7 @@ export default function CategoriesManager() {
                           ? 'bg-emerald-500 text-white ring-2 ring-emerald-500'
                           : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800'
                       }`}
-                      aria-label={ic}
+                      aria-label={`Ícone: ${ic.replace(/-/g, ' ')}`}
                     >
                       <CategoryIcon icon={ic} className="h-4 w-4" />
                     </button>
@@ -490,7 +498,7 @@ export default function CategoriesManager() {
               </div>
 
               {formError && (
-                <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+                <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                   {formError}
                 </p>
               )}
@@ -500,7 +508,7 @@ export default function CategoriesManager() {
                 disabled={saving}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                {saving && <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar alterações' : 'Criar categoria'}
               </button>
             </form>

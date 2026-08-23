@@ -112,7 +112,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Valor (R$) <span className="text-rose-500">*</span>
@@ -154,7 +154,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
           </div>
 
           {error && (
-            <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+            <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
               {error}
             </p>
           )}

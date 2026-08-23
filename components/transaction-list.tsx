@@ -43,7 +43,7 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
                     : 'bg-rose-500 text-white'
               }`}
             >
-              {isTransfer ? <ArrowRightLeft className="h-4 w-4" /> : isIncome ? '+' : '–'}
+              {isTransfer ? <ArrowRightLeft aria-hidden="true" className="h-4 w-4" /> : isIncome ? '+' : '–'}
             </div>
 
             <div className="min-w-0 flex-1">
@@ -68,19 +68,19 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
                       <button
                         type="button"
                         onClick={() => onEdit(t)}
-                        className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 sm:p-2 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+                        className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
                         aria-label="Editar"
                       >
-                        <Pencil className="h-3.5 w-3.5" />
+                        <Pencil aria-hidden="true" className="h-4 w-4" />
                       </button>
                     )}
                     <button
                       type="button"
                       onClick={() => onDelete(t.id)}
-                      className="rounded-lg p-1.5 text-zinc-500 hover:bg-red-500 hover:text-white sm:p-2 dark:text-zinc-300 dark:hover:text-white"
+                      className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
                       aria-label="Excluir"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 aria-hidden="true" className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
@@ -90,13 +90,14 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
                   <span
                     className="h-2 w-2 shrink-0 rounded-full"
                     style={{ backgroundColor: t.categoryColor ?? t.accountColor }}
+                    aria-hidden="true"
                   />
                   {t.categoryName ?? 'Transferência'}
                 </span>
                 · {t.accountName} · {formatDate(new Date(t.date))}
                 {t.recurringId && (
                   <span className="inline-flex items-center gap-0.5 text-emerald-600 dark:text-emerald-400">
-                    <Repeat className="h-3 w-3" />
+                    <Repeat aria-hidden="true" className="h-3 w-3" />
                     Recorrente
                   </span>
                 )}

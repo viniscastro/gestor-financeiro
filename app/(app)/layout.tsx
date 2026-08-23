@@ -29,9 +29,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-[#0e0e12]">
       <ServerPreferencesScript theme={user.theme} dashboardCards={user.dashboardCards} />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+      >
+        Pular para o conteúdo principal
+      </a>
       <Sidebar user={user} />
-      <main className="min-h-screen lg:pl-64">
-        <div className="mx-auto max-w-5xl px-4 py-16 pt-20 sm:px-6 sm:py-20 lg:px-6 lg:pt-10">{children}</div>
+      <main id="main-content" className="min-h-screen lg:pl-64">
+        <div className="mx-auto max-w-5xl px-4 py-8 pt-20 sm:px-6 sm:py-20 lg:px-6 lg:pt-10">{children}</div>
       </main>
     </div>
   )

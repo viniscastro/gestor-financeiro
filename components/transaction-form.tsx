@@ -146,9 +146,11 @@ function TransactionFormBody({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+          <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
             <button
               type="button"
+              role="tab"
+              aria-selected={type === 'INCOME'}
               onClick={() => switchType('INCOME')}
               className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                 type === 'INCOME'
@@ -161,6 +163,8 @@ function TransactionFormBody({
             </button>
             <button
               type="button"
+              role="tab"
+              aria-selected={type === 'EXPENSE'}
               onClick={() => switchType('EXPENSE')}
               className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                 type === 'EXPENSE'
@@ -175,7 +179,7 @@ function TransactionFormBody({
 
           <div>
             <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Descrição <span className="text-rose-500">*</span>
+              Descrição <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
             </label>
             <input
               id="description"
@@ -191,7 +195,7 @@ function TransactionFormBody({
 
           <div>
             <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Categoria <span className="text-rose-500">*</span>
+              Categoria <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
             </label>
             <Select
               value={categoryId}
@@ -203,10 +207,10 @@ function TransactionFormBody({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
             <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Valor (R$) <span className="text-rose-500">*</span>
+              Valor (R$) <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
               </label>
               <CurrencyInput
                 id="amount"
@@ -219,7 +223,7 @@ function TransactionFormBody({
             </div>
             <div>
               <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Data <span className="text-rose-500">*</span>
+                Data <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
               </label>
               <DatePicker
                 value={date}
@@ -231,7 +235,7 @@ function TransactionFormBody({
 
           <div>
             <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Conta <span className="text-rose-500">*</span>
+              Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
             </label>
             <Select
               value={accountId}
@@ -256,7 +260,7 @@ function TransactionFormBody({
           )}
 
           {error && (
-            <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+            <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
               {error}
             </p>
           )}

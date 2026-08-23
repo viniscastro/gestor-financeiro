@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
@@ -53,11 +53,31 @@ export default function Sidebar({ user }: { user: SessionUser }) {
     await signOut({ redirectTo: '/login' })
   }
 
+  useEffect(() => {
+    if (!open) return
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [open])
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [open])
+
   const nav = (
     <>
       <div className="mb-8 flex items-center gap-3 px-2">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500">
-          <PiggyBank className="h-5 w-5 text-white" />
+          <PiggyBank aria-hidden="true" className="h-5 w-5 text-white" />
         </div>
         <span className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
           Gestor Financeiro
@@ -68,7 +88,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
           className="ml-auto rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white lg:hidden"
           aria-label="Fechar menu"
         >
-          <X className="h-5 w-5" />
+          <X aria-hidden="true" className="h-5 w-5" />
         </button>
       </div>
 
@@ -80,13 +100,14 @@ export default function Sidebar({ user }: { user: SessionUser }) {
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
+              aria-current={active ? 'page' : undefined}
               className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                 active
                   ? 'bg-emerald-500 text-white'
                   : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
               }`}
             >
-              <item.icon className="h-5 w-5" />
+              <item.icon aria-hidden="true" className="h-5 w-5" />
               {item.label}
             </Link>
           )
@@ -110,9 +131,9 @@ export default function Sidebar({ user }: { user: SessionUser }) {
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-500 transition hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white disabled:opacity-60"
         >
           {signingOut ? (
-            <LoaderCircle className="h-5 w-5 animate-spin" />
+            <LoaderCircle aria-hidden="true" className="h-5 w-5 animate-spin" />
           ) : (
-            <LogOut className="h-5 w-5" />
+            <LogOut aria-hidden="true" className="h-5 w-5" />
           )}
           Sair
         </button>
@@ -132,8 +153,10 @@ export default function Sidebar({ user }: { user: SessionUser }) {
         onClick={() => setOpen(true)}
         className="fixed left-4 top-4 z-40 rounded-lg border border-zinc-200 bg-white p-2 text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white lg:hidden"
         aria-label="Abrir menu"
+        aria-expanded={open}
+        aria-controls="mobile-nav"
       >
-        <Menu className="h-5 w-5" />
+        <Menu aria-hidden="true" className="h-5 w-5" />
       </button>
       )}
 
@@ -144,7 +167,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col border-r border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-[#0e0e12]">
+          <aside id="mobile-nav" className="absolute inset-y-0 left-0 flex w-64 flex-col border-r border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-[#0e0e12]">
             {nav}
           </aside>
         </div>

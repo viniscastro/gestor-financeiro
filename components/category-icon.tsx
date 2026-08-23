@@ -60,5 +60,5 @@ export default function CategoryIcon({
   className?: string
 }) {
   const Icon = icon ? (ICON_MAP[icon as keyof typeof ICON_MAP] ?? Tag) : Tag
-  return <Icon className={className} />
+  return <Icon aria-hidden="true" className={className} />
 }

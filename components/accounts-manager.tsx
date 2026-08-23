@@ -260,7 +260,7 @@ export default function AccountsManager() {
             title={accounts.length < 2 ? 'Crie pelo menos 2 contas para transferir' : undefined}
             className="flex items-center gap-2 rounded-lg border border-sky-300 bg-transparent px-4 py-2.5 text-sm font-semibold text-sky-600 transition hover:bg-sky-500 hover:text-white dark:border-sky-700 dark:text-sky-400 dark:hover:bg-sky-500 dark:hover:text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
           >
-            <ArrowRightLeft className="h-4 w-4" />
+            <ArrowRightLeft aria-hidden="true" className="h-4 w-4" />
             Transferir
           </button>
           <button
@@ -268,7 +268,7 @@ export default function AccountsManager() {
             onClick={openCreate}
             className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
           >
-            <Plus className="h-4 w-4" />
+            <Plus aria-hidden="true" className="h-4 w-4" />
             Nova conta
           </button>
         </div>
@@ -284,18 +284,18 @@ export default function AccountsManager() {
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+        <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
           {error}
         </p>
       )}
 
       {loading ? (
         <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800">
-          <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
+          <LoaderCircle aria-hidden="true" className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : accounts.length === 0 ? (
         <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
-          <Wallet className="mx-auto h-10 w-10 text-zinc-400" />
+          <Wallet aria-hidden="true" className="mx-auto h-10 w-10 text-zinc-400" />
           <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
             Nenhuma conta criada ainda.
           </p>
@@ -321,10 +321,10 @@ export default function AccountsManager() {
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1">
                     <div
-                      className="touch-none cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                      className="flex h-10 w-10 touch-none cursor-grab items-center justify-center text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
                       onTouchStart={() => handleTouchStart(index)}
                     >
-                      <GripVertical className="h-5 w-5" />
+                      <GripVertical aria-hidden="true" className="h-5 w-5" />
                     </div>
                     <button
                       type="button"
@@ -370,8 +370,9 @@ export default function AccountsManager() {
                   <div
                     className="flex h-10 w-10 items-center justify-center rounded-xl"
                     style={{ backgroundColor: account.color }}
+                    aria-hidden="true"
                   >
-                    <Wallet className="h-5 w-5 text-white" />
+                    <Wallet aria-hidden="true" className="h-5 w-5 text-white" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -387,7 +388,7 @@ export default function AccountsManager() {
                     className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
                     aria-label="Editar"
                   >
-                    <Pencil className="h-4 w-4" />
+                    <Pencil aria-hidden="true" className="h-4 w-4" />
                   </button>
                   <button
                     type="button"
@@ -395,7 +396,7 @@ export default function AccountsManager() {
                     className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
                     aria-label="Excluir"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 aria-hidden="true" className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -468,7 +469,7 @@ export default function AccountsManager() {
                 />
               </div>
               {formError && (
-                <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+                <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                   {formError}
                 </p>
               )}
@@ -477,7 +478,7 @@ export default function AccountsManager() {
                 disabled={saving}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                {saving && <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar alterações' : 'Criar conta'}
               </button>
             </form>

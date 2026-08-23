@@ -124,7 +124,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
                   type="button"
                   onClick={() => setShowNew((s) => !s)}
                   aria-label={showNew ? 'Ocultar nova senha' : 'Mostrar nova senha'}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
                 >
                   {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -152,7 +152,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
                   type="button"
                   onClick={() => setShowConfirm((s) => !s)}
                   aria-label={showConfirm ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
                 >
                   {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -160,7 +160,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
             </div>
 
             {error && (
-              <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+              <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                 {error}
               </p>
             )}

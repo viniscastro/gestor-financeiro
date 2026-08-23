@@ -102,7 +102,7 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
           disabled={!hasMonthly && !hasCategories}
           className="flex items-center gap-2 rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
         >
-          <Download className="h-4 w-4" />
+          <Download aria-hidden="true" className="h-4 w-4" />
           Exportar Excel
         </button>
       </div>
@@ -114,7 +114,11 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
         </h2>
         <p className="mb-4 text-xs text-zinc-500">Últimos 6 meses</p>
         {hasMonthly ? (
-          <div className="h-72">
+          <div
+            className="h-72"
+            role="img"
+            aria-label="Gráfico de barras comparando entradas e saídas nos últimos meses"
+          >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthly} barGap={4}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
@@ -159,7 +163,11 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
         </p>
         {hasCategories ? (
           <>
-            <div className="h-64">
+            <div
+              className="h-64"
+              role="img"
+              aria-label="Gráfico de pizza mostrando distribuição de gastos por categoria"
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie

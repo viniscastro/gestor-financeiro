@@ -1,9 +1,14 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { formatDateLong } from '@/lib/format'
 import AvatarUpload from '@/components/avatar-upload'
 import DeleteAccountForm from '@/components/delete-account-form'
+
+export const metadata: Metadata = {
+  title: 'Minha Conta | Gestor Financeiro',
+}
 
 export const dynamic = 'force-dynamic'
 

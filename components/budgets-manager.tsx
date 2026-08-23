@@ -166,24 +166,24 @@ export default function BudgetsManager() {
           disabled={available.length === 0}
           className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" />
+          <Plus aria-hidden="true" className="h-4 w-4" />
           Novo orçamento
         </button>
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+        <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
           {error}
         </p>
       )}
 
       {loading ? (
         <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800">
-          <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
+          <LoaderCircle aria-hidden="true" className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : budgets.length === 0 ? (
         <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
-          <Target className="mx-auto h-10 w-10 text-zinc-400" />
+          <Target aria-hidden="true" className="mx-auto h-10 w-10 text-zinc-400" />
           <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
             Nenhum orçamento definido. Crie um para começar a acompanhar seus gastos.
           </p>
@@ -225,7 +225,7 @@ export default function BudgetsManager() {
                       className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
                       aria-label="Editar"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil aria-hidden="true" className="h-4 w-4" />
                     </button>
                     <button
                       type="button"
@@ -233,7 +233,7 @@ export default function BudgetsManager() {
                       className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
                       aria-label="Excluir"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 aria-hidden="true" className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
@@ -247,7 +247,14 @@ export default function BudgetsManager() {
                   </span>
                 </div>
 
-                <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                <div
+                  className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
+                  role="progressbar"
+                  aria-valuenow={Math.round(pct)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`Progresso: ${Math.round(pct)}%${over ? ' — orçamento excedido' : ''}`}
+                >
                   <div
                     className={`h-full rounded-full transition-all ${
                       over ? 'bg-rose-500' : pct >= 80 ? 'bg-amber-500' : 'bg-emerald-500'
@@ -276,7 +283,7 @@ export default function BudgetsManager() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Categoria <span className="text-rose-500">*</span>
+                  Categoria <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                 </label>
                 <Select
                   value={categoryId}
@@ -294,7 +301,7 @@ export default function BudgetsManager() {
               </div>
               <div>
                 <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Limite mensal (R$) <span className="text-rose-500">*</span>
+                  Limite mensal (R$) <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                 </label>
                 <CurrencyInput
                   id="amount"
@@ -306,7 +313,7 @@ export default function BudgetsManager() {
                 />
               </div>
               {formError && (
-                <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+                <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                   {formError}
                 </p>
               )}
@@ -315,7 +322,7 @@ export default function BudgetsManager() {
                 disabled={saving}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                {saving && <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar alterações' : 'Criar orçamento'}
               </button>
             </form>

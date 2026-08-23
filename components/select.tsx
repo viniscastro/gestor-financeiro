@@ -136,7 +136,7 @@ export default function Select({
   }
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative w-full">
       <button
         ref={triggerRef}
         id={id}

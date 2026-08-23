@@ -207,6 +207,7 @@ export default function GoalsManager() {
     }
     await reload()
     toast.success('Meta excluída', {
+      duration: 10000,
       action: { label: 'Desfazer', onClick: () => undoCreate(confirmTarget!) },
     })
   }
@@ -244,7 +245,7 @@ export default function GoalsManager() {
               onClick={() => openTopup()}
               className="flex items-center gap-2 rounded-lg border border-emerald-500 bg-transparent px-4 py-2.5 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-500 hover:text-white dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-500 dark:hover:text-white"
             >
-              <Wallet className="h-4 w-4" />
+              <Wallet aria-hidden="true" className="h-4 w-4" />
               Adicionar saldo
             </button>
           )}
@@ -253,7 +254,7 @@ export default function GoalsManager() {
             onClick={openCreate}
             className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
           >
-            <Plus className="h-4 w-4" />
+            <Plus aria-hidden="true" className="h-4 w-4" />
             Nova meta
           </button>
         </div>
@@ -267,18 +268,18 @@ export default function GoalsManager() {
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+        <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
           {error}
         </p>
       )}
 
       {loading ? (
         <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800">
-          <LoaderCircle className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
+          <LoaderCircle aria-hidden="true" className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
         </div>
       ) : goals.length === 0 ? (
         <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
-          <Flag className="mx-auto h-10 w-10 text-zinc-400" />
+          <Flag aria-hidden="true" className="mx-auto h-10 w-10 text-zinc-400" />
           <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
             Nenhuma meta criada ainda. Ex.: viagem, reserva de emergência, entrada do
             carro...
@@ -320,7 +321,7 @@ export default function GoalsManager() {
                       className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
                       aria-label="Editar"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil aria-hidden="true" className="h-4 w-4" />
                     </button>
                     <button
                       type="button"
@@ -328,12 +329,19 @@ export default function GoalsManager() {
                       className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
                       aria-label="Excluir"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 aria-hidden="true" className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
 
-                <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                <div
+                  className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
+                  role="progressbar"
+                  aria-valuenow={Math.min(goal.percent, 100)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`Progresso: ${goal.percent}%`}
+                >
                   <div
                     className={`h-full rounded-full transition-all ${
                       done
@@ -351,7 +359,7 @@ export default function GoalsManager() {
                   </p>
                   {goal.targetDate && (
                     <p className="flex items-center gap-1 text-xs text-zinc-500">
-                      <CalendarDays className="h-3.5 w-3.5" />
+                      <CalendarDays aria-hidden="true" className="h-3.5 w-3.5" />
                       {formatDate(goal.targetDate)}
                     </p>
                   )}
@@ -371,7 +379,7 @@ export default function GoalsManager() {
             <div className="space-y-4">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Meta <span className="text-rose-500">*</span>
+                  Meta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                 </label>
                 <Select
                   value={topupGoalId}
@@ -384,7 +392,7 @@ export default function GoalsManager() {
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Valor (R$) <span className="text-rose-500">*</span>
+                  Valor (R$) <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                 </label>
                 <CurrencyInput
                   value={topupAmount}
@@ -397,7 +405,7 @@ export default function GoalsManager() {
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Descontar de <span className="text-rose-500">*</span>
+                  Descontar de <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                 </label>
                 <Select
                   value={topupAccountId}
@@ -422,7 +430,7 @@ export default function GoalsManager() {
                   disabled={topupLoading || !topupAmount || !topupGoalId || !topupAccountId}
                   className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {topupLoading && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                  {topupLoading && <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />}
                   Guardar
                 </button>
               </div>
@@ -439,7 +447,7 @@ export default function GoalsManager() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Nome <span className="text-rose-500">*</span>
+                  Nome <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                 </label>
                 <input
                   id="name"
@@ -468,6 +476,7 @@ export default function GoalsManager() {
                           ? 'bg-emerald-500 text-white ring-2 ring-emerald-500'
                           : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700'
                       }`}
+                      aria-label={`Ícone: ${ic.replace(/-/g, ' ')}`}
                     >
                       <CategoryIcon icon={ic} className="h-4 w-4" />
                     </button>
@@ -478,7 +487,7 @@ export default function GoalsManager() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="target" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Valor da meta (R$) <span className="text-rose-500">*</span>
+                    Valor da meta (R$) <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                   </label>
                   <CurrencyInput
                     id="target"
@@ -527,7 +536,7 @@ export default function GoalsManager() {
               )}
 
               {formError && (
-                <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+                <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                   {formError}
                 </p>
               )}
@@ -537,7 +546,7 @@ export default function GoalsManager() {
                 disabled={saving}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                {saving && <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar alterações' : 'Criar meta'}
               </button>
             </form>

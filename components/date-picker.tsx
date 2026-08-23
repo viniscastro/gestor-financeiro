@@ -73,7 +73,7 @@ export default function DatePicker({ value, onChange, required, className }: Pro
           id={`${autoId}-calendar`}
           role="dialog"
           aria-label="Selecionar data"
-          className="absolute right-0 z-50 mt-1 rounded-xl border border-zinc-200 bg-white p-3 shadow-xl dark:border-zinc-700 dark:bg-zinc-800"
+          className="absolute right-0 top-full z-50 mt-1 max-w-[calc(100vw-2rem)] overflow-auto rounded-xl border border-zinc-200 bg-white p-3 shadow-xl dark:border-zinc-700 dark:bg-zinc-800"
         >
           <DayPicker
             mode="single"
