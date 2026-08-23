@@ -17,6 +17,7 @@ export function toAccountDto(
     type: string
     color: string
     initialBalance: number
+    position?: number
     transactions?: { transactionType: string; amount: number }[]
   }
 ): AccountDto {
@@ -32,5 +33,6 @@ export function toAccountDto(
     color: account.color,
     initialBalance: account.initialBalance,
     balance,
+    position: account.position ?? 0,
   }
 }

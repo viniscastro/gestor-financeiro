@@ -60,7 +60,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
       }
       sessionStorage.removeItem('reset-code')
       setDone(true)
-      setTimeout(() => router.push('/'), 2000)
+      setTimeout(() => router.push('/login'), 2000)
     } finally {
       setLoading(false)
     }
@@ -95,8 +95,8 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
               Agora é só entrar com a nova senha.
             </p>
             <Link
-              href="/"
-              className="mt-5 inline-block rounded-lg bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
+              href="/login"
+              className="mt-5 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
             >
               Fazer login
             </Link>
@@ -168,7 +168,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading && <LoaderCircle className="h-4 w-4 animate-spin" />}
               Redefinir senha

@@ -85,7 +85,7 @@ export default function ForgotPasswordEmailForm() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (
               <LoaderCircle className="h-4 w-4 animate-spin" />
@@ -98,7 +98,7 @@ export default function ForgotPasswordEmailForm() {
       </div>
 
       <Link
-        href="/"
+        href="/login"
         className="mt-5 flex items-center justify-center gap-1.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-300 dark:hover:text-zinc-100"
       >
         <ArrowLeft className="h-4 w-4" />

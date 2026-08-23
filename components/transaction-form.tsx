@@ -5,6 +5,7 @@ import { Info, LoaderCircle, TrendingDown, TrendingUp, X } from 'lucide-react'
 import CurrencyInput from '@/components/currency-input'
 import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
+import Modal from '@/components/modal'
 import type { TransactionType } from '@/lib/categories'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 
@@ -128,31 +129,30 @@ function TransactionFormBody({
   ]
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
-            {transaction ? 'Editar transação' : 'Nova transação'}
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
-            aria-label="Fechar"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+    <Modal
+      open
+      onClose={onClose}
+      title={transaction ? 'Editar transação' : 'Nova transação'}
+    >
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+          aria-label="Fechar"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
             <button
               type="button"
               onClick={() => switchType('INCOME')}
               className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                 type === 'INCOME'
-                  ? 'bg-emerald-500 text-white shadow'
+                  ? 'bg-emerald-600 text-white shadow'
                   : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
               }`}
             >
@@ -264,13 +264,12 @@ function TransactionFormBody({
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading && <LoaderCircle className="h-4 w-4 animate-spin" />}
             {transaction ? 'Salvar alterações' : 'Adicionar transação'}
           </button>
         </form>
-      </div>
-    </div>
+    </Modal>
   )
 }

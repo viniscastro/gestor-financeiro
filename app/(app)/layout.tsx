@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
-  if (!session?.user?.id) redirect('/')
+  if (!session?.user?.id) redirect('/login')
 
   await materializeRecurring(session.user.id)
   await notifyUpcomingBills(session.user.id).catch((err) => {
@@ -20,7 +20,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     where: { id: session.user.id },
     select: { id: true, name: true, email: true, image: true, emailVerified: true, theme: true, dashboardCards: true },
   })
-  if (!user) redirect('/')
+  if (!user) redirect('/login')
 
   if (!user.emailVerified) {
     redirect(`/verify-email?email=${encodeURIComponent(user.email)}`)

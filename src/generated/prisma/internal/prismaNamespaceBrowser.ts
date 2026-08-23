@@ -57,7 +57,8 @@ export const ModelName = {
   Budget: 'Budget',
   RecurringRule: 'RecurringRule',
   Transaction: 'Transaction',
-  SavingsGoal: 'SavingsGoal'
+  SavingsGoal: 'SavingsGoal',
+  Notification: 'Notification'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -108,6 +109,7 @@ export const AccountScalarFieldEnum = {
   type: 'type',
   color: 'color',
   initialBalance: 'initialBalance',
+  position: 'position',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -197,6 +199,19 @@ export const SavingsGoalScalarFieldEnum = {
 } as const
 
 export type SavingsGoalScalarFieldEnum = (typeof SavingsGoalScalarFieldEnum)[keyof typeof SavingsGoalScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  title: 'title',
+  message: 'message',
+  read: 'read',
+  createdAt: 'createdAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
 export const SortOrder = {

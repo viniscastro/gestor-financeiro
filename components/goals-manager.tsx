@@ -17,6 +17,7 @@ import CurrencyInput from '@/components/currency-input'
 import ConfirmDialog from '@/components/confirm-dialog'
 import DatePicker from '@/components/date-picker'
 import Select from '@/components/select'
+import Modal from '@/components/modal'
 import CategoryIcon from '@/components/category-icon'
 import { CATEGORY_ICONS } from '@/lib/categories'
 
@@ -250,7 +251,7 @@ export default function GoalsManager() {
           <button
             type="button"
             onClick={openCreate}
-            className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
+            className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
           >
             <Plus className="h-4 w-4" />
             Nova meta
@@ -312,7 +313,7 @@ export default function GoalsManager() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
+                  <div className="flex gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
                     <button
                       type="button"
                       onClick={() => openEdit(goal)}
@@ -362,12 +363,11 @@ export default function GoalsManager() {
       )}
 
       {topupOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setTopupOpen(false)} />
-          <div className="relative my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
-              Adicionar saldo
-            </h2>
+        <Modal
+          open={topupOpen}
+          onClose={() => setTopupOpen(false)}
+          title="Adicionar saldo"
+        >
             <div className="space-y-4">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -420,27 +420,22 @@ export default function GoalsManager() {
                   type="button"
                   onClick={handleTopup}
                   disabled={topupLoading || !topupAmount || !topupGoalId || !topupAccountId}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {topupLoading && <LoaderCircle className="h-4 w-4 animate-spin" />}
                   Guardar
                 </button>
               </div>
             </div>
-          </div>
-        </div>
+        </Modal>
       )}
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
-          <div
-            className="absolute inset-0 bg-black/60"
-            onClick={() => setModalOpen(false)}
-          />
-          <div className="relative my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
-              {editing ? 'Editar meta' : 'Nova meta'}
-            </h2>
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title={editing ? 'Editar meta' : 'Nova meta'}
+        >
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -540,14 +535,13 @@ export default function GoalsManager() {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar alterações' : 'Criar meta'}
               </button>
             </form>
-          </div>
-        </div>
+        </Modal>
       )}
       <ConfirmDialog
         open={confirmOpen}

@@ -15,8 +15,10 @@ import type { TransactionType } from '@/lib/types'
 import type { CategoryDto } from '@/lib/types'
 import CategoryIcon from '@/components/category-icon'
 import ConfirmDialog from '@/components/confirm-dialog'
+import Modal from '@/components/modal'
 import { toast } from 'sonner'
 import { CATEGORY_COLORS, CATEGORY_ICONS } from '@/lib/categories'
+import ColorPicker from '@/components/color-picker'
 
 export default function CategoriesManager() {
   const [categories, setCategories] = useState<CategoryDto[]>([])
@@ -259,7 +261,7 @@ export default function CategoriesManager() {
         <button
           type="button"
           onClick={() => openCreate(tab)}
-          className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
+          className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
         >
           <Plus className="h-4 w-4" />
           Nova categoria
@@ -278,7 +280,7 @@ export default function CategoriesManager() {
           onClick={() => setTab('INCOME')}
           className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
             tab === 'INCOME'
-              ? 'bg-emerald-500 text-white shadow'
+              ? 'bg-emerald-600 text-white shadow'
               : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
           }`}
         >
@@ -326,11 +328,53 @@ export default function CategoriesManager() {
                   dragOverIndex === index ? 'border-t-2 border-t-emerald-500' : ''
                 }`}
               >
-                <div
-                  className="touch-none cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
-                  onTouchStart={(e) => handleTouchStart(e, index)}
-                >
-                  <GripVertical className="h-5 w-5" />
+                <div className="flex items-center gap-1">
+                  <div
+                    className="touch-none cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                    onTouchStart={(e) => handleTouchStart(e, index)}
+                  >
+                    <GripVertical className="h-5 w-5" />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (index === 0) return
+                      const updated = [...categories]
+                      const [moved] = updated.splice(index, 1)
+                      updated.splice(index - 1, 0, moved)
+                      setCategories(updated)
+                      fetch('/api/categories', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ids: updated.map((c) => c.id) }),
+                      })
+                    }}
+                    disabled={index === 0}
+                    className="hidden rounded p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 dark:hover:bg-zinc-700 sm:block"
+                    aria-label="Mover para cima"
+                  >
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 15l-6-6-6 6"/></svg>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (index === filtered.length - 1) return
+                      const updated = [...categories]
+                      const [moved] = updated.splice(index, 1)
+                      updated.splice(index + 1, 0, moved)
+                      setCategories(updated)
+                      fetch('/api/categories', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ids: updated.map((c) => c.id) }),
+                      })
+                    }}
+                    disabled={index === filtered.length - 1}
+                    className="hidden rounded p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 dark:hover:bg-zinc-700 sm:block"
+                    aria-label="Mover para baixo"
+                  >
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+                  </button>
                 </div>
                 <div
                   className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg"
@@ -341,7 +385,7 @@ export default function CategoriesManager() {
                 <span className="flex-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">
                   {cat.name}
                 </span>
-                <div className="flex gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
+                <div className="flex gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
                   <button
                     type="button"
                     onClick={() => openEdit(cat)}
@@ -366,15 +410,11 @@ export default function CategoriesManager() {
       )}
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
-          <div
-            className="absolute inset-0 bg-black/60"
-            onClick={() => setModalOpen(false)}
-          />
-          <div className="relative my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
-              {editing ? 'Editar categoria' : 'Nova categoria'}
-            </h2>
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title={editing ? 'Editar categoria' : 'Nova categoria'}
+        >
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="catName" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -398,7 +438,7 @@ export default function CategoriesManager() {
                   onClick={() => setNewType('INCOME')}
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     newType === 'INCOME'
-                      ? 'bg-emerald-500 text-white shadow'
+                      ? 'bg-emerald-600 text-white shadow'
                       : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
                   }`}
                 >
@@ -423,20 +463,7 @@ export default function CategoriesManager() {
                 <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Cor
                 </label>
-                <div className="flex flex-wrap gap-2">
-                  {CATEGORY_COLORS.map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => setNewColor(c)}
-                      className={`h-7 w-7 rounded-full transition ${
-                        newColor === c ? 'ring-2 ring-offset-2 ring-emerald-500' : ''
-                      }`}
-                      style={{ backgroundColor: c }}
-                      aria-label={c}
-                    />
-                  ))}
-                </div>
+                <ColorPicker value={newColor} onChange={setNewColor} />
               </div>
 
               <div>
@@ -471,14 +498,13 @@ export default function CategoriesManager() {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar alterações' : 'Criar categoria'}
               </button>
             </form>
-          </div>
-        </div>
+        </Modal>
       )}
       <ConfirmDialog
         open={confirmOpen}

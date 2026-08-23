@@ -50,7 +50,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
 
   async function handleSignOut() {
     setSigningOut(true)
-    await signOut({ redirectTo: '/' })
+    await signOut({ redirectTo: '/login' })
   }
 
   const nav = (

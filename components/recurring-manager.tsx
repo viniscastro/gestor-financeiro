@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import ConfirmDialog from '@/components/confirm-dialog'
 import CurrencyInput from '@/components/currency-input'
 import Select, { type SelectOption } from '@/components/select'
+import Modal from '@/components/modal'
 import type { TransactionType } from '@/lib/types'
 import { formatBRL, formatDateLong } from '@/lib/format'
 import type { AccountDto, CategoryDto, RecurringRuleDto } from '@/lib/types'
@@ -336,7 +337,7 @@ export default function RecurringManager() {
         <button
           type="button"
           onClick={openCreate}
-          className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
+          className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
         >
           <Plus className="h-4 w-4" />
           Nova recorrência
@@ -380,11 +381,53 @@ export default function RecurringManager() {
                   } ${dragOverIndex === index ? 'border-t-2 border-t-emerald-500' : ''}`}
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className="touch-none cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
-                      onTouchStart={(e) => handleTouchStart(e, index)}
-                    >
-                      <GripVertical className="h-5 w-5" />
+                    <div className="flex items-center gap-1">
+                      <div
+                        className="touch-none cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                        onTouchStart={(e) => handleTouchStart(e, index)}
+                      >
+                        <GripVertical className="h-5 w-5" />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (index === 0) return
+                          const updated = [...rules]
+                          const [moved] = updated.splice(index, 1)
+                          updated.splice(index - 1, 0, moved)
+                          setRules(updated)
+                          fetch('/api/recurring', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ids: updated.map((r) => r.id) }),
+                          })
+                        }}
+                        disabled={index === 0}
+                        className="hidden rounded p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 dark:hover:bg-zinc-700 sm:block"
+                        aria-label="Mover para cima"
+                      >
+                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 15l-6-6-6 6"/></svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (index === rules.length - 1) return
+                          const updated = [...rules]
+                          const [moved] = updated.splice(index, 1)
+                          updated.splice(index + 1, 0, moved)
+                          setRules(updated)
+                          fetch('/api/recurring', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ids: updated.map((r) => r.id) }),
+                          })
+                        }}
+                        disabled={index === rules.length - 1}
+                        className="hidden rounded p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 dark:hover:bg-zinc-700 sm:block"
+                        aria-label="Mover para baixo"
+                      >
+                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+                      </button>
                     </div>
 
                     <div
@@ -417,7 +460,7 @@ export default function RecurringManager() {
                       {isIncome ? '+' : '–'} {formatBRL(rule.amountCents)}
                     </p>
 
-                    <div className="flex shrink-0 items-center gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
+                    <div className="flex shrink-0 items-center gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
                       <button
                         type="button"
                         onClick={() => toggleActive(rule)}
@@ -472,12 +515,11 @@ export default function RecurringManager() {
       )}
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setModalOpen(false)} />
-          <div className="relative my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
-              {editing ? 'Editar recorrência' : 'Nova recorrência'}
-            </h2>
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title={editing ? 'Editar recorrência' : 'Nova recorrência'}
+        >
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
                 <button
@@ -485,7 +527,7 @@ export default function RecurringManager() {
                   onClick={() => switchType('INCOME')}
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     type === 'INCOME'
-                      ? 'bg-emerald-500 text-white shadow'
+                      ? 'bg-emerald-600 text-white shadow'
                       : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
                   }`}
                 >
@@ -626,14 +668,13 @@ export default function RecurringManager() {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar alterações' : 'Criar recorrência'}
               </button>
             </form>
-          </div>
-        </div>
+        </Modal>
       )}
       <ConfirmDialog
         open={confirmOpen}

@@ -8,7 +8,7 @@ export type TransactionDto = {
   description: string
   amount: number
   date: string
-  accountId: string
+  accountId: string | null
   accountName: string
   accountColor: string
   categoryId: string | null
@@ -26,6 +26,7 @@ export type AccountDto = {
   color: string
   initialBalance: number
   balance: number
+  position: number
 }
 
 export type CategoryDto = {

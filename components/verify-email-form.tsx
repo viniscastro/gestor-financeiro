@@ -110,14 +110,14 @@ export default function VerifyEmailForm({
             {isLoggedIn ? (
               <button
                 onClick={() => router.push('/dashboard')}
-                className="mt-5 inline-block rounded-lg bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
+                className="mt-5 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
               >
                 Ir para o painel
               </button>
             ) : (
               <Link
-                href="/"
-                className="mt-5 inline-block rounded-lg bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
+                href="/login"
+                className="mt-5 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
               >
                 Fazer login
               </Link>
@@ -168,7 +168,7 @@ export default function VerifyEmailForm({
               <button
                 type="submit"
                 disabled={loading || code.length !== 6}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading && <LoaderCircle className="h-4 w-4 animate-spin" />}
                 Confirmar código

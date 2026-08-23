@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { amountToCents, toTransactionDto, transactionSchema } from '@/lib/transactions'
 import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
+import { notifyTransaction } from '@/lib/notifications'
 
 const transactionInclude = {
   account: { select: { name: true, color: true } },
@@ -93,6 +94,8 @@ export async function POST(request: NextRequest) {
     },
     include: transactionInclude,
   })
+
+  await notifyTransaction(session.user.id, transactionType, description, amountToCents(amount))
 
   return NextResponse.json(toTransactionDto(transaction), { status: 201 })
 }

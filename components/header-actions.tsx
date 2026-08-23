@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import { usePathname } from 'next/navigation'
 import { Moon, Sun, SlidersHorizontal } from 'lucide-react'
+import NotificationBell from '@/components/notification-bell'
 
 const emptySubscribe = () => () => {}
 
@@ -55,53 +56,59 @@ export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme
 
   if (!isDashboard) {
     return (
-      <button
-        type="button"
-        onClick={cycle}
-        title={labels[theme]}
-        aria-label={`Alternar tema (atual: ${labels[theme]})`}
-        className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
-      >
-        <Icon className="h-5 w-5" />
-      </button>
+      <div className="flex items-center gap-2">
+        <NotificationBell />
+        <button
+          type="button"
+          onClick={cycle}
+          title={labels[theme]}
+          aria-label={`Alternar tema (atual: ${labels[theme]})`}
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+        >
+          <Icon className="h-5 w-5" />
+        </button>
+      </div>
     )
   }
 
   return (
-    <div className="relative" data-header-menu>
-      <button
-        type="button"
-        onClick={() => setMenuOpen((o) => !o)}
-        className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
-        aria-label="Menu"
-      >
-        <SlidersHorizontal className="h-5 w-5" />
-      </button>
+    <div className="flex items-center gap-2">
+      <NotificationBell />
+      <div className="relative" data-header-menu>
+        <button
+          type="button"
+          onClick={() => setMenuOpen((o) => !o)}
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+          aria-label="Menu"
+        >
+          <SlidersHorizontal className="h-5 w-5" />
+        </button>
 
-      {menuOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
-          <button
-            type="button"
-            onClick={cycle}
-            className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            <Icon className="h-4 w-4" />
-            {labels[theme]}
-          </button>
-          <div className="border-t border-zinc-100 dark:border-zinc-700" />
-          <button
-            type="button"
-            onClick={() => {
-              setMenuOpen(false)
-              window.dispatchEvent(new CustomEvent('toggle-dashboard-editor'))
-            }}
-            className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            <SlidersHorizontal className="h-4 w-4" />
-            Editar cards
-          </button>
-        </div>
-      )}
+        {menuOpen && (
+          <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
+            <button
+              type="button"
+              onClick={cycle}
+              className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              <Icon className="h-4 w-4" />
+              {labels[theme]}
+            </button>
+            <div className="border-t border-zinc-100 dark:border-zinc-700" />
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false)
+                window.dispatchEvent(new CustomEvent('toggle-dashboard-editor'))
+              }}
+              className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              Editar cards
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

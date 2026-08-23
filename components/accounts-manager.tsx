@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { ArrowRightLeft, LoaderCircle, Pencil, Plus, Trash2, Wallet } from 'lucide-react'
-import { ACCOUNT_TYPES } from '@/lib/categories'
+import { useEffect, useRef, useState } from 'react'
+import { ArrowRightLeft, GripVertical, LoaderCircle, Pencil, Plus, Trash2, Wallet } from 'lucide-react'
+import { ACCOUNT_TYPES, ACCOUNT_TYPE_LABEL, CATEGORY_COLORS } from '@/lib/categories'
 import ConfirmDialog from '@/components/confirm-dialog'
 import TransferForm from '@/components/transfer-form'
-import { CATEGORY_COLORS } from '@/lib/categories'
+import ColorPicker from '@/components/color-picker'
+import Modal from '@/components/modal'
 import { formatBRL } from '@/lib/format'
 import type { AccountDto } from '@/lib/types'
 import { toast } from 'sonner'
@@ -27,6 +28,10 @@ export default function AccountsManager() {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<AccountDto | null>(null)
   const [transferOpen, setTransferOpen] = useState(false)
+  const dragItem = useRef<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+  const [touchDragging, setTouchDragging] = useState(false)
+  const touchCurrentIndex = useRef<number | null>(null)
 
   async function reload() {
     try {
@@ -61,6 +66,86 @@ export default function AccountsManager() {
       cancelled = true
     }
   }, [])
+
+  useEffect(() => {
+    if (!touchDragging) return
+    function onMove(e: TouchEvent) {
+      if (touchCurrentIndex.current === null) return
+      const touch = e.touches[0]
+      const el = document.elementFromPoint(touch.clientX, touch.clientY)
+      if (!el) return
+      const card = el.closest('[data-account-index]')
+      if (card) {
+        const idx = Number(card.getAttribute('data-account-index'))
+        if (!isNaN(idx)) setDragOverIndex(idx)
+      }
+    }
+    function onEnd() {
+      if (dragItem.current !== null && dragOverIndex !== null && dragItem.current !== dragOverIndex) {
+        const updated = [...accounts]
+        const [moved] = updated.splice(dragItem.current, 1)
+        updated.splice(dragOverIndex, 0, moved)
+        setAccounts(updated)
+        fetch('/api/accounts', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ids: updated.map((a) => a.id) }),
+        })
+      }
+      setTouchDragging(false)
+      setDragOverIndex(null)
+      touchCurrentIndex.current = null
+    }
+    document.addEventListener('touchmove', onMove, { passive: false })
+    document.addEventListener('touchend', onEnd)
+    document.addEventListener('touchcancel', onEnd)
+    return () => {
+      document.removeEventListener('touchmove', onMove)
+      document.removeEventListener('touchend', onEnd)
+      document.removeEventListener('touchcancel', onEnd)
+    }
+  }, [touchDragging, dragOverIndex, accounts])
+
+  function handleTouchStart(index: number) {
+    touchCurrentIndex.current = index
+    setTouchDragging(true)
+  }
+
+  function handleDragStart(index: number) {
+    dragItem.current = index
+  }
+
+  function handleDragEnter(index: number) {
+    setDragOverIndex(index)
+  }
+
+  function handleDragEnd() {
+    if (dragItem.current === null || dragOverIndex === null) {
+      setDragOverIndex(null)
+      dragItem.current = null
+      return
+    }
+    if (dragItem.current === dragOverIndex) {
+      setDragOverIndex(null)
+      dragItem.current = null
+      return
+    }
+    const updated = [...accounts]
+    const [moved] = updated.splice(dragItem.current, 1)
+    updated.splice(dragOverIndex, 0, moved)
+    setAccounts(updated)
+    fetch('/api/accounts', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: updated.map((a) => a.id) }),
+    })
+    setDragOverIndex(null)
+    dragItem.current = null
+  }
+
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault()
+  }
 
   function openCreate() {
     setEditing(null)
@@ -181,7 +266,7 @@ export default function AccountsManager() {
           <button
             type="button"
             onClick={openCreate}
-            className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600"
+            className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
           >
             <Plus className="h-4 w-4" />
             Nova conta
@@ -217,13 +302,71 @@ export default function AccountsManager() {
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {accounts.map((account) => (
+          {accounts.map((account, index) => (
             <div
               key={account.id}
-              className="group rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800"
+              data-account-index={index}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={handleDragOver}
+              className={`group rounded-2xl border bg-white p-5 transition dark:bg-zinc-800 ${
+                dragOverIndex === index
+                  ? 'border-emerald-400 border-2 dark:border-emerald-500'
+                  : 'border-zinc-200 dark:border-zinc-700'
+              }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    <div
+                      className="touch-none cursor-grab text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                      onTouchStart={() => handleTouchStart(index)}
+                    >
+                      <GripVertical className="h-5 w-5" />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (index === 0) return
+                        const updated = [...accounts]
+                        const [moved] = updated.splice(index, 1)
+                        updated.splice(index - 1, 0, moved)
+                        setAccounts(updated)
+                        fetch('/api/accounts', {
+                          method: 'PATCH',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ ids: updated.map((a) => a.id) }),
+                        })
+                      }}
+                      disabled={index === 0}
+                      className="hidden rounded p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 dark:hover:bg-zinc-700 sm:block"
+                      aria-label="Mover para cima"
+                    >
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 15l-6-6-6 6"/></svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (index === accounts.length - 1) return
+                        const updated = [...accounts]
+                        const [moved] = updated.splice(index, 1)
+                        updated.splice(index + 1, 0, moved)
+                        setAccounts(updated)
+                        fetch('/api/accounts', {
+                          method: 'PATCH',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ ids: updated.map((a) => a.id) }),
+                        })
+                      }}
+                      disabled={index === accounts.length - 1}
+                      className="hidden rounded p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 dark:hover:bg-zinc-700 sm:block"
+                      aria-label="Mover para baixo"
+                    >
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                  </div>
                   <div
                     className="flex h-10 w-10 items-center justify-center rounded-xl"
                     style={{ backgroundColor: account.color }}
@@ -234,10 +377,10 @@ export default function AccountsManager() {
                     <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                       {account.name}
                     </p>
-                    <p className="text-xs text-zinc-500">{account.type}</p>
+                    <p className="text-xs text-zinc-500">{ACCOUNT_TYPE_LABEL[account.type] ?? account.type}</p>
                   </div>
                 </div>
-                <div className="flex gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
+                <div className="flex gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
                   <button
                     type="button"
                     onClick={() => openEdit(account)}
@@ -274,15 +417,11 @@ export default function AccountsManager() {
       )}
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
-          <div
-            className="absolute inset-0 bg-black/60"
-            onClick={() => setModalOpen(false)}
-          />
-          <div className="relative my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
-              {editing ? 'Editar conta' : 'Nova conta'}
-            </h2>
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title={editing ? 'Editar conta' : 'Nova conta'}
+        >
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -315,20 +454,7 @@ export default function AccountsManager() {
                 <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Cor
                 </label>
-                <div className="flex flex-wrap gap-2">
-                  {CATEGORY_COLORS.map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => setColor(c)}
-                      className={`h-7 w-7 rounded-full transition ${
-                        color === c ? 'ring-2 ring-offset-2 ring-zinc-400 dark:ring-offset-zinc-900' : ''
-                      }`}
-                      style={{ backgroundColor: c }}
-                      aria-label={`Cor ${c}`}
-                    />
-                  ))}
-                </div>
+                <ColorPicker value={color} onChange={setColor} />
               </div>
               <div>
                 <label htmlFor="initialBalance" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -349,14 +475,13 @@ export default function AccountsManager() {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar alterações' : 'Criar conta'}
               </button>
             </form>
-          </div>
-        </div>
+        </Modal>
       )}
       <ConfirmDialog
         open={confirmOpen}

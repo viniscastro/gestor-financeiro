@@ -6,6 +6,7 @@ import CategoryIcon from '@/components/category-icon'
 import ConfirmDialog from '@/components/confirm-dialog'
 import CurrencyInput from '@/components/currency-input'
 import Select from '@/components/select'
+import Modal from '@/components/modal'
 import { toast } from 'sonner'
 import { formatBRL } from '@/lib/format'
 import type { BudgetDto, CategoryDto } from '@/lib/types'
@@ -163,7 +164,7 @@ export default function BudgetsManager() {
           type="button"
           onClick={openCreate}
           disabled={available.length === 0}
-          className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <Plus className="h-4 w-4" />
           Novo orçamento
@@ -217,7 +218,7 @@ export default function BudgetsManager() {
                       {budget.categoryName}
                     </p>
                   </div>
-                  <div className="flex shrink-0 gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
+                  <div className="flex shrink-0 gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
                     <button
                       type="button"
                       onClick={() => openEdit(budget)}
@@ -267,12 +268,11 @@ export default function BudgetsManager() {
       )}
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setModalOpen(false)} />
-          <div className="relative my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50">
-              {editing ? 'Editar orçamento' : 'Novo orçamento'}
-            </h2>
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title={editing ? 'Editar orçamento' : 'Novo orçamento'}
+        >
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -313,14 +313,13 @@ export default function BudgetsManager() {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar alterações' : 'Criar orçamento'}
               </button>
             </form>
-          </div>
-        </div>
+        </Modal>
       )}
       <ConfirmDialog
         open={confirmOpen}

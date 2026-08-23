@@ -33,6 +33,7 @@ model User {
   budgets              Budget[]
   recurringRules       RecurringRule[]
   goals                SavingsGoal[]
+  notifications        Notification[]
 }
 
 model Account {
@@ -43,6 +44,7 @@ model Account {
   type           String          @default("CARTEIRA")
   color          String          @default("#10b981")
   initialBalance Int             @default(0)
+  position       Int             @default(0)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   transactions   Transaction[]
@@ -121,8 +123,8 @@ model Transaction {
   updatedAt       DateTime       @updatedAt
   userId          String
   user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accountId       String
-  account         Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  accountId       String?
+  account         Account?       @relation(fields: [accountId], references: [id], onDelete: SetNull)
   categoryId      String?
   category        Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   transferGroupId String?
@@ -150,4 +152,18 @@ model SavingsGoal {
   updatedAt     DateTime  @updatedAt
 
   @@index([userId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
 }

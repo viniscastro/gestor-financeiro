@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto'
 import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
 import { formatBRL, formatDateLong } from '@/lib/format'
+import { notifyBillWarning } from '@/lib/notifications'
 
 export function monthKey(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
@@ -221,6 +222,7 @@ export async function notifyUpcomingBills(userId: string): Promise<void> {
       : `${toNotify.length} contas a vencer nos próximos dias`
 
   await sendEmail(user.email, subject, html)
+  await notifyBillWarning(userId, toNotify)
   await prisma.recurringRule.updateMany({
     where: { id: { in: toNotify.map((bill) => bill.id) } },
     data: { lastNotifiedAt: new Date() },

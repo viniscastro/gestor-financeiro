@@ -7,7 +7,8 @@ import { Download, LoaderCircle, Plus, Search } from 'lucide-react'
 import TransactionForm from '@/components/transaction-form'
 import TransactionList from '@/components/transaction-list'
 import ConfirmDialog from '@/components/confirm-dialog'
-import { downloadCsv, formatCentsPtBR, formatBRL, formatDate, toCsv } from '@/lib/format'
+import { formatBRL, formatDate } from '@/lib/format'
+import { exportTransactionsToExcel } from '@/lib/excel'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
@@ -177,23 +178,20 @@ export default function TransactionsPage() {
     }
   }
 
-  function exportCsv() {
-    const rows = filtered.map((t) => [
-      formatDate(new Date(t.date)),
-      t.transferGroupId
+  function exportExcel() {
+    const rows = filtered.map((t) => ({
+      date: formatDate(new Date(t.date)),
+      type: t.transferGroupId
         ? 'Transferência'
         : t.transactionType === 'INCOME'
           ? 'Entrada'
           : 'Saída',
-      t.description,
-      formatCentsPtBR(t.amount),
-      t.accountName,
-      t.categoryName ?? '',
-    ])
-    downloadCsv(
-      `transacoes_${new Date().toISOString().slice(0, 10)}.csv`,
-      toCsv(['Data', 'Tipo', 'Descrição', 'Valor', 'Conta', 'Categoria'], rows)
-    )
+      description: t.description,
+      amount: t.amount,
+      accountName: t.accountName,
+      categoryName: t.categoryName ?? '',
+    }))
+    exportTransactionsToExcel(rows)
   }
 
   function handleSaved() {
@@ -236,12 +234,12 @@ export default function TransactionsPage() {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={exportCsv}
+            onClick={exportExcel}
             disabled={filtered.length === 0}
             className="flex items-center gap-2 rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
           >
             <Download className="h-4 w-4" />
-            Exportar CSV
+            Exportar Excel
           </button>
           <button
             type="button"
@@ -249,7 +247,7 @@ export default function TransactionsPage() {
               setEditing(null)
               setFormOpen(true)
             }}
-            className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
+            className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
           >
             <Plus className="h-4 w-4" />
             Nova transação

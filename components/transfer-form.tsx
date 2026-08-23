@@ -5,6 +5,7 @@ import { ArrowRightLeft, LoaderCircle, X } from 'lucide-react'
 import CurrencyInput from '@/components/currency-input'
 import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
+import Modal from '@/components/modal'
 import type { AccountDto } from '@/lib/types'
 
 type Props = {
@@ -60,24 +61,19 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
     'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative my-8 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
-            Transferência entre contas
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
-            aria-label="Fechar"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+    <Modal open onClose={onClose} title="Transferência entre contas">
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+          aria-label="Fechar"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="fromAccount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Da conta <span className="text-rose-500">*</span>
@@ -166,7 +162,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (
               <LoaderCircle className="h-4 w-4 animate-spin" />
@@ -176,7 +172,6 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
             Transferir
           </button>
         </form>
-      </div>
-    </div>
+    </Modal>
   )
 }

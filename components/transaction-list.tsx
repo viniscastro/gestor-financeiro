@@ -32,10 +32,10 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
         return (
           <li
             key={t.id}
-            className="group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-700"
+            className="group flex items-start gap-3 rounded-xl border border-zinc-200 bg-white px-3 py-3 transition hover:border-zinc-300 sm:items-center sm:gap-4 sm:px-4 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-700"
           >
             <div
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold sm:h-10 sm:w-10 ${
                 isTransfer
                   ? 'bg-sky-500 text-white'
                   : isIncome
@@ -47,10 +47,45 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                {t.description}
-              </p>
-              <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-zinc-500">
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 sm:truncate">
+                  {t.description}
+                </p>
+                <div className="flex shrink-0 items-center gap-1">
+                  <p
+                    className={`shrink-0 text-sm font-semibold ${
+                      isTransfer
+                        ? 'text-sky-600 dark:text-sky-400'
+                        : isIncome
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-rose-600 dark:text-rose-400'
+                    }`}
+                  >
+                    {isIncome ? '+' : '–'} {formatBRL(t.amount)}
+                  </p>
+                  <div className="flex shrink-0 gap-0.5 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+                    {!isTransfer && (
+                      <button
+                        type="button"
+                        onClick={() => onEdit(t)}
+                        className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 sm:p-2 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+                        aria-label="Editar"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => onDelete(t.id)}
+                      className="rounded-lg p-1.5 text-zinc-500 hover:bg-red-500 hover:text-white sm:p-2 dark:text-zinc-300 dark:hover:text-white"
+                      aria-label="Excluir"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-zinc-500">
                 <span className="inline-flex items-center gap-1">
                   <span
                     className="h-2 w-2 shrink-0 rounded-full"
@@ -66,39 +101,6 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
                   </span>
                 )}
               </p>
-            </div>
-
-            <p
-              className={`shrink-0 text-sm font-semibold ${
-                isTransfer
-                  ? 'text-sky-600 dark:text-sky-400'
-                  : isIncome
-                    ? 'text-emerald-600 dark:text-emerald-400'
-                    : 'text-rose-600 dark:text-rose-400'
-              }`}
-            >
-              {isIncome ? '+' : '–'} {formatBRL(t.amount)}
-            </p>
-
-            <div className="flex shrink-0 gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
-              {!isTransfer && (
-                <button
-                  type="button"
-                  onClick={() => onEdit(t)}
-                  className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
-                  aria-label="Editar"
-                >
-                  <Pencil className="h-4 w-4" />
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => onDelete(t.id)}
-                className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
-                aria-label="Excluir"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
             </div>
           </li>
         )

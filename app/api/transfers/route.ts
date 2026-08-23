@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { transferSchema } from '@/lib/transfer'
 import { amountToCents } from '@/lib/transactions'
+import { createNotification } from '@/lib/notifications'
 
 export async function POST(request: NextRequest) {
   const session = await auth()
@@ -82,6 +83,13 @@ export async function POST(request: NextRequest) {
       },
     }),
   ])
+
+  await createNotification(
+    session.user.id,
+    'SYSTEM',
+    'Transferência realizada',
+    `${from.name} → ${to.name} — ${amount}`
+  )
 
   return NextResponse.json({ ok: true }, { status: 201 })
 }

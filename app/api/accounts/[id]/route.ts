@@ -55,29 +55,33 @@ export async function DELETE(_request: NextRequest, ctx: Params) {
 
   const { id } = await ctx.params
 
-  const txCount = await prisma.transaction.count({
-    where: { userId: session.user.id, accountId: id },
+  const account = await prisma.account.findFirst({
+    where: { id, userId: session.user.id },
+    include: {
+      transactions: { select: { transactionType: true, amount: true } },
+    },
   })
-  if (txCount > 0) {
-    return NextResponse.json(
-      { error: 'Exclua ou mova as transações desta conta antes de removê-la' },
-      { status: 400 }
-    )
+  if (!account) {
+    return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
   }
 
-  const ruleCount = await prisma.recurringRule.count({
-    where: { userId: session.user.id, accountId: id },
-  })
-  if (ruleCount > 0) {
+  const dto = toAccountDto(account)
+  if (dto.balance !== 0) {
     return NextResponse.json(
-      { error: 'Exclua as contas recorrentes desta conta antes de removê-la' },
+      { error: 'Transfira ou remova o saldo desta conta antes de excluí-la' },
       { status: 400 }
     )
   }
 
   try {
-    await prisma.account.delete({
-      where: { id, userId: session.user.id },
+    await prisma.$transaction(async (tx) => {
+      await tx.transaction.updateMany({
+        where: { accountId: id },
+        data: { accountId: null },
+      })
+      await tx.account.delete({
+        where: { id, userId: session.user!.id },
+      })
     })
     return NextResponse.json({ ok: true })
   } catch {

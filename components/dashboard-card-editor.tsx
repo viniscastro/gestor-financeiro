@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useSyncExternalStore } from 'react'
 import { Check, Eye, EyeOff, RotateCcw, X } from 'lucide-react'
+import Modal from '@/components/modal'
 
 const STORAGE_KEY = 'gf-dashboard-cards'
 const EVENT = 'gf-cards-change'
@@ -110,22 +111,12 @@ export default function DashboardCardEditor() {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
-      <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
-      <div className="relative my-8 max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800">
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
-            Editar cards
-          </h2>
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            className="rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
+    <Modal
+      open={open}
+      onClose={() => setOpen(false)}
+      title="Editar cards"
+      wide
+    >
         <div className="space-y-1">
           {CARD_IDS.map((card) => {
             const active = visible.includes(card.id)
@@ -165,12 +156,11 @@ export default function DashboardCardEditor() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-400"
+            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500"
           >
             Concluído
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   )
 }

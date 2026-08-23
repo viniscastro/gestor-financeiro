@@ -14,7 +14,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { downloadCsv, formatBRL, formatCentsPtBR, toCsv } from '@/lib/format'
+import { formatBRL } from '@/lib/format'
+import { exportStatsToExcel } from '@/lib/excel'
 
 export type MonthlyPoint = {
   label: string
@@ -88,29 +89,8 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
   const hasMonthly = monthly.some((m) => m.income > 0 || m.expense > 0)
   const hasCategories = byCategory.length > 0
 
-  function exportCsv() {
-    const monthlyRows = monthly.map((m) => [
-      m.label,
-      formatCentsPtBR(m.income),
-      formatCentsPtBR(m.expense),
-      formatCentsPtBR(m.income - m.expense),
-    ])
-    const categoryRows = byCategory.map((c) => {
-      const pct = totalExpense > 0 ? (c.amount / totalExpense) * 100 : 0
-      return [
-        c.label,
-        formatCentsPtBR(c.amount),
-        `${pct.toFixed(1).replace('.', ',')}%`,
-      ]
-    })
-    const content =
-      toCsv(['Mês', 'Entradas', 'Saídas', 'Resultado'], monthlyRows) +
-      '\r\n\r\n' +
-      toCsv(['Categoria', 'Valor', 'Percentual'], categoryRows)
-    downloadCsv(
-      `relatorio_${new Date().toISOString().slice(0, 10)}.csv`,
-      content
-    )
+  function exportExcel() {
+    exportStatsToExcel(monthly, byCategory, totalExpense)
   }
 
   return (
@@ -118,12 +98,12 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
       <div className="mb-6 flex justify-end">
         <button
           type="button"
-          onClick={exportCsv}
+          onClick={exportExcel}
           disabled={!hasMonthly && !hasCategories}
           className="flex items-center gap-2 rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
         >
           <Download className="h-4 w-4" />
-          Exportar CSV
+          Exportar Excel
         </button>
       </div>
 

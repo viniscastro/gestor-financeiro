@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function AccountPage() {
   const session = await auth()
-  if (!session?.user?.id) redirect('/')
+  if (!session?.user?.id) redirect('/login')
 
   let user: {
     name: string | null
@@ -34,7 +34,7 @@ export default async function AccountPage() {
   } catch (err) {
     console.error('[account] prisma error:', err)
   }
-  if (!user) redirect('/')
+  if (!user) redirect('/login')
 
   return (
     <div className="space-y-6">

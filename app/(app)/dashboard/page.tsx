@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
   const session = await auth()
-  if (!session?.user?.id) redirect('/')
+  if (!session?.user?.id) redirect('/login')
   const userId = session.user.id
 
   const [accounts, transactions, recent, budgets, goals, recurringRules, topCategories, user] = await Promise.all([

@@ -27,7 +27,7 @@ type TransactionWithRelations = {
   description: string
   amount: number
   date: Date
-  accountId: string
+  accountId: string | null
   categoryId: string | null
   transferGroupId: string | null
   recurringId: string | null

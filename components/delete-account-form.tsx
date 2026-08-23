@@ -46,7 +46,7 @@ export default function DeleteAccountForm({ email }: { email: string }) {
         setError(data.error ?? 'Não foi possível excluir a conta')
         return
       }
-      await signOut({ redirectTo: '/' })
+      await signOut({ redirectTo: '/login' })
     } finally {
       setLoading(false)
     }

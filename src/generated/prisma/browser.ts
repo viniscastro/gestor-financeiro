@@ -52,3 +52,8 @@ export type Transaction = Prisma.TransactionModel
  * 
  */
 export type SavingsGoal = Prisma.SavingsGoalModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
