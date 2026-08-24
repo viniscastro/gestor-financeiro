@@ -1,5 +1,14 @@
 import { prisma } from '@/lib/prisma'
 import { formatBRL } from '@/lib/format'
+import webPush from 'web-push'
+
+const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY
+const vapidSubject = process.env.VAPID_SUBJECT || 'mailto:admin@example.com'
+
+if (vapidPublicKey && vapidPrivateKey) {
+  webPush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey)
+}
 
 export async function createNotification(
   userId: string,
@@ -15,8 +24,50 @@ export async function createNotification(
     await prisma.notification.create({
       data: { userId, type, title, message },
     })
+
+    sendPushNotification(userId, { title, body: message, tag: `notification-${type}`, type })
   } catch (err) {
     console.error('[createNotification]', err)
+  }
+}
+
+async function sendPushNotification(
+  userId: string,
+  payload: { title: string; body: string; tag?: string; type?: string }
+) {
+  if (!vapidPublicKey || !vapidPrivateKey) return
+
+  try {
+    const subscriptions = await prisma.pushSubscription.findMany({
+      where: { userId },
+    })
+
+    for (const sub of subscriptions) {
+      try {
+        await webPush.sendNotification(
+          {
+            endpoint: sub.endpoint,
+            keys: { p256dh: sub.p256dh, auth: sub.auth },
+          },
+          JSON.stringify({
+            title: payload.title,
+            body: payload.body,
+            tag: payload.tag || 'gestor-notification',
+            type: payload.type || '',
+            url: '/dashboard',
+          })
+        )
+      } catch (err: unknown) {
+        const statusCode = (err as { statusCode?: number }).statusCode
+        if (statusCode === 404 || statusCode === 410) {
+          await prisma.pushSubscription.delete({ where: { id: sub.id } }).catch(() => {})
+        } else {
+          console.error('[sendPushNotification]', err)
+        }
+      }
+    }
+  } catch (err) {
+    console.error('[sendPushNotification]', err)
   }
 }
 

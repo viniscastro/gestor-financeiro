@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import { usePathname } from 'next/navigation'
 import { Moon, Sun, SlidersHorizontal } from 'lucide-react'
 import NotificationBell from '@/components/notification-bell'
+import PushToggle from '@/components/push-toggle'
 
 const emptySubscribe = () => () => {}
 
@@ -105,6 +106,8 @@ export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme
               <Icon aria-hidden="true" className="h-4 w-4" />
               {labels[theme]}
             </button>
+            <div className="border-t border-zinc-100 dark:border-zinc-700" />
+            <PushToggle onAction={() => setMenuOpen(false)} />
             <div className="border-t border-zinc-100 dark:border-zinc-700" />
             <button
               type="button"

@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Send, Sparkles, CircleAlert, Info, CheckCircle } from 'lucide-react'
+import { Send, Sparkles, Bug, Info, CheckCircle } from 'lucide-react'
 
 type NotifyType = 'FEATURE' | 'BUG' | 'SYSTEM'
 
 const TYPE_OPTIONS: { value: NotifyType; label: string; icon: typeof Sparkles; activeClass: string; idleClass: string; iconActiveClass: string }[] = [
   { value: 'FEATURE', label: 'Nova funcionalidade', icon: Sparkles, activeClass: 'badge-feature-active', idleClass: 'badge-feature-idle', iconActiveClass: 'badge-feature-icon' },
-  { value: 'BUG', label: 'Bug corrigido', icon: CircleAlert, activeClass: 'badge-bug-active', idleClass: 'badge-bug-idle', iconActiveClass: 'badge-bug-icon' },
+  { value: 'BUG', label: 'Bug corrigido', icon: Bug, activeClass: 'badge-bug-active', idleClass: 'badge-bug-idle', iconActiveClass: 'badge-bug-icon' },
   { value: 'SYSTEM', label: 'Sistema', icon: Info, activeClass: 'badge-system-active', idleClass: 'badge-system-idle', iconActiveClass: 'badge-system-icon' },
 ]
 

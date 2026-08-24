@@ -29,11 +29,15 @@ export type AggregateSavingsGoal = {
 export type SavingsGoalAvgAggregateOutputType = {
   targetAmount: number | null
   currentAmount: number | null
+  autoContributeAmount: number | null
+  autoContributeDayOfMonth: number | null
 }
 
 export type SavingsGoalSumAggregateOutputType = {
   targetAmount: number | null
   currentAmount: number | null
+  autoContributeAmount: number | null
+  autoContributeDayOfMonth: number | null
 }
 
 export type SavingsGoalMinAggregateOutputType = {
@@ -45,6 +49,10 @@ export type SavingsGoalMinAggregateOutputType = {
   currentAmount: number | null
   accountId: string | null
   targetDate: Date | null
+  autoContributeAmount: number | null
+  autoContributeDayOfMonth: number | null
+  autoContributeAccountId: string | null
+  autoLastMaterializedMonth: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -58,6 +66,10 @@ export type SavingsGoalMaxAggregateOutputType = {
   currentAmount: number | null
   accountId: string | null
   targetDate: Date | null
+  autoContributeAmount: number | null
+  autoContributeDayOfMonth: number | null
+  autoContributeAccountId: string | null
+  autoLastMaterializedMonth: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -71,6 +83,10 @@ export type SavingsGoalCountAggregateOutputType = {
   currentAmount: number
   accountId: number
   targetDate: number
+  autoContributeAmount: number
+  autoContributeDayOfMonth: number
+  autoContributeAccountId: number
+  autoLastMaterializedMonth: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -80,11 +96,15 @@ export type SavingsGoalCountAggregateOutputType = {
 export type SavingsGoalAvgAggregateInputType = {
   targetAmount?: true
   currentAmount?: true
+  autoContributeAmount?: true
+  autoContributeDayOfMonth?: true
 }
 
 export type SavingsGoalSumAggregateInputType = {
   targetAmount?: true
   currentAmount?: true
+  autoContributeAmount?: true
+  autoContributeDayOfMonth?: true
 }
 
 export type SavingsGoalMinAggregateInputType = {
@@ -96,6 +116,10 @@ export type SavingsGoalMinAggregateInputType = {
   currentAmount?: true
   accountId?: true
   targetDate?: true
+  autoContributeAmount?: true
+  autoContributeDayOfMonth?: true
+  autoContributeAccountId?: true
+  autoLastMaterializedMonth?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -109,6 +133,10 @@ export type SavingsGoalMaxAggregateInputType = {
   currentAmount?: true
   accountId?: true
   targetDate?: true
+  autoContributeAmount?: true
+  autoContributeDayOfMonth?: true
+  autoContributeAccountId?: true
+  autoLastMaterializedMonth?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -122,6 +150,10 @@ export type SavingsGoalCountAggregateInputType = {
   currentAmount?: true
   accountId?: true
   targetDate?: true
+  autoContributeAmount?: true
+  autoContributeDayOfMonth?: true
+  autoContributeAccountId?: true
+  autoLastMaterializedMonth?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -222,6 +254,10 @@ export type SavingsGoalGroupByOutputType = {
   currentAmount: number
   accountId: string | null
   targetDate: Date | null
+  autoContributeAmount: number | null
+  autoContributeDayOfMonth: number | null
+  autoContributeAccountId: string | null
+  autoLastMaterializedMonth: string | null
   createdAt: Date
   updatedAt: Date
   _count: SavingsGoalCountAggregateOutputType | null
@@ -258,10 +294,15 @@ export type SavingsGoalWhereInput = {
   currentAmount?: Prisma.IntFilter<"SavingsGoal"> | number
   accountId?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
   targetDate?: Prisma.DateTimeNullableFilter<"SavingsGoal"> | Date | string | null
+  autoContributeAmount?: Prisma.IntNullableFilter<"SavingsGoal"> | number | null
+  autoContributeDayOfMonth?: Prisma.IntNullableFilter<"SavingsGoal"> | number | null
+  autoContributeAccountId?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
+  autoLastMaterializedMonth?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
   createdAt?: Prisma.DateTimeFilter<"SavingsGoal"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SavingsGoal"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   account?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
+  autoContributeAccount?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
 }
 
 export type SavingsGoalOrderByWithRelationInput = {
@@ -273,10 +314,15 @@ export type SavingsGoalOrderByWithRelationInput = {
   currentAmount?: Prisma.SortOrder
   accountId?: Prisma.SortOrderInput | Prisma.SortOrder
   targetDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoContributeAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoContributeDayOfMonth?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoContributeAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoLastMaterializedMonth?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   account?: Prisma.AccountOrderByWithRelationInput
+  autoContributeAccount?: Prisma.AccountOrderByWithRelationInput
 }
 
 export type SavingsGoalWhereUniqueInput = Prisma.AtLeast<{
@@ -291,10 +337,15 @@ export type SavingsGoalWhereUniqueInput = Prisma.AtLeast<{
   currentAmount?: Prisma.IntFilter<"SavingsGoal"> | number
   accountId?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
   targetDate?: Prisma.DateTimeNullableFilter<"SavingsGoal"> | Date | string | null
+  autoContributeAmount?: Prisma.IntNullableFilter<"SavingsGoal"> | number | null
+  autoContributeDayOfMonth?: Prisma.IntNullableFilter<"SavingsGoal"> | number | null
+  autoContributeAccountId?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
+  autoLastMaterializedMonth?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
   createdAt?: Prisma.DateTimeFilter<"SavingsGoal"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SavingsGoal"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   account?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
+  autoContributeAccount?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
 }, "id">
 
 export type SavingsGoalOrderByWithAggregationInput = {
@@ -306,6 +357,10 @@ export type SavingsGoalOrderByWithAggregationInput = {
   currentAmount?: Prisma.SortOrder
   accountId?: Prisma.SortOrderInput | Prisma.SortOrder
   targetDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoContributeAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoContributeDayOfMonth?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoContributeAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoLastMaterializedMonth?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SavingsGoalCountOrderByAggregateInput
@@ -327,6 +382,10 @@ export type SavingsGoalScalarWhereWithAggregatesInput = {
   currentAmount?: Prisma.IntWithAggregatesFilter<"SavingsGoal"> | number
   accountId?: Prisma.StringNullableWithAggregatesFilter<"SavingsGoal"> | string | null
   targetDate?: Prisma.DateTimeNullableWithAggregatesFilter<"SavingsGoal"> | Date | string | null
+  autoContributeAmount?: Prisma.IntNullableWithAggregatesFilter<"SavingsGoal"> | number | null
+  autoContributeDayOfMonth?: Prisma.IntNullableWithAggregatesFilter<"SavingsGoal"> | number | null
+  autoContributeAccountId?: Prisma.StringNullableWithAggregatesFilter<"SavingsGoal"> | string | null
+  autoLastMaterializedMonth?: Prisma.StringNullableWithAggregatesFilter<"SavingsGoal"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"SavingsGoal"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"SavingsGoal"> | Date | string
 }
@@ -338,10 +397,14 @@ export type SavingsGoalCreateInput = {
   targetAmount: number
   currentAmount?: number
   targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoLastMaterializedMonth?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutGoalsInput
   account?: Prisma.AccountCreateNestedOneWithoutGoalsInput
+  autoContributeAccount?: Prisma.AccountCreateNestedOneWithoutGoalsAutoContributeInput
 }
 
 export type SavingsGoalUncheckedCreateInput = {
@@ -353,6 +416,10 @@ export type SavingsGoalUncheckedCreateInput = {
   currentAmount?: number
   accountId?: string | null
   targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoContributeAccountId?: string | null
+  autoLastMaterializedMonth?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -364,10 +431,14 @@ export type SavingsGoalUpdateInput = {
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutGoalsNestedInput
   account?: Prisma.AccountUpdateOneWithoutGoalsNestedInput
+  autoContributeAccount?: Prisma.AccountUpdateOneWithoutGoalsAutoContributeNestedInput
 }
 
 export type SavingsGoalUncheckedUpdateInput = {
@@ -379,6 +450,10 @@ export type SavingsGoalUncheckedUpdateInput = {
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -392,6 +467,10 @@ export type SavingsGoalCreateManyInput = {
   currentAmount?: number
   accountId?: string | null
   targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoContributeAccountId?: string | null
+  autoLastMaterializedMonth?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -403,6 +482,9 @@ export type SavingsGoalUpdateManyMutationInput = {
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -416,6 +498,10 @@ export type SavingsGoalUncheckedUpdateManyInput = {
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -439,6 +525,10 @@ export type SavingsGoalCountOrderByAggregateInput = {
   currentAmount?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
   targetDate?: Prisma.SortOrder
+  autoContributeAmount?: Prisma.SortOrder
+  autoContributeDayOfMonth?: Prisma.SortOrder
+  autoContributeAccountId?: Prisma.SortOrder
+  autoLastMaterializedMonth?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -446,6 +536,8 @@ export type SavingsGoalCountOrderByAggregateInput = {
 export type SavingsGoalAvgOrderByAggregateInput = {
   targetAmount?: Prisma.SortOrder
   currentAmount?: Prisma.SortOrder
+  autoContributeAmount?: Prisma.SortOrder
+  autoContributeDayOfMonth?: Prisma.SortOrder
 }
 
 export type SavingsGoalMaxOrderByAggregateInput = {
@@ -457,6 +549,10 @@ export type SavingsGoalMaxOrderByAggregateInput = {
   currentAmount?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
   targetDate?: Prisma.SortOrder
+  autoContributeAmount?: Prisma.SortOrder
+  autoContributeDayOfMonth?: Prisma.SortOrder
+  autoContributeAccountId?: Prisma.SortOrder
+  autoLastMaterializedMonth?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -470,6 +566,10 @@ export type SavingsGoalMinOrderByAggregateInput = {
   currentAmount?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
   targetDate?: Prisma.SortOrder
+  autoContributeAmount?: Prisma.SortOrder
+  autoContributeDayOfMonth?: Prisma.SortOrder
+  autoContributeAccountId?: Prisma.SortOrder
+  autoLastMaterializedMonth?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -477,6 +577,8 @@ export type SavingsGoalMinOrderByAggregateInput = {
 export type SavingsGoalSumOrderByAggregateInput = {
   targetAmount?: Prisma.SortOrder
   currentAmount?: Prisma.SortOrder
+  autoContributeAmount?: Prisma.SortOrder
+  autoContributeDayOfMonth?: Prisma.SortOrder
 }
 
 export type SavingsGoalCreateNestedManyWithoutUserInput = {
@@ -528,10 +630,24 @@ export type SavingsGoalCreateNestedManyWithoutAccountInput = {
   connect?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
 }
 
+export type SavingsGoalCreateNestedManyWithoutAutoContributeAccountInput = {
+  create?: Prisma.XOR<Prisma.SavingsGoalCreateWithoutAutoContributeAccountInput, Prisma.SavingsGoalUncheckedCreateWithoutAutoContributeAccountInput> | Prisma.SavingsGoalCreateWithoutAutoContributeAccountInput[] | Prisma.SavingsGoalUncheckedCreateWithoutAutoContributeAccountInput[]
+  connectOrCreate?: Prisma.SavingsGoalCreateOrConnectWithoutAutoContributeAccountInput | Prisma.SavingsGoalCreateOrConnectWithoutAutoContributeAccountInput[]
+  createMany?: Prisma.SavingsGoalCreateManyAutoContributeAccountInputEnvelope
+  connect?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
+}
+
 export type SavingsGoalUncheckedCreateNestedManyWithoutAccountInput = {
   create?: Prisma.XOR<Prisma.SavingsGoalCreateWithoutAccountInput, Prisma.SavingsGoalUncheckedCreateWithoutAccountInput> | Prisma.SavingsGoalCreateWithoutAccountInput[] | Prisma.SavingsGoalUncheckedCreateWithoutAccountInput[]
   connectOrCreate?: Prisma.SavingsGoalCreateOrConnectWithoutAccountInput | Prisma.SavingsGoalCreateOrConnectWithoutAccountInput[]
   createMany?: Prisma.SavingsGoalCreateManyAccountInputEnvelope
+  connect?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
+}
+
+export type SavingsGoalUncheckedCreateNestedManyWithoutAutoContributeAccountInput = {
+  create?: Prisma.XOR<Prisma.SavingsGoalCreateWithoutAutoContributeAccountInput, Prisma.SavingsGoalUncheckedCreateWithoutAutoContributeAccountInput> | Prisma.SavingsGoalCreateWithoutAutoContributeAccountInput[] | Prisma.SavingsGoalUncheckedCreateWithoutAutoContributeAccountInput[]
+  connectOrCreate?: Prisma.SavingsGoalCreateOrConnectWithoutAutoContributeAccountInput | Prisma.SavingsGoalCreateOrConnectWithoutAutoContributeAccountInput[]
+  createMany?: Prisma.SavingsGoalCreateManyAutoContributeAccountInputEnvelope
   connect?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
 }
 
@@ -549,6 +665,20 @@ export type SavingsGoalUpdateManyWithoutAccountNestedInput = {
   deleteMany?: Prisma.SavingsGoalScalarWhereInput | Prisma.SavingsGoalScalarWhereInput[]
 }
 
+export type SavingsGoalUpdateManyWithoutAutoContributeAccountNestedInput = {
+  create?: Prisma.XOR<Prisma.SavingsGoalCreateWithoutAutoContributeAccountInput, Prisma.SavingsGoalUncheckedCreateWithoutAutoContributeAccountInput> | Prisma.SavingsGoalCreateWithoutAutoContributeAccountInput[] | Prisma.SavingsGoalUncheckedCreateWithoutAutoContributeAccountInput[]
+  connectOrCreate?: Prisma.SavingsGoalCreateOrConnectWithoutAutoContributeAccountInput | Prisma.SavingsGoalCreateOrConnectWithoutAutoContributeAccountInput[]
+  upsert?: Prisma.SavingsGoalUpsertWithWhereUniqueWithoutAutoContributeAccountInput | Prisma.SavingsGoalUpsertWithWhereUniqueWithoutAutoContributeAccountInput[]
+  createMany?: Prisma.SavingsGoalCreateManyAutoContributeAccountInputEnvelope
+  set?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
+  disconnect?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
+  delete?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
+  connect?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
+  update?: Prisma.SavingsGoalUpdateWithWhereUniqueWithoutAutoContributeAccountInput | Prisma.SavingsGoalUpdateWithWhereUniqueWithoutAutoContributeAccountInput[]
+  updateMany?: Prisma.SavingsGoalUpdateManyWithWhereWithoutAutoContributeAccountInput | Prisma.SavingsGoalUpdateManyWithWhereWithoutAutoContributeAccountInput[]
+  deleteMany?: Prisma.SavingsGoalScalarWhereInput | Prisma.SavingsGoalScalarWhereInput[]
+}
+
 export type SavingsGoalUncheckedUpdateManyWithoutAccountNestedInput = {
   create?: Prisma.XOR<Prisma.SavingsGoalCreateWithoutAccountInput, Prisma.SavingsGoalUncheckedCreateWithoutAccountInput> | Prisma.SavingsGoalCreateWithoutAccountInput[] | Prisma.SavingsGoalUncheckedCreateWithoutAccountInput[]
   connectOrCreate?: Prisma.SavingsGoalCreateOrConnectWithoutAccountInput | Prisma.SavingsGoalCreateOrConnectWithoutAccountInput[]
@@ -563,6 +693,28 @@ export type SavingsGoalUncheckedUpdateManyWithoutAccountNestedInput = {
   deleteMany?: Prisma.SavingsGoalScalarWhereInput | Prisma.SavingsGoalScalarWhereInput[]
 }
 
+export type SavingsGoalUncheckedUpdateManyWithoutAutoContributeAccountNestedInput = {
+  create?: Prisma.XOR<Prisma.SavingsGoalCreateWithoutAutoContributeAccountInput, Prisma.SavingsGoalUncheckedCreateWithoutAutoContributeAccountInput> | Prisma.SavingsGoalCreateWithoutAutoContributeAccountInput[] | Prisma.SavingsGoalUncheckedCreateWithoutAutoContributeAccountInput[]
+  connectOrCreate?: Prisma.SavingsGoalCreateOrConnectWithoutAutoContributeAccountInput | Prisma.SavingsGoalCreateOrConnectWithoutAutoContributeAccountInput[]
+  upsert?: Prisma.SavingsGoalUpsertWithWhereUniqueWithoutAutoContributeAccountInput | Prisma.SavingsGoalUpsertWithWhereUniqueWithoutAutoContributeAccountInput[]
+  createMany?: Prisma.SavingsGoalCreateManyAutoContributeAccountInputEnvelope
+  set?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
+  disconnect?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
+  delete?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
+  connect?: Prisma.SavingsGoalWhereUniqueInput | Prisma.SavingsGoalWhereUniqueInput[]
+  update?: Prisma.SavingsGoalUpdateWithWhereUniqueWithoutAutoContributeAccountInput | Prisma.SavingsGoalUpdateWithWhereUniqueWithoutAutoContributeAccountInput[]
+  updateMany?: Prisma.SavingsGoalUpdateManyWithWhereWithoutAutoContributeAccountInput | Prisma.SavingsGoalUpdateManyWithWhereWithoutAutoContributeAccountInput[]
+  deleteMany?: Prisma.SavingsGoalScalarWhereInput | Prisma.SavingsGoalScalarWhereInput[]
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type SavingsGoalCreateWithoutUserInput = {
   id?: string
   name: string
@@ -570,9 +722,13 @@ export type SavingsGoalCreateWithoutUserInput = {
   targetAmount: number
   currentAmount?: number
   targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoLastMaterializedMonth?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   account?: Prisma.AccountCreateNestedOneWithoutGoalsInput
+  autoContributeAccount?: Prisma.AccountCreateNestedOneWithoutGoalsAutoContributeInput
 }
 
 export type SavingsGoalUncheckedCreateWithoutUserInput = {
@@ -583,6 +739,10 @@ export type SavingsGoalUncheckedCreateWithoutUserInput = {
   currentAmount?: number
   accountId?: string | null
   targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoContributeAccountId?: string | null
+  autoLastMaterializedMonth?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -625,6 +785,10 @@ export type SavingsGoalScalarWhereInput = {
   currentAmount?: Prisma.IntFilter<"SavingsGoal"> | number
   accountId?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
   targetDate?: Prisma.DateTimeNullableFilter<"SavingsGoal"> | Date | string | null
+  autoContributeAmount?: Prisma.IntNullableFilter<"SavingsGoal"> | number | null
+  autoContributeDayOfMonth?: Prisma.IntNullableFilter<"SavingsGoal"> | number | null
+  autoContributeAccountId?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
+  autoLastMaterializedMonth?: Prisma.StringNullableFilter<"SavingsGoal"> | string | null
   createdAt?: Prisma.DateTimeFilter<"SavingsGoal"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SavingsGoal"> | Date | string
 }
@@ -636,9 +800,13 @@ export type SavingsGoalCreateWithoutAccountInput = {
   targetAmount: number
   currentAmount?: number
   targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoLastMaterializedMonth?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutGoalsInput
+  autoContributeAccount?: Prisma.AccountCreateNestedOneWithoutGoalsAutoContributeInput
 }
 
 export type SavingsGoalUncheckedCreateWithoutAccountInput = {
@@ -649,6 +817,10 @@ export type SavingsGoalUncheckedCreateWithoutAccountInput = {
   targetAmount: number
   currentAmount?: number
   targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoContributeAccountId?: string | null
+  autoLastMaterializedMonth?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -660,6 +832,48 @@ export type SavingsGoalCreateOrConnectWithoutAccountInput = {
 
 export type SavingsGoalCreateManyAccountInputEnvelope = {
   data: Prisma.SavingsGoalCreateManyAccountInput | Prisma.SavingsGoalCreateManyAccountInput[]
+  skipDuplicates?: boolean
+}
+
+export type SavingsGoalCreateWithoutAutoContributeAccountInput = {
+  id?: string
+  name: string
+  icon?: string | null
+  targetAmount: number
+  currentAmount?: number
+  targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoLastMaterializedMonth?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutGoalsInput
+  account?: Prisma.AccountCreateNestedOneWithoutGoalsInput
+}
+
+export type SavingsGoalUncheckedCreateWithoutAutoContributeAccountInput = {
+  id?: string
+  userId: string
+  name: string
+  icon?: string | null
+  targetAmount: number
+  currentAmount?: number
+  accountId?: string | null
+  targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoLastMaterializedMonth?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SavingsGoalCreateOrConnectWithoutAutoContributeAccountInput = {
+  where: Prisma.SavingsGoalWhereUniqueInput
+  create: Prisma.XOR<Prisma.SavingsGoalCreateWithoutAutoContributeAccountInput, Prisma.SavingsGoalUncheckedCreateWithoutAutoContributeAccountInput>
+}
+
+export type SavingsGoalCreateManyAutoContributeAccountInputEnvelope = {
+  data: Prisma.SavingsGoalCreateManyAutoContributeAccountInput | Prisma.SavingsGoalCreateManyAutoContributeAccountInput[]
   skipDuplicates?: boolean
 }
 
@@ -679,6 +893,22 @@ export type SavingsGoalUpdateManyWithWhereWithoutAccountInput = {
   data: Prisma.XOR<Prisma.SavingsGoalUpdateManyMutationInput, Prisma.SavingsGoalUncheckedUpdateManyWithoutAccountInput>
 }
 
+export type SavingsGoalUpsertWithWhereUniqueWithoutAutoContributeAccountInput = {
+  where: Prisma.SavingsGoalWhereUniqueInput
+  update: Prisma.XOR<Prisma.SavingsGoalUpdateWithoutAutoContributeAccountInput, Prisma.SavingsGoalUncheckedUpdateWithoutAutoContributeAccountInput>
+  create: Prisma.XOR<Prisma.SavingsGoalCreateWithoutAutoContributeAccountInput, Prisma.SavingsGoalUncheckedCreateWithoutAutoContributeAccountInput>
+}
+
+export type SavingsGoalUpdateWithWhereUniqueWithoutAutoContributeAccountInput = {
+  where: Prisma.SavingsGoalWhereUniqueInput
+  data: Prisma.XOR<Prisma.SavingsGoalUpdateWithoutAutoContributeAccountInput, Prisma.SavingsGoalUncheckedUpdateWithoutAutoContributeAccountInput>
+}
+
+export type SavingsGoalUpdateManyWithWhereWithoutAutoContributeAccountInput = {
+  where: Prisma.SavingsGoalScalarWhereInput
+  data: Prisma.XOR<Prisma.SavingsGoalUpdateManyMutationInput, Prisma.SavingsGoalUncheckedUpdateManyWithoutAutoContributeAccountInput>
+}
+
 export type SavingsGoalCreateManyUserInput = {
   id?: string
   name: string
@@ -687,6 +917,10 @@ export type SavingsGoalCreateManyUserInput = {
   currentAmount?: number
   accountId?: string | null
   targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoContributeAccountId?: string | null
+  autoLastMaterializedMonth?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -698,9 +932,13 @@ export type SavingsGoalUpdateWithoutUserInput = {
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   account?: Prisma.AccountUpdateOneWithoutGoalsNestedInput
+  autoContributeAccount?: Prisma.AccountUpdateOneWithoutGoalsAutoContributeNestedInput
 }
 
 export type SavingsGoalUncheckedUpdateWithoutUserInput = {
@@ -711,6 +949,10 @@ export type SavingsGoalUncheckedUpdateWithoutUserInput = {
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -723,6 +965,10 @@ export type SavingsGoalUncheckedUpdateManyWithoutUserInput = {
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -735,6 +981,26 @@ export type SavingsGoalCreateManyAccountInput = {
   targetAmount: number
   currentAmount?: number
   targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoContributeAccountId?: string | null
+  autoLastMaterializedMonth?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SavingsGoalCreateManyAutoContributeAccountInput = {
+  id?: string
+  userId: string
+  name: string
+  icon?: string | null
+  targetAmount: number
+  currentAmount?: number
+  accountId?: string | null
+  targetDate?: Date | string | null
+  autoContributeAmount?: number | null
+  autoContributeDayOfMonth?: number | null
+  autoLastMaterializedMonth?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -746,9 +1012,13 @@ export type SavingsGoalUpdateWithoutAccountInput = {
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutGoalsNestedInput
+  autoContributeAccount?: Prisma.AccountUpdateOneWithoutGoalsAutoContributeNestedInput
 }
 
 export type SavingsGoalUncheckedUpdateWithoutAccountInput = {
@@ -759,6 +1029,10 @@ export type SavingsGoalUncheckedUpdateWithoutAccountInput = {
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -771,6 +1045,58 @@ export type SavingsGoalUncheckedUpdateManyWithoutAccountInput = {
   targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
   targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SavingsGoalUpdateWithoutAutoContributeAccountInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutGoalsNestedInput
+  account?: Prisma.AccountUpdateOneWithoutGoalsNestedInput
+}
+
+export type SavingsGoalUncheckedUpdateWithoutAutoContributeAccountInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SavingsGoalUncheckedUpdateManyWithoutAutoContributeAccountInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  currentAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoContributeAmount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoContributeDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoLastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -786,10 +1112,15 @@ export type SavingsGoalSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   currentAmount?: boolean
   accountId?: boolean
   targetDate?: boolean
+  autoContributeAmount?: boolean
+  autoContributeDayOfMonth?: boolean
+  autoContributeAccountId?: boolean
+  autoLastMaterializedMonth?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   account?: boolean | Prisma.SavingsGoal$accountArgs<ExtArgs>
+  autoContributeAccount?: boolean | Prisma.SavingsGoal$autoContributeAccountArgs<ExtArgs>
 }, ExtArgs["result"]["savingsGoal"]>
 
 export type SavingsGoalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -801,10 +1132,15 @@ export type SavingsGoalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   currentAmount?: boolean
   accountId?: boolean
   targetDate?: boolean
+  autoContributeAmount?: boolean
+  autoContributeDayOfMonth?: boolean
+  autoContributeAccountId?: boolean
+  autoLastMaterializedMonth?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   account?: boolean | Prisma.SavingsGoal$accountArgs<ExtArgs>
+  autoContributeAccount?: boolean | Prisma.SavingsGoal$autoContributeAccountArgs<ExtArgs>
 }, ExtArgs["result"]["savingsGoal"]>
 
 export type SavingsGoalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -816,10 +1152,15 @@ export type SavingsGoalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   currentAmount?: boolean
   accountId?: boolean
   targetDate?: boolean
+  autoContributeAmount?: boolean
+  autoContributeDayOfMonth?: boolean
+  autoContributeAccountId?: boolean
+  autoLastMaterializedMonth?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   account?: boolean | Prisma.SavingsGoal$accountArgs<ExtArgs>
+  autoContributeAccount?: boolean | Prisma.SavingsGoal$autoContributeAccountArgs<ExtArgs>
 }, ExtArgs["result"]["savingsGoal"]>
 
 export type SavingsGoalSelectScalar = {
@@ -831,22 +1172,29 @@ export type SavingsGoalSelectScalar = {
   currentAmount?: boolean
   accountId?: boolean
   targetDate?: boolean
+  autoContributeAmount?: boolean
+  autoContributeDayOfMonth?: boolean
+  autoContributeAccountId?: boolean
+  autoLastMaterializedMonth?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SavingsGoalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "icon" | "targetAmount" | "currentAmount" | "accountId" | "targetDate" | "createdAt" | "updatedAt", ExtArgs["result"]["savingsGoal"]>
+export type SavingsGoalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "icon" | "targetAmount" | "currentAmount" | "accountId" | "targetDate" | "autoContributeAmount" | "autoContributeDayOfMonth" | "autoContributeAccountId" | "autoLastMaterializedMonth" | "createdAt" | "updatedAt", ExtArgs["result"]["savingsGoal"]>
 export type SavingsGoalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   account?: boolean | Prisma.SavingsGoal$accountArgs<ExtArgs>
+  autoContributeAccount?: boolean | Prisma.SavingsGoal$autoContributeAccountArgs<ExtArgs>
 }
 export type SavingsGoalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   account?: boolean | Prisma.SavingsGoal$accountArgs<ExtArgs>
+  autoContributeAccount?: boolean | Prisma.SavingsGoal$autoContributeAccountArgs<ExtArgs>
 }
 export type SavingsGoalIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   account?: boolean | Prisma.SavingsGoal$accountArgs<ExtArgs>
+  autoContributeAccount?: boolean | Prisma.SavingsGoal$autoContributeAccountArgs<ExtArgs>
 }
 
 export type $SavingsGoalPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -854,6 +1202,7 @@ export type $SavingsGoalPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     account: Prisma.$AccountPayload<ExtArgs> | null
+    autoContributeAccount: Prisma.$AccountPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -864,6 +1213,10 @@ export type $SavingsGoalPayload<ExtArgs extends runtime.Types.Extensions.Interna
     currentAmount: number
     accountId: string | null
     targetDate: Date | null
+    autoContributeAmount: number | null
+    autoContributeDayOfMonth: number | null
+    autoContributeAccountId: string | null
+    autoLastMaterializedMonth: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["savingsGoal"]>
@@ -1262,6 +1615,7 @@ export interface Prisma__SavingsGoalClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   account<T extends Prisma.SavingsGoal$accountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SavingsGoal$accountArgs<ExtArgs>>): Prisma.Prisma__AccountClient<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  autoContributeAccount<T extends Prisma.SavingsGoal$autoContributeAccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SavingsGoal$autoContributeAccountArgs<ExtArgs>>): Prisma.Prisma__AccountClient<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1299,6 +1653,10 @@ export interface SavingsGoalFieldRefs {
   readonly currentAmount: Prisma.FieldRef<"SavingsGoal", 'Int'>
   readonly accountId: Prisma.FieldRef<"SavingsGoal", 'String'>
   readonly targetDate: Prisma.FieldRef<"SavingsGoal", 'DateTime'>
+  readonly autoContributeAmount: Prisma.FieldRef<"SavingsGoal", 'Int'>
+  readonly autoContributeDayOfMonth: Prisma.FieldRef<"SavingsGoal", 'Int'>
+  readonly autoContributeAccountId: Prisma.FieldRef<"SavingsGoal", 'String'>
+  readonly autoLastMaterializedMonth: Prisma.FieldRef<"SavingsGoal", 'String'>
   readonly createdAt: Prisma.FieldRef<"SavingsGoal", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"SavingsGoal", 'DateTime'>
 }
@@ -1705,6 +2063,25 @@ export type SavingsGoalDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
  * SavingsGoal.account
  */
 export type SavingsGoal$accountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Account
+   */
+  select?: Prisma.AccountSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Account
+   */
+  omit?: Prisma.AccountOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccountInclude<ExtArgs> | null
+  where?: Prisma.AccountWhereInput
+}
+
+/**
+ * SavingsGoal.autoContributeAccount
+ */
+export type SavingsGoal$autoContributeAccountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Account
    */

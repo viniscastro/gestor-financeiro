@@ -34,6 +34,7 @@ model User {
   recurringRules       RecurringRule[]
   goals                SavingsGoal[]
   notifications        Notification[]
+  pushSubscriptions    PushSubscription[]
 }
 
 model Account {
@@ -51,6 +52,7 @@ model Account {
   recurringRules RecurringRule[] @relation("RecurringFromAccount")
   recurringIncoming RecurringRule[] @relation("RecurringToAccount")
   goals          SavingsGoal[]
+  goalsAutoContribute SavingsGoal[] @relation("GoalAutoContribute")
 
   @@index([userId])
 }
@@ -148,6 +150,11 @@ model SavingsGoal {
   accountId     String?
   account       Account?  @relation(fields: [accountId], references: [id], onDelete: SetNull)
   targetDate    DateTime?
+  autoContributeAmount      Int?
+  autoContributeDayOfMonth  Int?
+  autoContributeAccountId   String?
+  autoContributeAccount     Account?   @relation("GoalAutoContribute", fields: [autoContributeAccountId], references: [id], onDelete: SetNull)
+  autoLastMaterializedMonth String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -166,4 +173,18 @@ model Notification {
 
   @@index([userId, read])
   @@index([userId, createdAt])
+}
+
+model PushSubscription {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint     String
+  p256dh       String
+  auth         String
+  userAgent    String?
+  createdAt    DateTime @default(now())
+
+  @@unique([userId, endpoint])
+  @@index([userId])
 }

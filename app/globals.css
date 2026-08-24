@@ -80,47 +80,39 @@ a:focus-visible,
 .badge-bug-idle,
 .badge-system-idle {
   border-color: #e4e4e7;
-  background-color: #fafafa;
+  background-color: #f4f4f5;
   color: #52525b;
+}
+.badge-feature-idle:hover,
+.badge-bug-idle:hover,
+.badge-system-idle:hover {
+  background-color: #fafafa;
 }
 .dark .badge-feature-idle,
 .dark .badge-bug-idle,
 .dark .badge-system-idle {
   border-color: #3f3f46;
-  background-color: #3f3f46;
+  background-color: #27272a;
   color: #d4d4d8;
 }
-
-.badge-feature-active {
-  border-color: #059669;
-  background-color: #059669;
-  color: #fff;
-}
-.dark .badge-feature-active {
-  border-color: #059669;
-  background-color: #059669;
-  color: #fff;
+.dark .badge-feature-idle:hover,
+.dark .badge-bug-idle:hover,
+.dark .badge-system-idle:hover {
+  background-color: #3f3f46;
 }
 
-.badge-bug-active {
-  border-color: #ef4444;
-  background-color: #ef4444;
-  color: #fff;
-}
-.dark .badge-bug-active {
-  border-color: #ef4444;
-  background-color: #ef4444;
-  color: #fff;
-}
-
+.badge-feature-active,
+.badge-bug-active,
 .badge-system-active {
-  border-color: #71717a;
-  background-color: #71717a;
+  border-color: #059669;
+  background-color: #059669;
   color: #fff;
 }
+.dark .badge-feature-active,
+.dark .badge-bug-active,
 .dark .badge-system-active {
-  border-color: #a1a1aa;
-  background-color: #a1a1aa;
+  border-color: #059669;
+  background-color: #059669;
   color: #fff;
 }
 

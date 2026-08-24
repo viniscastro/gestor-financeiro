@@ -3,12 +3,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { Download, LoaderCircle, Plus, Search } from 'lucide-react'
+import { Download, LoaderCircle, Plus, Search, FileText, Upload, Camera } from 'lucide-react'
 import TransactionForm from '@/components/transaction-form'
 import TransactionList from '@/components/transaction-list'
 import ConfirmDialog from '@/components/confirm-dialog'
+import ImportModal from '@/components/import-modal'
+import ReceiptScanner from '@/components/receipt-scanner'
 import { formatBRL, formatDate } from '@/lib/format'
 import { exportTransactionsToExcel } from '@/lib/excel'
+import { exportMonthlyReportPdf } from '@/lib/pdf'
+import type { ReceiptData } from '@/lib/receipt'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
@@ -32,6 +36,9 @@ export default function TransactionsPage() {
   const [editing, setEditing] = useState<TransactionDto | null>(null)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<TransactionDto | null>(null)
+  const [importOpen, setImportOpen] = useState(false)
+  const [scannerOpen, setScannerOpen] = useState(false)
+  const [parsedData, setParsedData] = useState<ReceiptData | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -199,6 +206,44 @@ export default function TransactionsPage() {
     exportTransactionsToExcel(rows)
   }
 
+  function exportPdf() {
+    const rows = filtered.map((t) => ({
+      date: formatDate(new Date(t.date)),
+      type: t.transferGroupId
+        ? 'Transferencia'
+        : t.transactionType === 'INCOME'
+          ? 'Entrada'
+          : 'Saida',
+      description: t.description,
+      amount: t.amount,
+      accountName: t.accountName,
+      categoryName: t.categoryName ?? '',
+    }))
+
+    const categoryMap = new Map<string, { label: string; color: string; amount: number }>()
+    for (const t of filtered) {
+      if (t.transferGroupId || t.transactionType !== 'EXPENSE') continue
+      const key = t.categoryId ?? 'sem-categoria'
+      const existing = categoryMap.get(key)
+      if (existing) {
+        existing.amount += t.amount
+      } else {
+        categoryMap.set(key, {
+          label: t.categoryName ?? 'Sem categoria',
+          color: t.categoryColor ?? '#71717A',
+          amount: t.amount,
+        })
+      }
+    }
+    const categoryBreakdown = Array.from(categoryMap.values()).sort((a, b) => b.amount - a.amount)
+
+    const monthLabel = monthFilter !== 'ALL'
+      ? months.find(([k]) => k === monthFilter)?.[1] ?? monthFilter
+      : 'Todos os meses'
+
+    exportMonthlyReportPdf(monthLabel, totals, rows, categoryBreakdown)
+  }
+
   function handleSaved() {
     setFormOpen(false)
     setEditing(null)
@@ -239,12 +284,37 @@ export default function TransactionsPage() {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
+            onClick={() => setImportOpen(true)}
+            className="flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700"
+          >
+            <Upload aria-hidden="true" className="h-4 w-4" />
+            Importar
+          </button>
+          <button
+            type="button"
             onClick={exportExcel}
             disabled={filtered.length === 0}
             className="flex items-center gap-2 rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
           >
             <Download aria-hidden="true" className="h-4 w-4" />
-            Exportar Excel
+            Excel
+          </button>
+          <button
+            type="button"
+            onClick={exportPdf}
+            disabled={filtered.length === 0}
+            className="flex items-center gap-2 rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+          >
+            <FileText aria-hidden="true" className="h-4 w-4" />
+            PDF
+          </button>
+          <button
+            type="button"
+            onClick={() => setScannerOpen(true)}
+            className="flex items-center gap-2 rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+          >
+            <Camera aria-hidden="true" className="h-4 w-4" />
+            Nota fiscal
           </button>
           <button
             type="button"
@@ -255,7 +325,7 @@ export default function TransactionsPage() {
             className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
           >
             <Plus aria-hidden="true" className="h-4 w-4" />
-            Nova transação
+            Nova transacao
           </button>
         </div>
       </div>
@@ -361,9 +431,11 @@ export default function TransactionsPage() {
         onClose={() => {
           setFormOpen(false)
           setEditing(null)
+          setParsedData(null)
         }}
         onSaved={handleSaved}
         transaction={editing}
+        initialData={parsedData}
         accounts={accounts}
         categories={categories}
       />
@@ -374,6 +446,25 @@ export default function TransactionsPage() {
         message="Tem certeza que deseja excluir esta transação? Essa ação não pode ser desfeita."
         onConfirm={confirmDelete}
         onCancel={() => { setConfirmOpen(false); setConfirmTarget(null) }}
+      />
+
+      <ImportModal
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        onSaved={() => { setImportOpen(false); reload(); router.refresh() }}
+        accounts={accounts}
+        categories={categories}
+      />
+
+      <ReceiptScanner
+        open={scannerOpen}
+        onClose={() => setScannerOpen(false)}
+        onParsed={(data) => {
+          setScannerOpen(false)
+          setParsedData(data)
+          setEditing(null)
+          setFormOpen(true)
+        }}
       />
     </div>
   )

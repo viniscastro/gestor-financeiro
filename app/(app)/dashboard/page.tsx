@@ -10,8 +10,10 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { formatBRL, formatDate } from '@/lib/format'
 import { getUpcomingBills } from '@/lib/recurring'
+import { materializeGoalContributions } from '@/lib/goal'
 import DashboardCards from '@/components/dashboard-cards'
 import DashboardCardEditor, { type DashboardCardId } from '@/components/dashboard-card-editor'
+import MonthlyTrendChart from '@/components/monthly-trend-chart'
 
 export const metadata: Metadata = {
   title: 'Dashboard | Gestor Financeiro',
@@ -23,6 +25,8 @@ export default async function DashboardPage() {
   const session = await auth()
   if (!session?.user?.id) redirect('/login')
   const userId = session.user.id
+
+  await materializeGoalContributions(userId)
 
   const [accounts, transactions, recent, budgets, goals, recurringRules, topCategories, user] = await Promise.all([
     prisma.account.findMany({
@@ -215,6 +219,29 @@ export default async function DashboardPage() {
     return null
   })()
 
+  const now = new Date()
+  const monthlyMonths: { key: string; label: string; income: number; expense: number }[] = []
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    monthlyMonths.push({
+      key,
+      label: d.toLocaleDateString('pt-BR', { month: 'short' }),
+      income: 0,
+      expense: 0,
+    })
+  }
+  for (const t of transactions) {
+    if (t.transferGroupId) continue
+    const key = `${t.date.getFullYear()}-${String(t.date.getMonth() + 1).padStart(2, '0')}`
+    const month = monthlyMonths.find((m) => m.key === key)
+    if (month) {
+      if (t.transactionType === 'INCOME') month.income += t.amount
+      else month.expense += t.amount
+    }
+  }
+  const monthlyTrend = monthlyMonths.map(({ label, income, expense }) => ({ label, income, expense }))
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
@@ -227,6 +254,8 @@ export default async function DashboardPage() {
 
       <DashboardCards cards={cards} initialCards={parsedCards} />
       <DashboardCardEditor />
+
+      <MonthlyTrendChart data={monthlyTrend} />
 
       {accounts.length > 1 && (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

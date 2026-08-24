@@ -1,20 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { goalSchema, toGoalDto } from '@/lib/goal'
+import { goalSchema, toGoalDto, materializeGoalContributions } from '@/lib/goal'
 import { amountToCents } from '@/lib/transactions'
-
-let iconColumnReady = false
-
-async function ensureIconColumn() {
-  if (iconColumnReady) return
-  try {
-    await prisma.$executeRaw`ALTER TABLE "SavingsGoal" ADD COLUMN IF NOT EXISTS "icon" TEXT`
-    iconColumnReady = true
-  } catch {
-    iconColumnReady = true
-  }
-}
 
 export async function GET() {
   const session = await auth()
@@ -22,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
   }
 
-  await ensureIconColumn()
+  await materializeGoalContributions(session.user.id)
 
   const goals = await prisma.savingsGoal.findMany({
     where: { userId: session.user.id },
@@ -45,8 +33,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
   }
 
-  await ensureIconColumn()
-
   const parsed = goalSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json(
@@ -55,8 +41,10 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { name, icon, targetAmount, currentAmount, accountId, targetDate } = parsed.data
+  const { name, icon, targetAmount, currentAmount, accountId, targetDate, autoContributeAmount, autoContributeDayOfMonth, autoContributeAccountId } = parsed.data
   const currentCents = amountToCents(currentAmount)
+
+  const autoAmount = autoContributeAmount != null ? amountToCents(autoContributeAmount) : null
 
   if (currentCents > 0 && accountId) {
     try {
@@ -74,6 +62,9 @@ export async function POST(request: NextRequest) {
             targetAmount: amountToCents(targetAmount),
             currentAmount: currentCents,
             targetDate: targetDate ? new Date(`${targetDate}T00:00:00.000Z`) : null,
+            autoContributeAmount: autoAmount,
+            autoContributeDayOfMonth: autoContributeDayOfMonth ?? null,
+            autoContributeAccountId: autoContributeAccountId ?? null,
           },
         })
 
@@ -106,6 +97,9 @@ export async function POST(request: NextRequest) {
       targetAmount: amountToCents(targetAmount),
       currentAmount: currentCents,
       targetDate: targetDate ? new Date(`${targetDate}T00:00:00.000Z`) : null,
+      autoContributeAmount: autoAmount,
+      autoContributeDayOfMonth: autoContributeDayOfMonth ?? null,
+      autoContributeAccountId: autoContributeAccountId ?? null,
     },
   })
 

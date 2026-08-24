@@ -136,7 +136,7 @@ export default function Select({
   }
 
   return (
-    <div ref={ref} className="relative w-full">
+    <div ref={ref} className={`relative ${className}`}>
       <button
         ref={triggerRef}
         id={id}
@@ -154,7 +154,7 @@ export default function Select({
           open
             ? 'border-emerald-500 ring-2 ring-emerald-500/20'
             : 'border-zinc-300 dark:border-zinc-700'
-        } ${selected ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400'} ${className}`}
+        } ${selected ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400'}`}
       >
         <span className="truncate">{selected?.label ?? placeholder}</span>
         <ChevronDown

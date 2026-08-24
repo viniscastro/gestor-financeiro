@@ -7,6 +7,7 @@ import {
   LoaderCircle,
   Pencil,
   Plus,
+  Repeat,
   Trash2,
   Wallet,
 } from 'lucide-react'
@@ -36,6 +37,10 @@ export default function GoalsManager() {
   const [currentAmount, setCurrentAmount] = useState('')
   const [accountId, setAccountId] = useState('')
   const [targetDate, setTargetDate] = useState('')
+  const [autoEnabled, setAutoEnabled] = useState(false)
+  const [autoAmount, setAutoAmount] = useState('')
+  const [autoDay, setAutoDay] = useState('1')
+  const [autoAccountId, setAutoAccountId] = useState('')
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
   const [topupOpen, setTopupOpen] = useState(false)
@@ -95,6 +100,10 @@ export default function GoalsManager() {
     setCurrentAmount('')
     setAccountId('')
     setTargetDate('')
+    setAutoEnabled(false)
+    setAutoAmount('')
+    setAutoDay('1')
+    setAutoAccountId('')
     setFormError('')
     setModalOpen(true)
   }
@@ -107,6 +116,10 @@ export default function GoalsManager() {
     setCurrentAmount(String(goal.currentAmount / 100))
     setAccountId('')
     setTargetDate(goal.targetDate ?? '')
+    setAutoEnabled(goal.autoContributeAmount != null && goal.autoContributeDayOfMonth != null && goal.autoContributeAccountId != null)
+    setAutoAmount(goal.autoContributeAmount != null ? String(goal.autoContributeAmount / 100) : '')
+    setAutoDay(goal.autoContributeDayOfMonth != null ? String(goal.autoContributeDayOfMonth) : '1')
+    setAutoAccountId(goal.autoContributeAccountId ?? '')
     setFormError('')
     setModalOpen(true)
   }
@@ -156,6 +169,9 @@ export default function GoalsManager() {
         currentAmount: Number(currentAmount || 0),
         accountId: accountId || null,
         targetDate: targetDate || null,
+        autoContributeAmount: autoEnabled && autoAmount ? Number(autoAmount) : null,
+        autoContributeDayOfMonth: autoEnabled && autoAmount ? Number(autoDay) : null,
+        autoContributeAccountId: autoEnabled && autoAmount ? (autoAccountId || null) : null,
       }
       const res = await fetch(
         editing ? `/api/goals/${editing.id}` : '/api/goals',
@@ -186,6 +202,9 @@ export default function GoalsManager() {
         targetAmount: goal.targetAmount / 100,
         currentAmount: goal.currentAmount / 100,
         targetDate: goal.targetDate,
+        autoContributeAmount: goal.autoContributeAmount != null ? goal.autoContributeAmount / 100 : null,
+        autoContributeDayOfMonth: goal.autoContributeDayOfMonth,
+        autoContributeAccountId: goal.autoContributeAccountId,
       }),
     })
     if (res.ok) await reload()
@@ -364,6 +383,14 @@ export default function GoalsManager() {
                     </p>
                   )}
                 </div>
+                {goal.autoContributeAmount != null && goal.autoContributeDayOfMonth != null && (
+                  <div className="mt-2 flex items-center gap-1.5 rounded-md bg-violet-50 px-2 py-1 text-xs text-violet-700 dark:bg-violet-950/40 dark:text-violet-300">
+                    <Repeat aria-hidden="true" className="h-3 w-3" />
+                    <span>
+                      Aporte automático: {formatBRL(goal.autoContributeAmount)} no dia {goal.autoContributeDayOfMonth}
+                    </span>
+                  </div>
+                )}
               </div>
             )
           })}
@@ -534,6 +561,79 @@ export default function GoalsManager() {
                   />
                 </div>
               )}
+
+              <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-900/50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Repeat aria-hidden="true" className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                      Aporte automático mensal
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={autoEnabled}
+                    onClick={() => setAutoEnabled(!autoEnabled)}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
+                      autoEnabled ? 'bg-violet-600' : 'bg-zinc-300 dark:bg-zinc-600'
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform ${
+                        autoEnabled ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+                {autoEnabled && (
+                  <div className="mt-3 space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="autoAmount" className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                          Valor (R$) <span className="text-rose-500">*</span>
+                        </label>
+                        <CurrencyInput
+                          id="autoAmount"
+                          value={autoAmount}
+                          onChange={setAutoAmount}
+                          required
+                          placeholder="0,00"
+                          className={inputClass}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="autoDay" className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                          Dia do mês <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          id="autoDay"
+                          type="number"
+                          min={1}
+                          max={31}
+                          value={autoDay}
+                          onChange={(e) => setAutoDay(e.target.value)}
+                          required
+                          className={inputClass}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                        Descontar de <span className="text-rose-500">*</span>
+                      </label>
+                      <Select
+                        value={autoAccountId}
+                        onChange={setAutoAccountId}
+                        options={accountOptions}
+                        placeholder="Selecione a conta"
+                        required
+                        className={inputClass}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {formError && (
                 <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">

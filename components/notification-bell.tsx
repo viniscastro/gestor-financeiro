@@ -13,13 +13,13 @@ type Notification = {
   createdAt: string
 }
 
-const TYPE_CONFIG: Record<string, { icon: typeof Bell; color: string; label: string }> = {
-  FEATURE: { icon: Sparkles, color: 'text-emerald-500', label: 'Nova funcionalidade' },
-  BUG: { icon: CircleAlert, color: 'text-red-500', label: 'Bug corrigido' },
-  INCOME: { icon: Download, color: 'text-emerald-500', label: 'Entrada' },
-  EXPENSE: { icon: CircleAlert, color: 'text-red-500', label: 'Saída' },
-  BILL: { icon: Info, color: 'text-amber-500', label: 'Conta a vencer' },
-  SYSTEM: { icon: Info, color: 'text-blue-500', label: 'Sistema' },
+const TYPE_CONFIG: Record<string, { icon: typeof Bell; color: string; bg: string; label: string }> = {
+  FEATURE: { icon: Sparkles, color: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/40', label: 'Nova funcionalidade' },
+  BUG: { icon: CircleAlert, color: 'text-red-700 dark:text-red-300', bg: 'bg-red-100 dark:bg-red-900/40', label: 'Bug corrigido' },
+  INCOME: { icon: Download, color: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/40', label: 'Entrada' },
+  EXPENSE: { icon: CircleAlert, color: 'text-red-700 dark:text-red-300', bg: 'bg-red-100 dark:bg-red-900/40', label: 'Saída' },
+  BILL: { icon: Info, color: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/40', label: 'Conta a vencer' },
+  SYSTEM: { icon: Info, color: 'text-blue-700 dark:text-blue-300', bg: 'bg-blue-100 dark:bg-blue-900/40', label: 'Sistema' },
 }
 
 function timeAgo(date: string) {
@@ -179,7 +179,10 @@ export default function NotificationBell() {
                       <Icon aria-hidden="true" className="h-4 w-4" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                      <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${config.bg} ${config.color}`}>
+                        {config.label}
+                      </span>
+                      <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">
                         {n.title}
                       </p>
                       <p className="mt-0.5 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">

@@ -55,6 +55,9 @@ export type SavingsGoalDto = {
   currentAmount: number
   percent: number
   targetDate: string | null
+  autoContributeAmount: number | null
+  autoContributeDayOfMonth: number | null
+  autoContributeAccountId: string | null
 }
 
 export type RecurringRuleDto = {

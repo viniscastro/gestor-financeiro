@@ -58,7 +58,8 @@ export const ModelName = {
   RecurringRule: 'RecurringRule',
   Transaction: 'Transaction',
   SavingsGoal: 'SavingsGoal',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  PushSubscription: 'PushSubscription'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -194,6 +195,10 @@ export const SavingsGoalScalarFieldEnum = {
   currentAmount: 'currentAmount',
   accountId: 'accountId',
   targetDate: 'targetDate',
+  autoContributeAmount: 'autoContributeAmount',
+  autoContributeDayOfMonth: 'autoContributeDayOfMonth',
+  autoContributeAccountId: 'autoContributeAccountId',
+  autoLastMaterializedMonth: 'autoLastMaterializedMonth',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -212,6 +217,19 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
 
 
 export const SortOrder = {
