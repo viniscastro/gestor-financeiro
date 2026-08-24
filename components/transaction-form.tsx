@@ -7,7 +7,6 @@ import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
 import Modal from '@/components/modal'
 import type { TransactionType } from '@/lib/categories'
-import type { ReceiptData } from '@/lib/receipt'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 
 type Props = {
@@ -15,7 +14,6 @@ type Props = {
   onClose: () => void
   onSaved: () => void
   transaction?: TransactionDto | null
-  initialData?: ReceiptData | null
   accounts: AccountDto[]
   categories: CategoryDto[]
 }
@@ -25,7 +23,6 @@ export default function TransactionForm({
   onClose,
   onSaved,
   transaction,
-  initialData,
   accounts,
   categories,
 }: Props) {
@@ -34,7 +31,6 @@ export default function TransactionForm({
     <TransactionFormBody
       key={transaction?.id ?? 'new'}
       transaction={transaction ?? null}
-      initialData={initialData ?? null}
       onClose={onClose}
       onSaved={onSaved}
       accounts={accounts}
@@ -45,7 +41,6 @@ export default function TransactionForm({
 
 type BodyProps = {
   transaction: TransactionDto | null
-  initialData: ReceiptData | null
   onClose: () => void
   onSaved: () => void
   accounts: AccountDto[]
@@ -54,7 +49,6 @@ type BodyProps = {
 
 function TransactionFormBody({
   transaction,
-  initialData,
   onClose,
   onSaved,
   accounts,
@@ -63,9 +57,9 @@ function TransactionFormBody({
   const [type, setType] = useState<TransactionType>(
     transaction?.transactionType ?? 'EXPENSE'
   )
-  const [description, setDescription] = useState(transaction?.description ?? initialData?.description ?? '')
+  const [description, setDescription] = useState(transaction?.description ?? '')
   const [amount, setAmount] = useState(
-    transaction ? (transaction.amount / 100).toFixed(2) : initialData?.amount ?? ''
+    transaction ? (transaction.amount / 100).toFixed(2) : ''
   )
   const [accountId, setAccountId] = useState(
     transaction?.accountId ?? accounts[0]?.id ?? ''
@@ -76,7 +70,7 @@ function TransactionFormBody({
   const [date, setDate] = useState(
     transaction
       ? transaction.date.slice(0, 10)
-      : initialData?.date || new Date().toISOString().slice(0, 10)
+      : new Date().toISOString().slice(0, 10)
   )
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)

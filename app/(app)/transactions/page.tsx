@@ -3,16 +3,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { Download, LoaderCircle, Plus, Search, FileText, Upload, Camera } from 'lucide-react'
+import { Download, LoaderCircle, Plus, Search, FileText, Upload } from 'lucide-react'
 import TransactionForm from '@/components/transaction-form'
 import TransactionList from '@/components/transaction-list'
 import ConfirmDialog from '@/components/confirm-dialog'
 import ImportModal from '@/components/import-modal'
-import ReceiptScanner from '@/components/receipt-scanner'
 import { formatBRL, formatDate } from '@/lib/format'
 import { exportTransactionsToExcel } from '@/lib/excel'
 import { exportMonthlyReportPdf } from '@/lib/pdf'
-import type { ReceiptData } from '@/lib/receipt'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
@@ -37,8 +35,6 @@ export default function TransactionsPage() {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<TransactionDto | null>(null)
   const [importOpen, setImportOpen] = useState(false)
-  const [scannerOpen, setScannerOpen] = useState(false)
-  const [parsedData, setParsedData] = useState<ReceiptData | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -310,14 +306,6 @@ export default function TransactionsPage() {
           </button>
           <button
             type="button"
-            onClick={() => setScannerOpen(true)}
-            className="flex items-center gap-2 rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
-          >
-            <Camera aria-hidden="true" className="h-4 w-4" />
-            Nota fiscal
-          </button>
-          <button
-            type="button"
             onClick={() => {
               setEditing(null)
               setFormOpen(true)
@@ -431,11 +419,9 @@ export default function TransactionsPage() {
         onClose={() => {
           setFormOpen(false)
           setEditing(null)
-          setParsedData(null)
         }}
         onSaved={handleSaved}
         transaction={editing}
-        initialData={parsedData}
         accounts={accounts}
         categories={categories}
       />
@@ -454,17 +440,6 @@ export default function TransactionsPage() {
         onSaved={() => { setImportOpen(false); reload(); router.refresh() }}
         accounts={accounts}
         categories={categories}
-      />
-
-      <ReceiptScanner
-        open={scannerOpen}
-        onClose={() => setScannerOpen(false)}
-        onParsed={(data) => {
-          setScannerOpen(false)
-          setParsedData(data)
-          setEditing(null)
-          setFormOpen(true)
-        }}
       />
     </div>
   )
