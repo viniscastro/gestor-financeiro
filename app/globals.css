@@ -83,26 +83,12 @@ a:focus-visible,
   background-color: #fafafa;
   color: #52525b;
 }
-.badge-feature-idle:hover,
-.badge-bug-idle:hover,
-.badge-system-idle:hover {
-  background-color: #059669;
-  color: #fff;
-  border-color: #059669;
-}
 .dark .badge-feature-idle,
 .dark .badge-bug-idle,
 .dark .badge-system-idle {
   border-color: #3f3f46;
   background-color: #3f3f46;
   color: #d4d4d8;
-}
-.dark .badge-feature-idle:hover,
-.dark .badge-bug-idle:hover,
-.dark .badge-system-idle:hover {
-  background-color: #059669;
-  color: #fff;
-  border-color: #059669;
 }
 
 .badge-feature-active,
