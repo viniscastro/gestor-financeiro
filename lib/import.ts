@@ -155,7 +155,7 @@ export function parseCsv(content: string): ParsedTransaction[] {
       const parsed = parseAmount(cols[amountIdx])
       if (parsed === null) continue
       amountCents = Math.abs(parsed)
-      rawType = parsed >= 0 ? 'INCOME' : 'EXPENSE'
+      rawType = parsed >= 0 ? 'EXPENSE' : 'INCOME'
     } else if (debit >= 0 && credit >= 0) {
       const debitVal = cols[debit] ? parseAmount(cols[debit]) : null
       const creditVal = cols[credit] ? parseAmount(cols[credit]) : null
