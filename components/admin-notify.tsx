@@ -5,10 +5,10 @@ import { Send, Sparkles, CircleAlert, Info, CheckCircle } from 'lucide-react'
 
 type NotifyType = 'FEATURE' | 'BUG' | 'SYSTEM'
 
-const TYPE_OPTIONS: { value: NotifyType; label: string; icon: typeof Sparkles; color: string; hoverBg: string; hoverText: string }[] = [
-  { value: 'FEATURE', label: 'Nova funcionalidade', icon: Sparkles, color: 'text-emerald-500', hoverBg: 'hover:bg-emerald-500', hoverText: 'hover:text-white' },
-  { value: 'BUG', label: 'Bug corrigido', icon: CircleAlert, color: 'text-red-500', hoverBg: 'hover:bg-red-500', hoverText: 'hover:text-white' },
-  { value: 'SYSTEM', label: 'Sistema', icon: Info, color: 'text-blue-500', hoverBg: 'hover:bg-blue-500', hoverText: 'hover:text-white' },
+const TYPE_OPTIONS: { value: NotifyType; label: string; icon: typeof Sparkles; color: string; idleClasses: string; iconClasses: string }[] = [
+  { value: 'FEATURE', label: 'Nova funcionalidade', icon: Sparkles, color: 'text-emerald-500', idleClasses: 'border-zinc-200 bg-zinc-50 text-zinc-600 hover:bg-emerald-500 hover:text-white dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-emerald-600', iconClasses: 'text-zinc-400 dark:text-zinc-500 group-hover:text-white' },
+  { value: 'BUG', label: 'Bug corrigido', icon: CircleAlert, color: 'text-red-500', idleClasses: 'border-zinc-200 bg-zinc-50 text-zinc-600 hover:bg-red-500 hover:text-white dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-red-600', iconClasses: 'text-zinc-400 dark:text-zinc-500 group-hover:text-white' },
+  { value: 'SYSTEM', label: 'Sistema', icon: Info, color: 'text-blue-500', idleClasses: 'border-zinc-200 bg-zinc-50 text-zinc-600 hover:bg-blue-500 hover:text-white dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-blue-600', iconClasses: 'text-zinc-400 dark:text-zinc-500 group-hover:text-white' },
 ]
 
 export default function AdminNotify() {
@@ -82,10 +82,10 @@ export default function AdminNotify() {
                   className={`group flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition ${
                     active
                       ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:border-emerald-500 dark:bg-emerald-900/20 dark:text-emerald-400'
-                      : `border-zinc-200 bg-zinc-50 text-zinc-600 ${opt.hoverBg} ${opt.hoverText} dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-600`
+                      : opt.idleClasses
                   }`}
                 >
-                  <Icon aria-hidden="true" className={`h-4 w-4 ${active ? opt.color : `text-zinc-400 dark:text-zinc-500 group-hover:text-white`}`} />
+                  <Icon aria-hidden="true" className={`h-4 w-4 ${active ? opt.color : opt.iconClasses}`} />
                   {opt.label}
                 </button>
               )
