@@ -4,7 +4,6 @@ import { useRef, useState } from 'react'
 import { Camera, LoaderCircle, ScanLine, X } from 'lucide-react'
 import Modal from '@/components/modal'
 import { parseReceiptText, type ReceiptData } from '@/lib/receipt'
-import Tesseract from 'tesseract.js'
 
 type Props = {
   open: boolean
@@ -36,6 +35,7 @@ export default function ReceiptScanner({ open, onClose, onParsed }: Props) {
     setProcessing(true)
     setError('')
     try {
+      const Tesseract = await import('tesseract.js')
       const { data } = await Tesseract.recognize(preview, 'por')
       const parsed = parseReceiptText(data.text)
       setResult(parsed)
