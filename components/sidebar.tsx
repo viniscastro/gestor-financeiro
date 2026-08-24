@@ -15,6 +15,7 @@ import {
   PiggyBank,
   PieChart,
   Repeat,
+  Send,
   Settings,
   Target,
   Wallet,
@@ -31,6 +32,8 @@ type SessionUser = {
   theme?: string | null
 }
 
+const ADMIN_EMAILS = ['vinislad17@gmail.com']
+
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/transactions', label: 'Transações', icon: ArrowLeftRight },
@@ -43,10 +46,15 @@ const NAV_ITEMS = [
   { href: '/account', label: 'Conta', icon: Settings },
 ]
 
+const ADMIN_NAV_ITEMS = [
+  { href: '/admin', label: 'Notificar Usuários', icon: Send },
+]
+
 export default function Sidebar({ user }: { user: SessionUser }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
+  const isAdmin = ADMIN_EMAILS.includes(user.email ?? '')
 
   async function handleSignOut() {
     setSigningOut(true)
@@ -93,7 +101,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
       </div>
 
       <nav className="flex-1 space-y-1">
-        {NAV_ITEMS.map((item) => {
+        {[...NAV_ITEMS, ...(isAdmin ? ADMIN_NAV_ITEMS : [])].map((item) => {
           const active = pathname === item.href
           return (
             <Link
