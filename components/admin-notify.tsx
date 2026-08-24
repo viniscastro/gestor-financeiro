@@ -5,10 +5,10 @@ import { Send, Sparkles, CircleAlert, Info, CheckCircle } from 'lucide-react'
 
 type NotifyType = 'FEATURE' | 'BUG' | 'SYSTEM'
 
-const TYPE_OPTIONS: { value: NotifyType; label: string; icon: typeof Sparkles; color: string; idleClasses: string; iconClasses: string }[] = [
-  { value: 'FEATURE', label: 'Nova funcionalidade', icon: Sparkles, color: 'text-emerald-500', idleClasses: 'border-zinc-200 bg-zinc-50 text-zinc-600 hover:bg-emerald-500 hover:text-white dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-emerald-600', iconClasses: 'text-zinc-400 dark:text-zinc-500 group-hover:text-white' },
-  { value: 'BUG', label: 'Bug corrigido', icon: CircleAlert, color: 'text-red-500', idleClasses: 'border-zinc-200 bg-zinc-50 text-zinc-600 hover:bg-red-500 hover:text-white dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-red-600', iconClasses: 'text-zinc-400 dark:text-zinc-500 group-hover:text-white' },
-  { value: 'SYSTEM', label: 'Sistema', icon: Info, color: 'text-blue-500', idleClasses: 'border-zinc-200 bg-zinc-50 text-zinc-600 hover:bg-blue-500 hover:text-white dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-blue-600', iconClasses: 'text-zinc-400 dark:text-zinc-500 group-hover:text-white' },
+const TYPE_OPTIONS: { value: NotifyType; label: string; icon: typeof Sparkles }[] = [
+  { value: 'FEATURE', label: 'Nova funcionalidade', icon: Sparkles },
+  { value: 'BUG', label: 'Bug corrigido', icon: CircleAlert },
+  { value: 'SYSTEM', label: 'Sistema', icon: Info },
 ]
 
 export default function AdminNotify() {
@@ -74,18 +74,24 @@ export default function AdminNotify() {
             {TYPE_OPTIONS.map((opt) => {
               const Icon = opt.icon
               const active = type === opt.value
+              const buttonClasses = active
+                ? 'border-emerald-500 bg-emerald-600 text-white dark:border-emerald-500 dark:bg-emerald-600 dark:text-white'
+                : opt.value === 'FEATURE'
+                  ? 'border-zinc-200 bg-zinc-50 text-zinc-600 hover:bg-emerald-500 hover:text-white dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-emerald-500'
+                  : opt.value === 'BUG'
+                    ? 'border-zinc-200 bg-zinc-50 text-zinc-600 hover:bg-red-500 hover:text-white dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-red-500'
+                    : 'border-zinc-200 bg-zinc-50 text-zinc-600 hover:bg-blue-500 hover:text-white dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-blue-500'
+              const iconClasses = active
+                ? 'text-emerald-300 dark:text-emerald-200'
+                : 'text-zinc-400 dark:text-zinc-500'
               return (
                 <button
                   key={opt.value}
                   type="button"
                   onClick={() => setType(opt.value)}
-                  className={`group flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition ${
-                    active
-                      ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:border-emerald-500 dark:bg-emerald-900/20 dark:text-emerald-400'
-                      : opt.idleClasses
-                  }`}
+                  className={`group flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition ${buttonClasses}`}
                 >
-                  <Icon aria-hidden="true" className={`h-4 w-4 ${active ? opt.color : opt.iconClasses}`} />
+                  <Icon aria-hidden="true" className={`h-4 w-4 ${iconClasses}`} />
                   {opt.label}
                 </button>
               )
