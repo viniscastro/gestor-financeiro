@@ -13,6 +13,7 @@ export default function AuthForm() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -25,6 +26,10 @@ export default function AuthForm() {
 
     try {
       if (mode === 'register') {
+        if (password !== confirmPassword) {
+          setError('As senhas não coincidem')
+          return
+        }
         const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -142,6 +147,35 @@ export default function AuthForm() {
             </div>
           </div>
 
+          {mode === 'register' && (
+            <div>
+              <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Confirmar senha <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  id="confirmPassword"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  minLength={6}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className={`${inputClass} pr-11`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  aria-label={showPassword ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+          )}
+
           {error && (
             <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
               {error}
@@ -164,6 +198,7 @@ export default function AuthForm() {
                 onClick={() => {
                   setMode('register')
                   setError('')
+                  setConfirmPassword('')
                 }}
                 className="flex w-full items-center justify-center rounded-lg border border-emerald-500 px-4 py-2.5 text-sm font-medium text-emerald-600 transition hover:bg-emerald-500 hover:text-white dark:text-emerald-400 dark:hover:text-white"
               >
@@ -187,6 +222,7 @@ export default function AuthForm() {
                 onClick={() => {
                   setMode('login')
                   setError('')
+                  setConfirmPassword('')
                 }}
                 className="flex w-full items-center justify-center rounded-lg border border-emerald-500 px-4 py-2.5 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
               >

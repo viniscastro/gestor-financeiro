@@ -124,7 +124,7 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[22rem] max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800 sm:w-96">
+        <div className="fixed right-4 top-16 z-50 w-[calc(100vw-2rem)] max-w-sm overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800 sm:absolute sm:right-0 sm:top-full sm:mt-2 sm:w-96 sm:max-w-none">
           <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3 dark:border-zinc-700">
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               Notificações
@@ -155,7 +155,7 @@ export default function NotificationBell() {
             </div>
           </div>
 
-          <div className="max-h-[50vh] sm:max-h-96 overflow-y-auto">
+          <div className="max-h-[60vh] overflow-y-auto sm:max-h-96">
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
                 <Bell aria-hidden="true" className="mb-2 h-8 w-8" />
@@ -168,7 +168,7 @@ export default function NotificationBell() {
                 return (
                   <div
                     key={n.id}
-                    className={`group relative flex gap-3 border-b border-zinc-50 px-4 py-3 transition hover:bg-zinc-50 dark:border-zinc-700/50 dark:hover:bg-zinc-700/50 ${
+                    className={`group relative flex gap-3 border-b border-zinc-50 px-3 py-3 transition hover:bg-zinc-50 dark:border-zinc-700/50 dark:hover:bg-zinc-700/50 sm:px-4 ${
                       !n.read ? 'bg-emerald-50/50 dark:bg-emerald-900/10' : ''
                     }`}
                   >
@@ -182,7 +182,7 @@ export default function NotificationBell() {
                       <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                         {n.title}
                       </p>
-                      <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                      <p className="mt-0.5 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
                         {n.message}
                       </p>
                       <p
@@ -192,26 +192,26 @@ export default function NotificationBell() {
                         {timeAgo(n.createdAt)}
                       </p>
                     </div>
-                    <div className="flex shrink-0 gap-0.5 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+                    <div className="flex shrink-0 items-start gap-1">
                       {!n.read && (
                         <button
                           type="button"
                           onClick={() => markAsRead([n.id])}
-                          className="rounded p-1 text-zinc-400 transition hover:bg-zinc-200 hover:text-emerald-500 dark:hover:bg-zinc-600"
+                          className="rounded p-1.5 text-zinc-400 transition hover:bg-zinc-200 hover:text-emerald-500 dark:hover:bg-zinc-600"
                           title="Marcar como lida"
                           aria-label="Marcar como lida"
                         >
-                          <Check aria-hidden="true" className="h-3.5 w-3.5" />
+                          <Check aria-hidden="true" className="h-4 w-4" />
                         </button>
                       )}
                       <button
                         type="button"
                         onClick={() => deleteNotification(n.id)}
-                        className="rounded p-1 text-zinc-400 transition hover:bg-zinc-200 hover:text-red-500 dark:hover:bg-zinc-600"
+                        className="rounded p-1.5 text-zinc-400 transition hover:bg-zinc-200 hover:text-red-500 dark:hover:bg-zinc-600"
                         title="Excluir"
                         aria-label="Excluir notificação"
                       >
-                        <Trash2 aria-hidden="true" className="h-3.5 w-3.5" />
+                        <Trash2 aria-hidden="true" className="h-4 w-4" />
                       </button>
                     </div>
                   </div>

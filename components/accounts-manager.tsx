@@ -33,6 +33,23 @@ export default function AccountsManager() {
   const [touchDragging, setTouchDragging] = useState(false)
   const touchCurrentIndex = useRef<number | null>(null)
 
+  useEffect(() => {
+    function onStart(e: TouchEvent) {
+      const grip = (e.target as HTMLElement).closest('[data-touch-grip]')
+      if (!grip) return
+      e.preventDefault()
+      const card = grip.closest('[data-account-index]')
+      if (!card) return
+      const idx = Number(card.getAttribute('data-account-index'))
+      if (isNaN(idx)) return
+      touchCurrentIndex.current = idx
+      dragItem.current = idx
+      setTouchDragging(true)
+    }
+    document.addEventListener('touchstart', onStart, { passive: false })
+    return () => document.removeEventListener('touchstart', onStart)
+  }, [])
+
   async function reload() {
     try {
       const res = await fetch('/api/accounts', { cache: 'no-store' })
@@ -71,6 +88,7 @@ export default function AccountsManager() {
     if (!touchDragging) return
     function onMove(e: TouchEvent) {
       if (touchCurrentIndex.current === null) return
+      e.preventDefault()
       const touch = e.touches[0]
       const el = document.elementFromPoint(touch.clientX, touch.clientY)
       if (!el) return
@@ -105,11 +123,6 @@ export default function AccountsManager() {
       document.removeEventListener('touchcancel', onEnd)
     }
   }, [touchDragging, dragOverIndex, accounts])
-
-  function handleTouchStart(index: number) {
-    touchCurrentIndex.current = index
-    setTouchDragging(true)
-  }
 
   function handleDragStart(index: number) {
     dragItem.current = index
@@ -319,55 +332,13 @@ export default function AccountsManager() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1">
                     <div
+                      data-touch-grip
                       className="flex h-10 w-10 touch-none cursor-grab items-center justify-center text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
-                      onTouchStart={() => handleTouchStart(index)}
                     >
                       <GripVertical aria-hidden="true" className="h-5 w-5" />
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (index === 0) return
-                        const updated = [...accounts]
-                        const [moved] = updated.splice(index, 1)
-                        updated.splice(index - 1, 0, moved)
-                        setAccounts(updated)
-                        fetch('/api/accounts', {
-                          method: 'PATCH',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ ids: updated.map((a) => a.id) }),
-                        })
-                      }}
-                      disabled={index === 0}
-                      className="hidden rounded p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 dark:hover:bg-zinc-700 sm:block"
-                      aria-label="Mover para cima"
-                    >
-                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 15l-6-6-6 6"/></svg>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (index === accounts.length - 1) return
-                        const updated = [...accounts]
-                        const [moved] = updated.splice(index, 1)
-                        updated.splice(index + 1, 0, moved)
-                        setAccounts(updated)
-                        fetch('/api/accounts', {
-                          method: 'PATCH',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ ids: updated.map((a) => a.id) }),
-                        })
-                      }}
-                      disabled={index === accounts.length - 1}
-                      className="hidden rounded p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 dark:hover:bg-zinc-700 sm:block"
-                      aria-label="Mover para baixo"
-                    >
-                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
-                    </button>
-                  </div>
-                  <div
+                    <div
                     className="flex h-10 w-10 items-center justify-center rounded-xl"
                     style={{ backgroundColor: account.color }}
                     aria-hidden="true"

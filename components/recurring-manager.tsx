@@ -46,10 +46,28 @@ export default function RecurringManager() {
   const touchCurrentIndex = useRef<number | null>(null)
 
   useEffect(() => {
+    function onStart(e: TouchEvent) {
+      const grip = (e.target as HTMLElement).closest('[data-touch-grip]')
+      if (!grip) return
+      e.preventDefault()
+      const li = grip.closest('li[data-drag-index]')
+      if (!li) return
+      const idx = Number(li.getAttribute('data-drag-index'))
+      if (isNaN(idx)) return
+      touchCurrentIndex.current = idx
+      dragItem.current = idx
+      setTouchDragging(true)
+    }
+    document.addEventListener('touchstart', onStart, { passive: false })
+    return () => document.removeEventListener('touchstart', onStart)
+  }, [])
+
+  useEffect(() => {
     if (!touchDragging) return
 
     function onMove(e: TouchEvent) {
       if (touchCurrentIndex.current === null) return
+      e.preventDefault()
       const touch = e.touches[0]
       const el = document.elementFromPoint(touch.clientX, touch.clientY)
       const li = el?.closest('li[data-drag-index]') as HTMLElement | null
@@ -87,13 +105,6 @@ export default function RecurringManager() {
       document.removeEventListener('touchcancel', onEnd)
     }
   }, [touchDragging, dragOverIndex, rules])
-
-  function handleTouchStart(e: React.TouchEvent, index: number) {
-    e.preventDefault()
-    touchCurrentIndex.current = index
-    dragItem.current = index
-    setTouchDragging(true)
-  }
 
   async function reload() {
     try {
@@ -381,53 +392,11 @@ export default function RecurringManager() {
                   } ${dragOverIndex === index ? 'border-t-2 border-t-emerald-500' : ''}`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      <div
-                        className="flex h-10 w-10 touch-none cursor-grab items-center justify-center text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
-                        onTouchStart={(e) => handleTouchStart(e, index)}
-                      >
-                        <GripVertical aria-hidden="true" className="h-5 w-5" />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (index === 0) return
-                          const updated = [...rules]
-                          const [moved] = updated.splice(index, 1)
-                          updated.splice(index - 1, 0, moved)
-                          setRules(updated)
-                          fetch('/api/recurring', {
-                            method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ ids: updated.map((r) => r.id) }),
-                          })
-                        }}
-                        disabled={index === 0}
-                        className="hidden rounded p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 dark:hover:bg-zinc-700 sm:block"
-                        aria-label="Mover para cima"
-                      >
-                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 15l-6-6-6 6"/></svg>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (index === rules.length - 1) return
-                          const updated = [...rules]
-                          const [moved] = updated.splice(index, 1)
-                          updated.splice(index + 1, 0, moved)
-                          setRules(updated)
-                          fetch('/api/recurring', {
-                            method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ ids: updated.map((r) => r.id) }),
-                          })
-                        }}
-                        disabled={index === rules.length - 1}
-                        className="hidden rounded p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 dark:hover:bg-zinc-700 sm:block"
-                        aria-label="Mover para baixo"
-                      >
-                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
-                      </button>
+                    <div
+                      data-touch-grip
+                      className="flex h-10 w-10 touch-none cursor-grab items-center justify-center text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                    >
+                      <GripVertical aria-hidden="true" className="h-5 w-5" />
                     </div>
 
                     <div

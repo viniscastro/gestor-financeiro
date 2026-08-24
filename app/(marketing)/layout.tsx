@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { PiggyBank } from 'lucide-react'
+import ThemeToggle from '@/components/theme-toggle'
 
 export const metadata: Metadata = {
   title: 'Gestor Financeiro — Controle financeiro pessoal',
@@ -34,6 +35,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             >
               Criar conta
             </Link>
+            <ThemeToggle />
           </div>
         </div>
       </header>
