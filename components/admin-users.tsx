@@ -152,7 +152,7 @@ export default function AdminUsers() {
                     onClick={() => setConfirmDelete(u)}
                     disabled={actionLoading === u.id}
                     title="Deletar usuário"
-                    className="rounded-lg p-2 text-zinc-500 transition hover:bg-red-50 hover:text-red-600 dark:text-zinc-400 dark:hover:bg-red-900/20 dark:hover:text-red-400 disabled:opacity-50"
+                    className="rounded-lg bg-red-500 p-2 text-white transition hover:bg-red-600 disabled:opacity-50"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
