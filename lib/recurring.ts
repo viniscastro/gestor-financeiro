@@ -173,9 +173,10 @@ export async function notifyUpcomingBills(userId: string): Promise<void> {
   if (!user?.email) return
 
   const bills = await getUpcomingBills(userId)
+  const now = new Date()
   const toNotify = bills.filter((bill) => {
     if (bill.days > bill.notifyDaysBefore) return false
-    if (bill.lastNotifiedAt && bill.lastNotifiedAt >= startOfDay(bill.date)) return false
+    if (bill.lastNotifiedAt && bill.lastNotifiedAt >= startOfDay(now)) return false
     return true
   })
 
