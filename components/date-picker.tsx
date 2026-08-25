@@ -13,19 +13,66 @@ type Props = {
   className?: string
 }
 
+function formatDateInput(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 8)
+  if (digits.length <= 2) return digits
+  if (digits.length <= 4) return digits.slice(0, 2) + '/' + digits.slice(2)
+  return digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4)
+}
+
+function parseDateInput(text: string): string | null {
+  const m = text.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+  if (!m) return null
+  const [, dd, mm, yyyy] = m
+  const d = parseInt(dd, 10)
+  const mo = parseInt(mm, 10)
+  const y = parseInt(yyyy, 10)
+  if (mo < 1 || mo > 12 || d < 1 || d > 31 || y < 2000 || y > 2100) return null
+  const test = new Date(y, mo - 1, d)
+  if (test.getFullYear() !== y || test.getMonth() !== mo - 1 || test.getDate() !== d) return null
+  return `${yyyy}-${mm}-${dd}`
+}
+
 export default function DatePicker({ value, onChange, required, className }: Props) {
   const [open, setOpen] = useState(false)
+  const [inputValue, setInputValue] = useState('')
   const ref = useRef<HTMLDivElement>(null)
-  const triggerRef = useRef<HTMLButtonElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const autoId = useId()
+  const [editing, setEditing] = useState(false)
 
   const selected = value ? parse(value, 'yyyy-MM-dd', new Date()) : undefined
+
+  useEffect(() => {
+    if (!editing && selected) {
+      setInputValue(format(selected, 'dd/MM/yyyy'))
+    } else if (!editing && !selected) {
+      setInputValue('')
+    }
+  }, [selected, editing])
+
+  function commitInput() {
+    setEditing(false)
+    if (!inputValue.trim()) {
+      if (!required) onChange('')
+      else if (selected) setInputValue(format(selected, 'dd/MM/yyyy'))
+      return
+    }
+    const iso = parseDateInput(inputValue)
+    if (iso) {
+      onChange(iso)
+    } else if (selected) {
+      setInputValue(format(selected, 'dd/MM/yyyy'))
+    } else {
+      setInputValue('')
+    }
+  }
 
   function handleSelect(day: Date | undefined) {
     if (day) {
       onChange(format(day, 'yyyy-MM-dd'))
       setOpen(false)
-      triggerRef.current?.focus()
+      inputRef.current?.focus()
     }
   }
 
@@ -36,7 +83,7 @@ export default function DatePicker({ value, onChange, required, className }: Pro
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape' && open) {
         setOpen(false)
-        triggerRef.current?.focus()
+        inputRef.current?.focus()
       }
     }
     if (open) {
@@ -49,28 +96,49 @@ export default function DatePicker({ value, onChange, required, className }: Pro
     }
   }, [open])
 
-  const display = selected ? format(selected, 'dd/MM/yyyy') : 'dd/mm/aaaa'
-
   return (
-    <div ref={ref} className="relative">
-      <button
-        ref={triggerRef}
-        type="button"
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        aria-controls={open ? `${autoId}-calendar` : undefined}
-        onClick={() => setOpen(!open)}
-        className={`flex w-full items-center gap-2 rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-left text-sm text-zinc-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 ${className ?? ''}`}
-      >
-        <span className={selected ? '' : 'text-zinc-500 dark:text-zinc-400'}>
-          {display}
-        </span>
-        <CalendarIcon className="ml-auto h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
-      </button>
+    <div ref={ref} className={`relative ${className ?? ''}`}>
+      <div className="relative">
+        <input
+          ref={inputRef}
+          type="text"
+          inputMode="numeric"
+          placeholder="dd/mm/aaaa"
+          value={editing ? inputValue : (selected ? format(selected, 'dd/MM/yyyy') : '')}
+          onChange={(e) => {
+            setEditing(true)
+            setInputValue(formatDateInput(e.target.value))
+          }}
+          onFocus={() => {
+            setEditing(true)
+            setInputValue(selected ? format(selected, 'dd/MM/yyyy') : '')
+          }}
+          onBlur={commitInput}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              commitInput()
+            }
+          }}
+          required={required}
+          maxLength={10}
+          className="w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 pr-10 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+        />
+        <button
+          type="button"
+          aria-label="Abrir calendário"
+          onClick={() => {
+            commitInput()
+            setOpen((o) => !o)
+          }}
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
+        >
+          <CalendarIcon className="h-4 w-4" />
+        </button>
+      </div>
 
       {open && (
         <div
-          id={`${autoId}-calendar`}
           role="dialog"
           aria-label="Selecionar data"
           className="absolute right-0 top-full z-50 mt-1 max-w-[calc(100vw-2rem)] overflow-auto rounded-xl border border-zinc-200 bg-white p-3 shadow-xl dark:border-zinc-700 dark:bg-zinc-800"
@@ -112,7 +180,6 @@ export default function DatePicker({ value, onChange, required, className }: Pro
           />
         </div>
       )}
-
     </div>
   )
 }
