@@ -19,8 +19,6 @@ const TYPE_CONFIG: Record<string, { icon: typeof Bell; color: string; bg: string
   INCOME: { icon: Download, color: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/40', label: 'Entrada' },
   EXPENSE: { icon: CircleAlert, color: 'text-red-700 dark:text-red-300', bg: 'bg-red-100 dark:bg-red-900/40', label: 'Saída' },
   BILL: { icon: Info, color: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/40', label: 'Conta a vencer' },
-  BUDGET: { icon: CircleAlert, color: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/40', label: 'Alerta de orçamento' },
-  MONTHLY_SUMMARY: { icon: Sparkles, color: 'text-blue-700 dark:text-blue-300', bg: 'bg-blue-100 dark:bg-blue-900/40', label: 'Resumo mensal' },
   SYSTEM: { icon: Info, color: 'text-blue-700 dark:text-blue-300', bg: 'bg-blue-100 dark:bg-blue-900/40', label: 'Sistema' },
 }
 

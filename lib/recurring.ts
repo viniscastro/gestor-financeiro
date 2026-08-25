@@ -1,8 +1,8 @@
 import { randomUUID } from 'crypto'
 import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
-import { formatBRL, formatDateLong, formatMonth } from '@/lib/format'
-import { notifyBillWarning, notifyBudgetAlert, notifyMonthlySummary } from '@/lib/notifications'
+import { formatBRL, formatDateLong } from '@/lib/format'
+import { notifyBillWarning } from '@/lib/notifications'
 
 export function monthKey(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
@@ -228,83 +228,4 @@ export async function notifyUpcomingBills(userId: string): Promise<void> {
     where: { id: { in: toNotify.map((bill) => bill.id) } },
     data: { lastNotifiedAt: new Date() },
   })
-}
-
-export async function checkBudgetAlerts(userId: string): Promise<void> {
-  const now = new Date()
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  const mk = monthKey(now)
-
-  const budgets = await prisma.budget.findMany({
-    where: { userId },
-    include: { category: { select: { name: true } } },
-  })
-  if (budgets.length === 0) return
-
-  const txns = await prisma.transaction.findMany({
-    where: {
-      userId,
-      transactionType: 'EXPENSE',
-      date: { gte: startOfMonth },
-      categoryId: { in: budgets.map((b) => b.categoryId) },
-    },
-    select: { categoryId: true, amount: true },
-  })
-  const spentMap = new Map<string, number>()
-  for (const t of txns) {
-    if (t.categoryId) spentMap.set(t.categoryId, (spentMap.get(t.categoryId) ?? 0) + t.amount)
-  }
-
-  const existing = await prisma.notification.findMany({
-    where: { userId, type: 'BUDGET', read: false },
-    select: { message: true },
-  })
-  const existingMsgs = new Set(existing.map((n) => n.message))
-
-  for (const b of budgets) {
-    const spent = spentMap.get(b.categoryId) ?? 0
-    if (b.amountCents <= 0) continue
-    const pct = (spent / b.amountCents) * 100
-    if (pct < 80) continue
-    const alertMessage = `${b.category.name} — ${Math.round(pct)}% do limite atingido (${formatBRL(spent)} de ${formatBRL(b.amountCents)})`
-    if (existingMsgs.has(alertMessage)) continue
-    await notifyBudgetAlert(userId, b.category.name, spent, b.amountCents)
-  }
-}
-
-export async function checkMonthlySummary(userId: string): Promise<void> {
-  const now = new Date()
-  const day = now.getDate()
-  if (day > 3) return
-
-  const prevMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1
-  const prevYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear()
-  const mk = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}`
-
-  const existing = await prisma.notification.findMany({
-    where: { userId, type: 'MONTHLY_SUMMARY' },
-    select: { message: true },
-  })
-  if (existing.some((n) => n.message.includes(mk))) return
-
-  const start = new Date(prevYear, prevMonth, 1)
-  const end = new Date(prevYear, prevMonth + 1, 0, 23, 59, 59, 999)
-
-  const txns = await prisma.transaction.findMany({
-    where: { userId, date: { gte: start, lte: end } },
-    select: { transactionType: true, amount: true, transferGroupId: true },
-  })
-
-  let income = 0
-  let expense = 0
-  for (const t of txns) {
-    if (t.transferGroupId) continue
-    if (t.transactionType === 'INCOME') income += t.amount
-    else expense += t.amount
-  }
-
-  if (income === 0 && expense === 0) return
-
-  const label = formatMonth(prevMonth, prevYear)
-  await notifyMonthlySummary(userId, label, income, expense, income - expense)
 }

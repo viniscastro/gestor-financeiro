@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { materializeRecurring, notifyUpcomingBills, checkBudgetAlerts, checkMonthlySummary } from '@/lib/recurring'
+import { materializeRecurring, notifyUpcomingBills } from '@/lib/recurring'
 import Sidebar from '@/components/sidebar'
 import ServerPreferencesScript from '@/components/server-preferences-script'
 
@@ -14,12 +14,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   await materializeRecurring(session.user.id)
   await notifyUpcomingBills(session.user.id).catch((err) => {
     console.error('[notifyUpcomingBills]', err)
-  })
-  await checkBudgetAlerts(session.user.id).catch((err) => {
-    console.error('[checkBudgetAlerts]', err)
-  })
-  await checkMonthlySummary(session.user.id).catch((err) => {
-    console.error('[checkMonthlySummary]', err)
   })
 
   const user = await prisma.user.findUnique({
