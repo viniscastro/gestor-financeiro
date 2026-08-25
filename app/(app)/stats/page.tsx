@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
 import StatisticsCharts from '@/components/statistics-charts'
+import CategoryComparison from '@/components/category-comparison'
 
 export const metadata: Metadata = {
   title: 'Estatísticas | Gestor Financeiro',
@@ -82,6 +83,8 @@ export default async function StatsPage() {
       </div>
 
       <StatisticsCharts monthly={monthly} byCategory={byCategory} totalExpense={totalExpense} />
+
+      <CategoryComparison />
     </div>
   )
 }

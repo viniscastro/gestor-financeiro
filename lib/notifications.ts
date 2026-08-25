@@ -118,3 +118,26 @@ export async function notifyFeature(title: string, message: string, type = 'FEAT
     await createNotification(user.id, type, title, message)
   }
 }
+
+export async function notifyBudgetAlert(
+  userId: string,
+  categoryName: string,
+  spentCents: number,
+  limitCents: number
+) {
+  const pct = Math.round((spentCents / limitCents) * 100)
+  const message = `${categoryName} — ${pct}% do limite atingido (${formatBRL(spentCents)} de ${formatBRL(limitCents)})`
+  await createNotification(userId, 'BUDGET', 'Alerta de orçamento', message)
+}
+
+export async function notifyMonthlySummary(
+  userId: string,
+  monthLabel: string,
+  incomeCents: number,
+  expenseCents: number,
+  balanceCents: number
+) {
+  const balanceSign = balanceCents >= 0 ? '+' : ''
+  const message = `Entradas: ${formatBRL(incomeCents)} | Saídas: ${formatBRL(expenseCents)} | Saldo: ${balanceSign}${formatBRL(balanceCents)}`
+  await createNotification(userId, 'MONTHLY_SUMMARY', `Resumo de ${monthLabel}`, message)
+}
