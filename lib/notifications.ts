@@ -127,16 +127,18 @@ export async function notifyBudgetAlert(
 ) {
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  const existing = await prisma.notification.findMany({
-    where: { userId, type: 'BUDGET', createdAt: { gte: startOfMonth } },
-    select: { message: true },
+  const existing = await prisma.notification.findFirst({
+    where: {
+      userId,
+      type: 'BUDGET',
+      createdAt: { gte: startOfMonth },
+      message: { startsWith: `${categoryName} —` },
+    },
   })
-  const existingMessages = new Set(existing.map((n) => n.message))
+  if (existing) return
 
   const pct = Math.round((spentCents / limitCents) * 100)
   const message = `${categoryName} — ${pct}% do limite atingido (${formatBRL(spentCents)} de ${formatBRL(limitCents)})`
-  if (existingMessages.has(message)) return
-
   await createNotification(userId, 'BUDGET', 'Alerta de orçamento', message)
 }
 
