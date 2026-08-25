@@ -24,7 +24,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { id: true, name: true, email: true, image: true, emailVerified: true, theme: true, dashboardCards: true },
+    select: { id: true, name: true, email: true, image: true, emailVerified: true, theme: true, dashboardCards: true, role: true },
   })
   if (!user) redirect('/login')
 

@@ -2,11 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { notifyFeature } from '@/lib/notifications'
 
-const ADMIN_EMAILS = ['vinislad17@gmail.com']
-
 export async function POST(request: NextRequest) {
   const session = await auth()
-  if (!session?.user?.id || !ADMIN_EMAILS.includes(session.user.email ?? '')) {
+  if (!session?.user?.id || session.user.role !== 'ADMIN') {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 403 })
   }
 

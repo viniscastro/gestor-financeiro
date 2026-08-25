@@ -30,9 +30,8 @@ type SessionUser = {
   email?: string | null
   image?: string | null
   theme?: string | null
+  role?: string | null
 }
-
-const ADMIN_EMAILS = ['vinislad17@gmail.com']
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -47,14 +46,14 @@ const NAV_ITEMS = [
 ]
 
 const ADMIN_NAV_ITEMS = [
-  { href: '/admin', label: 'Notificar Usuários', icon: Send },
+  { href: '/admin', label: 'Administração', icon: Send },
 ]
 
 export default function Sidebar({ user }: { user: SessionUser }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
-  const isAdmin = ADMIN_EMAILS.includes(user.email ?? '')
+  const isAdmin = user.role === 'ADMIN'
 
   async function handleSignOut() {
     setSigningOut(true)
