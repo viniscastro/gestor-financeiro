@@ -56,7 +56,7 @@ function TransactionFormBody({
   categories,
 }: BodyProps) {
   const [type, setType] = useState<TransactionType>(
-    transaction?.transactionType ?? 'EXPENSE'
+    transaction?.transactionType ?? 'INCOME'
   )
   const [description, setDescription] = useState(transaction?.description ?? '')
   const [amount, setAmount] = useState(
