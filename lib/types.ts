@@ -17,6 +17,9 @@ export type TransactionDto = {
   transferGroupId: string | null
   recurringId: string | null
   occurrenceMonth: string | null
+  installmentGroupId: string | null
+  installmentCurrent: number | null
+  installmentTotal: number | null
 }
 
 export type AccountDto = {

@@ -95,6 +95,12 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
                   {t.categoryName ?? 'Transferência'}
                 </span>
                 · {t.accountName} · {formatDate(new Date(t.date))}
+                {t.installmentGroupId && t.installmentCurrent && t.installmentTotal && (
+                  <span className="inline-flex items-center gap-0.5 font-medium text-amber-600 dark:text-amber-400">
+                    <Repeat aria-hidden="true" className="h-3 w-3" />
+                    {t.installmentCurrent}/{t.installmentTotal}
+                  </span>
+                )}
                 {t.recurringId && (
                   <span className="inline-flex items-center gap-0.5 text-emerald-600 dark:text-emerald-400">
                     <Repeat aria-hidden="true" className="h-3 w-3" />

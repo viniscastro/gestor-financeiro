@@ -707,14 +707,6 @@ export type SavingsGoalUncheckedUpdateManyWithoutAutoContributeAccountNestedInpu
   deleteMany?: Prisma.SavingsGoalScalarWhereInput | Prisma.SavingsGoalScalarWhereInput[]
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type SavingsGoalCreateWithoutUserInput = {
   id?: string
   name: string

@@ -133,10 +133,14 @@ model Transaction {
   recurringId     String?
   recurringRule   RecurringRule? @relation(fields: [recurringId], references: [id], onDelete: SetNull)
   occurrenceMonth String?
+  installmentGroupId String?
+  installmentCurrent Int?
+  installmentTotal   Int?
 
   @@index([userId, date])
   @@index([userId, accountId])
   @@index([userId, categoryId])
+  @@index([installmentGroupId])
 }
 
 model SavingsGoal {

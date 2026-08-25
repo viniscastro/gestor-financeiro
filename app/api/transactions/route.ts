@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { transactionType, description, amount, accountId, categoryId, date, recurringId, occurrenceMonth } = parsed.data
+  const { transactionType, description, amount, accountId, categoryId, date, recurringId, occurrenceMonth, installments } = parsed.data
 
   const account = await prisma.account.findFirst({
     where: { id: accountId, userId: session.user.id },
@@ -80,22 +80,61 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const transaction = await prisma.transaction.create({
-    data: {
-      transactionType,
-      description,
-      amount: amountToCents(amount),
-      date: new Date(date),
-      userId: session.user.id,
-      accountId,
-      categoryId: categoryId ?? null,
-      recurringId: recurringId ?? null,
-      occurrenceMonth: occurrenceMonth ?? null,
-    },
-    include: transactionInclude,
-  })
+  const totalInstallments = installments && transactionType === 'EXPENSE' ? installments : 1
+  const totalCents = amountToCents(amount)
+  const baseAmount = Math.floor(totalCents / totalInstallments)
+  const remainder = totalCents - baseAmount * totalInstallments
 
-  await notifyTransaction(session.user.id, transactionType, description, amountToCents(amount))
+  if (totalInstallments === 1) {
+    const transaction = await prisma.transaction.create({
+      data: {
+        transactionType,
+        description,
+        amount: totalCents,
+        date: new Date(date),
+        userId: session.user.id,
+        accountId,
+        categoryId: categoryId ?? null,
+        recurringId: recurringId ?? null,
+        occurrenceMonth: occurrenceMonth ?? null,
+      },
+      include: transactionInclude,
+    })
 
-  return NextResponse.json(toTransactionDto(transaction), { status: 201 })
+    await notifyTransaction(session.user.id, transactionType, description, totalCents)
+
+    return NextResponse.json(toTransactionDto(transaction), { status: 201 })
+  }
+
+  const groupId = crypto.randomUUID()
+  const baseDate = new Date(date)
+
+  const transactions = await prisma.$transaction(
+    Array.from({ length: totalInstallments }, (_, i) => {
+      const installmentDate = new Date(baseDate)
+      installmentDate.setMonth(installmentDate.getMonth() + i)
+
+      const installmentAmount = baseAmount + (i < remainder ? 1 : 0)
+
+      return prisma.transaction.create({
+        data: {
+          transactionType,
+          description: `${description} (${i + 1}/${totalInstallments})`,
+          amount: installmentAmount,
+          date: installmentDate,
+          userId: session.user.id,
+          accountId,
+          categoryId: categoryId ?? null,
+          installmentGroupId: groupId,
+          installmentCurrent: i + 1,
+          installmentTotal: totalInstallments,
+        },
+        include: transactionInclude,
+      })
+    })
+  )
+
+  await notifyTransaction(session.user.id, transactionType, description, totalCents)
+
+  return NextResponse.json(toTransactionDto(transactions[0]), { status: 201 })
 }

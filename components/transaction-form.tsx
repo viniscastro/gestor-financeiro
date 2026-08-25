@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Info, LoaderCircle, TrendingDown, TrendingUp, X } from 'lucide-react'
+import { Info, LoaderCircle, Repeat, TrendingDown, TrendingUp, X } from 'lucide-react'
 import CurrencyInput from '@/components/currency-input'
 import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
 import Modal from '@/components/modal'
+import { formatBRL } from '@/lib/format'
 import type { TransactionType } from '@/lib/categories'
 import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
 
@@ -74,6 +75,9 @@ function TransactionFormBody({
   )
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [installments, setInstallments] = useState(
+    transaction?.installmentTotal ?? 1
+  )
 
   const availableCategories = categories.filter((c) => c.type === type)
   const selectedAccount = accounts.find((a) => a.id === accountId)
@@ -96,6 +100,7 @@ function TransactionFormBody({
         accountId,
         categoryId: categoryId || null,
         date,
+        ...(!transaction && type === 'EXPENSE' && installments > 1 ? { installments } : {}),
       }
       const res = await fetch(
         transaction ? `/api/transactions/${transaction.id}` : '/api/transactions',
@@ -246,6 +251,32 @@ function TransactionFormBody({
               className={inputClass}
             />
           </div>
+
+          {type === 'EXPENSE' && !transaction && (
+            <div>
+              <label htmlFor="installments" className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                <Repeat className="h-3.5 w-3.5" />
+                Parcelas
+              </label>
+              <input
+                id="installments"
+                type="number"
+                min={1}
+                max={48}
+                value={installments}
+                onChange={(e) => {
+                  const v = parseInt(e.target.value, 10)
+                  setInstallments(isNaN(v) || v < 1 ? 1 : Math.min(v, 48))
+                }}
+                className={inputClass}
+              />
+              {installments > 1 && amount && (
+                <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                  {installments}x de {formatBRL(Math.round(Number(amount) * 100 / installments) / 100)}
+                </p>
+              )}
+            </div>
+          )}
 
           {showTransferHint && (
             <div className="flex gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400">
