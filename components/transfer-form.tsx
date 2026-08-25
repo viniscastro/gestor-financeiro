@@ -74,42 +74,44 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="fromAccount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Da conta <span className="text-rose-500">*</span>
-            </label>
-            <Select
-              value={fromAccountId}
-              onChange={setFromAccountId}
-              options={[
-                { value: '', label: 'Selecione...', disabled: true },
-                ...accounts.map((a) => ({ value: a.id, label: a.name })),
-              ]}
-              placeholder="Selecione..."
-              id="fromAccount"
-              required
-              className={inputClass}
-            />
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="fromAccount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Da conta <span className="text-rose-500">*</span>
+              </label>
+              <Select
+                value={fromAccountId}
+                onChange={setFromAccountId}
+                options={[
+                  { value: '', label: 'Selecione...', disabled: true },
+                  ...accounts.map((a) => ({ value: a.id, label: a.name })),
+                ]}
+                placeholder="Selecione..."
+                id="fromAccount"
+                required
+                className={inputClass}
+              />
+            </div>
 
-          <div>
-            <label htmlFor="toAccount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Para a conta <span className="text-rose-500">*</span>
-            </label>
-            <Select
-              value={toAccountId}
-              onChange={setToAccountId}
-              options={[
-                { value: '', label: 'Selecione...', disabled: true },
-                ...accounts
-                  .filter((a) => a.id !== fromAccountId)
-                  .map((a) => ({ value: a.id, label: a.name })),
-              ]}
-              placeholder="Selecione..."
-              id="toAccount"
-              required
-              className={inputClass}
-            />
+            <div>
+              <label htmlFor="toAccount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Para a conta <span className="text-rose-500">*</span>
+              </label>
+              <Select
+                value={toAccountId}
+                onChange={setToAccountId}
+                options={[
+                  { value: '', label: 'Selecione...', disabled: true },
+                  ...accounts
+                    .filter((a) => a.id !== fromAccountId)
+                    .map((a) => ({ value: a.id, label: a.name })),
+                ]}
+                placeholder="Selecione..."
+                id="toAccount"
+                required
+                className={inputClass}
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

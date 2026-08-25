@@ -539,23 +539,43 @@ export default function RecurringManager() {
                 />
               </div>
 
-              <div>
-                <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Categoria
-                </label>
-                <Select
-                  id="category"
-                  value={categoryId}
-                  onChange={setCategoryId}
-                  className={inputClass}
-                  options={[
-                    { value: '', label: 'Sem categoria' },
-                    ...availableCategories.map((c) => ({
-                      value: c.id,
-                      label: c.name,
-                    })),
-                  ]}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Categoria
+                  </label>
+                  <Select
+                    id="category"
+                    value={categoryId}
+                    onChange={setCategoryId}
+                    className={inputClass}
+                    options={[
+                      { value: '', label: 'Sem categoria' },
+                      ...availableCategories.map((c) => ({
+                        value: c.id,
+                        label: c.name,
+                      })),
+                    ]}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
+                  </label>
+                  <Select
+                    id="account"
+                    value={accountId}
+                    onChange={setAccountId}
+                    required
+                    placeholder="Selecione..."
+                    className={inputClass}
+                    options={[
+                      { value: '', label: 'Selecione...', disabled: true },
+                      ...accounts.map((a) => ({ value: a.id, label: a.name })),
+                    ]}
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -587,24 +607,6 @@ export default function RecurringManager() {
                     className={inputClass}
                   />
                 </div>
-              </div>
-
-              <div>
-                <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
-                </label>
-                <Select
-                  id="account"
-                  value={accountId}
-                  onChange={setAccountId}
-                  required
-                  placeholder="Selecione..."
-                  className={inputClass}
-                  options={[
-                    { value: '', label: 'Selecione...', disabled: true },
-                    ...accounts.map((a) => ({ value: a.id, label: a.name })),
-                  ]}
-                />
               </div>
 
               <div>

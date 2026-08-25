@@ -198,23 +198,37 @@ function TransactionFormBody({
             />
           </div>
 
-          <div>
-            <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Categoria <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
-            </label>
-            <Select
-              value={categoryId}
-              onChange={setCategoryId}
-              options={categoryOptions}
-              id="category"
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Categoria <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
+              </label>
+              <Select
+                value={categoryId}
+                onChange={setCategoryId}
+                options={categoryOptions}
+                id="category"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
+              </label>
+              <Select
+                value={accountId}
+                onChange={setAccountId}
+                options={accountOptions}
+                id="account"
+                required
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-            <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Valor (R$) <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
+              <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Valor (R$) <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
               </label>
               <CurrencyInput
                 id="amount"
@@ -235,19 +249,6 @@ function TransactionFormBody({
                 required
               />
             </div>
-          </div>
-
-          <div>
-            <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
-            </label>
-            <Select
-              value={accountId}
-              onChange={setAccountId}
-              options={accountOptions}
-              id="account"
-              required
-            />
           </div>
 
           {type === 'EXPENSE' && !transaction && (
