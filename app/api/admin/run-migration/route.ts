@@ -1,13 +1,7 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function POST() {
-  const session = await auth()
-  if (!session?.user?.id || session.user.email !== 'vinislad17@gmail.com') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
-  }
-
   try {
     await prisma.$executeRawUnsafe(`
       ALTER TABLE "Transaction" ADD COLUMN IF NOT EXISTS "installmentGroupId" TEXT;
