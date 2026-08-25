@@ -125,8 +125,18 @@ export async function notifyBudgetAlert(
   spentCents: number,
   limitCents: number
 ) {
+  const now = new Date()
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  const existing = await prisma.notification.findMany({
+    where: { userId, type: 'BUDGET', createdAt: { gte: startOfMonth } },
+    select: { message: true },
+  })
+  const existingMessages = new Set(existing.map((n) => n.message))
+
   const pct = Math.round((spentCents / limitCents) * 100)
   const message = `${categoryName} — ${pct}% do limite atingido (${formatBRL(spentCents)} de ${formatBRL(limitCents)})`
+  if (existingMessages.has(message)) return
+
   await createNotification(userId, 'BUDGET', 'Alerta de orçamento', message)
 }
 
@@ -137,7 +147,13 @@ export async function notifyMonthlySummary(
   expenseCents: number,
   balanceCents: number
 ) {
+  const title = `Resumo de ${monthLabel}`
+  const existing = await prisma.notification.findFirst({
+    where: { userId, type: 'MONTHLY_SUMMARY', title },
+  })
+  if (existing) return
+
   const balanceSign = balanceCents >= 0 ? '+' : ''
   const message = `Entradas: ${formatBRL(incomeCents)} | Saídas: ${formatBRL(expenseCents)} | Saldo: ${balanceSign}${formatBRL(balanceCents)}`
-  await createNotification(userId, 'MONTHLY_SUMMARY', `Resumo de ${monthLabel}`, message)
+  await createNotification(userId, 'MONTHLY_SUMMARY', title, message)
 }
