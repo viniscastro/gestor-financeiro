@@ -13,7 +13,7 @@ export const transactionSchema = z.object({
   date: z.string().min(1, 'Informe a data'),
   recurringId: z.string().nullable().optional(),
   occurrenceMonth: z.string().nullable().optional(),
-  installments: z.number().int().min(1).max(48).optional(),
+  installments: z.number().int().min(1).optional(),
 })
 
 export type TransactionInput = z.infer<typeof transactionSchema>

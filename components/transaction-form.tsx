@@ -208,7 +208,6 @@ function TransactionFormBody({
               options={categoryOptions}
               id="category"
               required
-              className={inputClass}
             />
           </div>
 
@@ -248,7 +247,6 @@ function TransactionFormBody({
               options={accountOptions}
               id="account"
               required
-              className={inputClass}
             />
           </div>
 
@@ -262,11 +260,10 @@ function TransactionFormBody({
                 id="installments"
                 type="number"
                 min={1}
-                max={48}
                 value={installments}
                 onChange={(e) => {
                   const v = parseInt(e.target.value, 10)
-                  setInstallments(isNaN(v) || v < 1 ? 1 : Math.min(v, 48))
+                  setInstallments(isNaN(v) || v < 1 ? 1 : v)
                 }}
                 className={inputClass}
               />
