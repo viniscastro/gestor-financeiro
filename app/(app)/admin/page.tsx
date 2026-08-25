@@ -30,14 +30,14 @@ export default async function AdminPage() {
   ])
 
   const metrics = [
-    { label: 'Usuários', value: totalUsers, icon: Users, color: 'bg-blue-500' },
-    { label: 'Novos (7d)', value: newUsers7d, icon: Users, color: 'bg-blue-400' },
-    { label: 'Novos (30d)', value: newUsers30d, icon: Users, color: 'bg-blue-300' },
-    { label: 'Ativos (mês)', value: activeUsersMonth, icon: Users, color: 'bg-emerald-500' },
-    { label: 'Transações', value: totalTransactions, icon: BarChart3, color: 'bg-violet-500' },
-    { label: 'Tx (7d)', value: txLast7d, icon: BarChart3, color: 'bg-violet-400' },
-    { label: 'Contas', value: totalAccounts, icon: BarChart3, color: 'bg-amber-500' },
-    { label: 'Categorias', value: totalCategories, icon: BarChart3, color: 'bg-amber-400' },
+    { label: 'Usuários', value: totalUsers, icon: Users, bg: 'bg-blue-600' },
+    { label: 'Novos (7d)', value: newUsers7d, icon: Users, bg: 'bg-sky-500' },
+    { label: 'Novos (30d)', value: newUsers30d, icon: Users, bg: 'bg-cyan-500' },
+    { label: 'Ativos (mês)', value: activeUsersMonth, icon: Users, bg: 'bg-emerald-600' },
+    { label: 'Transações', value: totalTransactions, icon: BarChart3, bg: 'bg-violet-600' },
+    { label: 'Tx (7d)', value: txLast7d, icon: BarChart3, bg: 'bg-purple-500' },
+    { label: 'Contas', value: totalAccounts, icon: BarChart3, bg: 'bg-amber-500' },
+    { label: 'Categorias', value: totalCategories, icon: BarChart3, bg: 'bg-orange-500' },
   ]
 
   return (
@@ -53,15 +53,11 @@ export default async function AdminPage() {
         <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-50">Métricas</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {metrics.map((m) => (
-            <div key={m.label} className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
-              <div className="flex items-center gap-3">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${m.color}`}>
-                  <m.icon className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{m.value.toLocaleString('pt-BR')}</p>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">{m.label}</p>
-                </div>
+            <div key={m.label} className={`flex items-center gap-3 rounded-xl p-4 ${m.bg}`}>
+              <m.icon className="h-6 w-6 shrink-0 text-white/80" />
+              <div>
+                <p className="text-2xl font-bold text-white">{m.value.toLocaleString('pt-BR')}</p>
+                <p className="text-xs font-medium text-white/80">{m.label}</p>
               </div>
             </div>
           ))}

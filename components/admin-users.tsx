@@ -79,15 +79,15 @@ export default function AdminUsers() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center rounded-xl border border-zinc-200 bg-white p-8 dark:border-zinc-700 dark:bg-zinc-800">
-        <LoaderCircle className="h-6 w-6 animate-spin text-zinc-400" />
+      <div className="flex items-center justify-center rounded-xl bg-zinc-200 p-8 dark:bg-zinc-700">
+        <LoaderCircle className="h-6 w-6 animate-spin text-zinc-500" />
       </div>
     )
   }
 
   return (
     <>
-      <div className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+      <div className="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-zinc-800">
         <div className="border-b border-zinc-200 p-4 dark:border-zinc-700">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
@@ -122,16 +122,16 @@ export default function AdminUsers() {
                 </div>
 
                 <span
-                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                  className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                     u.role === 'ADMIN'
-                      ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400'
-                      : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-400'
+                      ? 'bg-violet-600 text-white'
+                      : 'bg-zinc-200 text-zinc-700 dark:bg-zinc-600 dark:text-zinc-200'
                   }`}
                 >
                   {u.role}
                 </span>
 
-                <div className="flex items-center gap-1">
+                <div className="flex shrink-0 items-center gap-1">
                   <button
                     type="button"
                     onClick={() => toggleRole(u.id, u.role)}

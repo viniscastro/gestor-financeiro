@@ -56,16 +56,7 @@ export default function AdminNotify() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-          Enviar Notificação
-        </h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-          Enviar notificação manual para todos os usuários do sistema.
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-5 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+      <form onSubmit={handleSubmit} className="space-y-5 rounded-xl bg-white p-6 shadow-sm dark:bg-zinc-800">
         <div>
           <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
             Tipo
@@ -118,13 +109,13 @@ export default function AdminNotify() {
         </div>
 
         {error && (
-          <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+          <p role="alert" className="rounded-lg bg-red-600 px-3 py-2 text-sm text-white">
             {error}
           </p>
         )}
 
         {sent && (
-          <div role="status" className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400">
+          <div role="status" className="flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm text-white">
             <CheckCircle aria-hidden="true" className="h-4 w-4" />
             Notificação enviada com sucesso para todos os usuários!
           </div>
