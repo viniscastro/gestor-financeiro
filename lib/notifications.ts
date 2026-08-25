@@ -94,6 +94,12 @@ export async function notifyBillWarning(
 ) {
   if (bills.length === 0) return
 
+  const existing = await prisma.notification.findMany({
+    where: { userId, type: 'BILL', read: false },
+    select: { message: true },
+  })
+  const existingMessages = new Set(existing.map((n) => n.message))
+
   for (const bill of bills) {
     const dayLabel = bill.days === 0
       ? 'vence hoje'
@@ -101,6 +107,7 @@ export async function notifyBillWarning(
         ? 'vence amanhã'
         : `vence em ${bill.days} dias`
     const message = `${bill.description} — ${formatBRL(bill.amountCents)} ${dayLabel}`
+    if (existingMessages.has(message)) continue
     await createNotification(userId, 'BILL', 'Conta a vencer', message)
   }
 }
