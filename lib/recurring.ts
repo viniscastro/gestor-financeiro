@@ -104,6 +104,7 @@ export async function materializeRecurring(userId: string): Promise<void> {
           date,
           userId,
           accountId: rule.accountId,
+          creditCardId: rule.creditCardId ?? null,
           categoryId: rule.categoryId,
           recurringId: rule.id,
           occurrenceMonth: key,
@@ -128,8 +129,24 @@ export type UpcomingBill = {
   accountColor: string
   date: Date
   days: number
+  occurrenceMonth: string
+  paid: boolean
   notifyDaysBefore: number
   lastNotifiedAt: Date | null
+}
+
+export async function markBillPaid(userId: string, ruleId: string): Promise<boolean> {
+  const rule = await prisma.recurringRule.findFirst({
+    where: { id: ruleId, userId, active: true, kind: 'TRANSACTION', type: 'EXPENSE' },
+  })
+  if (!rule) return false
+
+  const month = monthKey(nextOccurrence(rule.dayOfMonth, new Date()))
+  await prisma.recurringRule.update({
+    where: { id: rule.id },
+    data: { lastPaidMonth: month },
+  })
+  return true
 }
 
 export async function getUpcomingBills(
@@ -137,31 +154,37 @@ export async function getUpcomingBills(
   withinDays = 30
 ): Promise<UpcomingBill[]> {
   const rules = await prisma.recurringRule.findMany({
-    where: { userId, active: true, kind: 'TRANSACTION' },
+    where: { userId, active: true, kind: 'TRANSACTION', type: 'EXPENSE' },
     include: {
       account: { select: { name: true, color: true } },
+      creditCard: { select: { name: true } },
       category: { select: { name: true, color: true } },
     },
   })
 
   const now = new Date()
   return rules
-    .map((rule) => ({
-      id: rule.id,
-      description: rule.description,
-      amountCents: rule.amountCents,
-      type: rule.type,
-      categoryName: rule.category?.name ?? null,
-      categoryColor: rule.category?.color ?? null,
-      accountName: rule.account?.name ?? '',
-      accountColor: rule.account?.color ?? '#10b981',
-      date: nextOccurrence(rule.dayOfMonth, now),
-      days: 0,
-      notifyDaysBefore: rule.notifyDaysBefore,
-      lastNotifiedAt: rule.lastNotifiedAt,
-    }))
+    .map((rule) => {
+      const date = nextOccurrence(rule.dayOfMonth, now)
+      return {
+        id: rule.id,
+        description: rule.description,
+        amountCents: rule.amountCents,
+        type: rule.type,
+        categoryName: rule.category?.name ?? null,
+        categoryColor: rule.category?.color ?? null,
+        accountName: rule.creditCard?.name ?? rule.account?.name ?? '',
+        accountColor: rule.account?.color ?? '#10b981',
+        date,
+        days: 0,
+        occurrenceMonth: monthKey(date),
+        paid: rule.lastPaidMonth === monthKey(date),
+        notifyDaysBefore: rule.notifyDaysBefore,
+        lastNotifiedAt: rule.lastNotifiedAt,
+      }
+    })
     .map((bill) => ({ ...bill, days: daysUntil(bill.date, now) }))
-    .filter((bill) => bill.days >= 0 && bill.days <= withinDays)
+    .filter((bill) => !bill.paid && bill.days >= 0 && bill.days <= withinDays)
     .sort((a, b) => a.days - b.days)
 }
 

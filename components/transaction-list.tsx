@@ -6,11 +6,13 @@ import type { TransactionDto } from '@/lib/types'
 
 type Props = {
   transactions: TransactionDto[]
+  selectedIds: Set<string>
+  onToggleSelect: (id: string) => void
   onEdit: (transaction: TransactionDto) => void
   onDelete: (id: string) => void
 }
 
-export default function TransactionList({ transactions, onEdit, onDelete }: Props) {
+export default function TransactionList({ transactions, selectedIds, onToggleSelect, onEdit, onDelete }: Props) {
   if (transactions.length === 0) {
     return (
       <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
@@ -32,8 +34,15 @@ export default function TransactionList({ transactions, onEdit, onDelete }: Prop
         return (
           <li
             key={t.id}
-            className="group flex items-start gap-3 rounded-xl border border-zinc-200 bg-white px-3 py-3 transition hover:border-zinc-300 sm:items-center sm:gap-4 sm:px-4 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-700"
+            className="group flex items-start gap-3 rounded-xl border border-zinc-200 bg-white px-3 py-3 transition hover:border-zinc-300 sm:items-center sm:gap-4 sm:px-4             dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-700"
           >
+            <input
+              type="checkbox"
+              checked={selectedIds.has(t.id)}
+              onChange={() => onToggleSelect(t.id)}
+              aria-label={`Selecionar ${t.description}`}
+              className="mt-1 h-4 w-4 shrink-0 rounded border-zinc-300 accent-emerald-600 sm:mt-0"
+            />
             <div
               className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold sm:h-10 sm:w-10 ${
                 isTransfer

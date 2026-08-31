@@ -18,11 +18,12 @@ import Select, { type SelectOption } from '@/components/select'
 import Modal from '@/components/modal'
 import type { TransactionType } from '@/lib/types'
 import { formatBRL, formatDateLong } from '@/lib/format'
-import type { AccountDto, CategoryDto, RecurringRuleDto } from '@/lib/types'
+import type { AccountDto, CategoryDto, CreditCardDto, RecurringRuleDto } from '@/lib/types'
 
 export default function RecurringManager() {
   const [rules, setRules] = useState<RecurringRuleDto[]>([])
   const [accounts, setAccounts] = useState<AccountDto[]>([])
+  const [cards, setCards] = useState<CreditCardDto[]>([])
   const [categories, setCategories] = useState<CategoryDto[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -32,6 +33,8 @@ export default function RecurringManager() {
   const [type, setType] = useState<TransactionType>('INCOME')
   const [amount, setAmount] = useState('')
   const [accountId, setAccountId] = useState('')
+  const [cardId, setCardId] = useState('')
+  const [paySource, setPaySource] = useState<'ACCOUNT' | 'CARD'>('ACCOUNT')
   const [categoryId, setCategoryId] = useState('')
   const [dayOfMonth, setDayOfMonth] = useState('1')
   const [notifyDaysBefore, setNotifyDaysBefore] = useState('3')
@@ -108,15 +111,17 @@ export default function RecurringManager() {
 
   async function reload() {
     try {
-      const [rRes, aRes, cRes] = await Promise.all([
+      const [rRes, aRes, cRes, cdRes] = await Promise.all([
         fetch('/api/recurring', { cache: 'no-store' }),
         fetch('/api/accounts', { cache: 'no-store' }),
         fetch('/api/categories', { cache: 'no-store' }),
+        fetch('/api/cards', { cache: 'no-store' }),
       ])
-      if (!rRes.ok || !aRes.ok || !cRes.ok) throw new Error('Erro ao carregar')
+      if (!rRes.ok || !aRes.ok || !cRes.ok || !cdRes.ok) throw new Error('Erro ao carregar')
       setRules((await rRes.json()) as RecurringRuleDto[])
       setAccounts((await aRes.json()) as AccountDto[])
       setCategories((await cRes.json()) as CategoryDto[])
+      setCards((await cdRes.json()) as CreditCardDto[])
       setError('')
     } catch {
       setError('Não foi possível carregar as contas recorrentes.')
@@ -127,17 +132,19 @@ export default function RecurringManager() {
     let cancelled = false
     async function fetchData() {
       try {
-        const [rRes, aRes, cRes] = await Promise.all([
+        const [rRes, aRes, cRes, cdRes] = await Promise.all([
           fetch('/api/recurring', { cache: 'no-store' }),
           fetch('/api/accounts', { cache: 'no-store' }),
           fetch('/api/categories', { cache: 'no-store' }),
+          fetch('/api/cards', { cache: 'no-store' }),
         ])
-        if (!rRes.ok || !aRes.ok || !cRes.ok) throw new Error('Erro ao carregar')
+        if (!rRes.ok || !aRes.ok || !cRes.ok || !cdRes.ok) throw new Error('Erro ao carregar')
         const data = (await rRes.json()) as RecurringRuleDto[]
         if (!cancelled) {
           setRules(data)
           setAccounts((await aRes.json()) as AccountDto[])
           setCategories((await cRes.json()) as CategoryDto[])
+          setCards((await cdRes.json()) as CreditCardDto[])
           setError('')
         }
       } catch {
@@ -158,6 +165,8 @@ export default function RecurringManager() {
     setType('INCOME')
     setAmount('')
     setAccountId(accounts[0]?.id ?? '')
+    setCardId('')
+    setPaySource('ACCOUNT')
     setCategoryId('')
     setDayOfMonth('1')
     setNotifyDaysBefore('3')
@@ -171,7 +180,9 @@ export default function RecurringManager() {
     setDescription(rule.description)
     setType(rule.type ?? 'INCOME')
     setAmount((rule.amountCents / 100).toFixed(2))
-    setAccountId(rule.accountId)
+    setAccountId(rule.accountId ?? '')
+    setCardId(rule.creditCardId ?? '')
+    setPaySource(rule.creditCardId ? 'CARD' : 'ACCOUNT')
     setCategoryId(rule.categoryId ?? '')
     setDayOfMonth(String(rule.dayOfMonth))
     setNotifyDaysBefore(String(rule.notifyDaysBefore))
@@ -190,7 +201,8 @@ export default function RecurringManager() {
         description,
         type,
         amount: Number(amount),
-        accountId,
+        accountId: paySource === 'CARD' ? null : accountId,
+        creditCardId: paySource === 'CARD' ? cardId : null,
         categoryId: categoryId || null,
         dayOfMonth: Number(dayOfMonth),
         notifyDaysBefore: Number(notifyDaysBefore),
@@ -222,6 +234,7 @@ export default function RecurringManager() {
       type: rule.type,
       amount: rule.amountCents / 100,
       accountId: rule.accountId,
+      creditCardId: rule.creditCardId,
       categoryId: rule.categoryId,
       dayOfMonth: rule.dayOfMonth,
       notifyDaysBefore: rule.notifyDaysBefore,
@@ -266,6 +279,7 @@ export default function RecurringManager() {
       type: rule.type,
       amount: rule.amountCents / 100,
       accountId: rule.accountId,
+      creditCardId: rule.creditCardId,
       categoryId: rule.categoryId,
       dayOfMonth: rule.dayOfMonth,
       notifyDaysBefore: rule.notifyDaysBefore,
@@ -547,7 +561,7 @@ export default function RecurringManager() {
                   id="category"
                   value={categoryId}
                   onChange={setCategoryId}
-                  className={inputClass}
+                  placeholder="Selecione..."
                   options={[
                     { value: '', label: 'Sem categoria' },
                     ...availableCategories.map((c) => ({
@@ -589,23 +603,87 @@ export default function RecurringManager() {
                 </div>
               </div>
 
-              <div>
-                <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                  Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
-                </label>
-                <Select
-                  id="account"
-                  value={accountId}
-                  onChange={setAccountId}
-                  required
-                  placeholder="Selecione..."
-                  className={inputClass}
-                  options={[
-                    { value: '', label: 'Selecione...', disabled: true },
-                    ...accounts.map((a) => ({ value: a.id, label: a.name })),
-                  ]}
-                />
-              </div>
+              {type === 'EXPENSE' && cards.length > 0 ? (
+                <>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                      Pagamento
+                    </label>
+                    <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+                      <button
+                        type="button"
+                        role="tab"
+                        aria-selected={paySource === 'ACCOUNT'}
+                        onClick={() => setPaySource('ACCOUNT')}
+                        className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+                          paySource === 'ACCOUNT'
+                            ? 'bg-emerald-600 text-white shadow'
+                            : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
+                        }`}
+                      >
+                        Conta
+                      </button>
+                      <button
+                        type="button"
+                        role="tab"
+                        aria-selected={paySource === 'CARD'}
+                        onClick={() => setPaySource('CARD')}
+                        className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+                          paySource === 'CARD'
+                            ? 'bg-emerald-600 text-white shadow'
+                            : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
+                        }`}
+                      >
+                        Cartão
+                      </button>
+                    </div>
+                  </div>
+
+                  {paySource === 'CARD' ? (
+                    <div>
+                      <label htmlFor="rule-card" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        Cartão <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
+                      </label>
+                      <Select
+                        id="rule-card"
+                        value={cardId}
+                        onChange={setCardId}
+                        required
+                        placeholder="Selecione..."
+                        options={cards.map((c) => ({ value: c.id, label: c.name }))}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
+                      </label>
+                      <Select
+                        id="account"
+                        value={accountId}
+                        onChange={setAccountId}
+                        required
+                        placeholder="Selecione..."
+                        options={accounts.map((a) => ({ value: a.id, label: a.name }))}
+                      />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div>
+                  <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
+                  </label>
+                  <Select
+                    id="account"
+                    value={accountId}
+                    onChange={setAccountId}
+                    required
+                    placeholder="Selecione..."
+                    options={accounts.map((a) => ({ value: a.id, label: a.name }))}
+                  />
+                </div>
+              )}
 
               <div>
                 <label htmlFor="notify" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">

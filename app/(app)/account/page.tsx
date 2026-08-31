@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { formatDateLong } from '@/lib/format'
 import AvatarUpload from '@/components/avatar-upload'
 import DeleteAccountForm from '@/components/delete-account-form'
+import MonthlyReportToggle from '@/components/monthly-report-toggle'
 
 export const metadata: Metadata = {
   title: 'Minha Conta | Gestor Financeiro',
@@ -23,6 +24,7 @@ export default async function AccountPage() {
     emailVerified: Date | null
     createdAt: Date
     password: string | null
+    monthlyReport: boolean
   } | null = null
   try {
     user = await prisma.user.findUnique({
@@ -34,6 +36,7 @@ export default async function AccountPage() {
         emailVerified: true,
         createdAt: true,
         password: true,
+        monthlyReport: true,
       },
     })
   } catch (err) {
@@ -75,6 +78,8 @@ export default async function AccountPage() {
           </div>
         </dl>
       </div>
+
+      <MonthlyReportToggle enabled={user.monthlyReport} />
 
       <DeleteAccountForm email={user.email} />
     </div>

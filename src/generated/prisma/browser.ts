@@ -62,3 +62,13 @@ export type Notification = Prisma.NotificationModel
  * 
  */
 export type PushSubscription = Prisma.PushSubscriptionModel
+/**
+ * Model CreditCard
+ * 
+ */
+export type CreditCard = Prisma.CreditCardModel
+/**
+ * Model CreditCardStatement
+ * 
+ */
+export type CreditCardStatement = Prisma.CreditCardStatementModel

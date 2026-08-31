@@ -50,11 +50,13 @@ export type RecurringRuleMinAggregateOutputType = {
   categoryId: string | null
   accountId: string | null
   toAccountId: string | null
+  creditCardId: string | null
   dayOfMonth: number | null
   active: boolean | null
   notifyDaysBefore: number | null
   lastNotifiedAt: Date | null
   lastMaterializedMonth: string | null
+  lastPaidMonth: string | null
   position: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -70,11 +72,13 @@ export type RecurringRuleMaxAggregateOutputType = {
   categoryId: string | null
   accountId: string | null
   toAccountId: string | null
+  creditCardId: string | null
   dayOfMonth: number | null
   active: boolean | null
   notifyDaysBefore: number | null
   lastNotifiedAt: Date | null
   lastMaterializedMonth: string | null
+  lastPaidMonth: string | null
   position: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -90,11 +94,13 @@ export type RecurringRuleCountAggregateOutputType = {
   categoryId: number
   accountId: number
   toAccountId: number
+  creditCardId: number
   dayOfMonth: number
   active: number
   notifyDaysBefore: number
   lastNotifiedAt: number
   lastMaterializedMonth: number
+  lastPaidMonth: number
   position: number
   createdAt: number
   updatedAt: number
@@ -126,11 +132,13 @@ export type RecurringRuleMinAggregateInputType = {
   categoryId?: true
   accountId?: true
   toAccountId?: true
+  creditCardId?: true
   dayOfMonth?: true
   active?: true
   notifyDaysBefore?: true
   lastNotifiedAt?: true
   lastMaterializedMonth?: true
+  lastPaidMonth?: true
   position?: true
   createdAt?: true
   updatedAt?: true
@@ -146,11 +154,13 @@ export type RecurringRuleMaxAggregateInputType = {
   categoryId?: true
   accountId?: true
   toAccountId?: true
+  creditCardId?: true
   dayOfMonth?: true
   active?: true
   notifyDaysBefore?: true
   lastNotifiedAt?: true
   lastMaterializedMonth?: true
+  lastPaidMonth?: true
   position?: true
   createdAt?: true
   updatedAt?: true
@@ -166,11 +176,13 @@ export type RecurringRuleCountAggregateInputType = {
   categoryId?: true
   accountId?: true
   toAccountId?: true
+  creditCardId?: true
   dayOfMonth?: true
   active?: true
   notifyDaysBefore?: true
   lastNotifiedAt?: true
   lastMaterializedMonth?: true
+  lastPaidMonth?: true
   position?: true
   createdAt?: true
   updatedAt?: true
@@ -271,13 +283,15 @@ export type RecurringRuleGroupByOutputType = {
   kind: string
   type: string
   categoryId: string | null
-  accountId: string
+  accountId: string | null
   toAccountId: string | null
+  creditCardId: string | null
   dayOfMonth: number
   active: boolean
   notifyDaysBefore: number
   lastNotifiedAt: Date | null
   lastMaterializedMonth: string | null
+  lastPaidMonth: string | null
   position: number
   createdAt: Date
   updatedAt: Date
@@ -314,20 +328,23 @@ export type RecurringRuleWhereInput = {
   kind?: Prisma.StringFilter<"RecurringRule"> | string
   type?: Prisma.StringFilter<"RecurringRule"> | string
   categoryId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
-  accountId?: Prisma.StringFilter<"RecurringRule"> | string
+  accountId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
   toAccountId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
+  creditCardId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
   dayOfMonth?: Prisma.IntFilter<"RecurringRule"> | number
   active?: Prisma.BoolFilter<"RecurringRule"> | boolean
   notifyDaysBefore?: Prisma.IntFilter<"RecurringRule"> | number
   lastNotifiedAt?: Prisma.DateTimeNullableFilter<"RecurringRule"> | Date | string | null
   lastMaterializedMonth?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
+  lastPaidMonth?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
   position?: Prisma.IntFilter<"RecurringRule"> | number
   createdAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
-  account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
+  account?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
   toAccount?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
+  creditCard?: Prisma.XOR<Prisma.CreditCardNullableScalarRelationFilter, Prisma.CreditCardWhereInput> | null
   transactions?: Prisma.TransactionListRelationFilter
 }
 
@@ -339,13 +356,15 @@ export type RecurringRuleOrderByWithRelationInput = {
   kind?: Prisma.SortOrder
   type?: Prisma.SortOrder
   categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
-  accountId?: Prisma.SortOrder
+  accountId?: Prisma.SortOrderInput | Prisma.SortOrder
   toAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
+  creditCardId?: Prisma.SortOrderInput | Prisma.SortOrder
   dayOfMonth?: Prisma.SortOrder
   active?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
   lastNotifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastMaterializedMonth?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastPaidMonth?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -353,6 +372,7 @@ export type RecurringRuleOrderByWithRelationInput = {
   category?: Prisma.CategoryOrderByWithRelationInput
   account?: Prisma.AccountOrderByWithRelationInput
   toAccount?: Prisma.AccountOrderByWithRelationInput
+  creditCard?: Prisma.CreditCardOrderByWithRelationInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
 }
 
@@ -367,20 +387,23 @@ export type RecurringRuleWhereUniqueInput = Prisma.AtLeast<{
   kind?: Prisma.StringFilter<"RecurringRule"> | string
   type?: Prisma.StringFilter<"RecurringRule"> | string
   categoryId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
-  accountId?: Prisma.StringFilter<"RecurringRule"> | string
+  accountId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
   toAccountId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
+  creditCardId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
   dayOfMonth?: Prisma.IntFilter<"RecurringRule"> | number
   active?: Prisma.BoolFilter<"RecurringRule"> | boolean
   notifyDaysBefore?: Prisma.IntFilter<"RecurringRule"> | number
   lastNotifiedAt?: Prisma.DateTimeNullableFilter<"RecurringRule"> | Date | string | null
   lastMaterializedMonth?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
+  lastPaidMonth?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
   position?: Prisma.IntFilter<"RecurringRule"> | number
   createdAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
-  account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
+  account?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
   toAccount?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
+  creditCard?: Prisma.XOR<Prisma.CreditCardNullableScalarRelationFilter, Prisma.CreditCardWhereInput> | null
   transactions?: Prisma.TransactionListRelationFilter
 }, "id">
 
@@ -392,13 +415,15 @@ export type RecurringRuleOrderByWithAggregationInput = {
   kind?: Prisma.SortOrder
   type?: Prisma.SortOrder
   categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
-  accountId?: Prisma.SortOrder
+  accountId?: Prisma.SortOrderInput | Prisma.SortOrder
   toAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
+  creditCardId?: Prisma.SortOrderInput | Prisma.SortOrder
   dayOfMonth?: Prisma.SortOrder
   active?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
   lastNotifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastMaterializedMonth?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastPaidMonth?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -420,13 +445,15 @@ export type RecurringRuleScalarWhereWithAggregatesInput = {
   kind?: Prisma.StringWithAggregatesFilter<"RecurringRule"> | string
   type?: Prisma.StringWithAggregatesFilter<"RecurringRule"> | string
   categoryId?: Prisma.StringNullableWithAggregatesFilter<"RecurringRule"> | string | null
-  accountId?: Prisma.StringWithAggregatesFilter<"RecurringRule"> | string
+  accountId?: Prisma.StringNullableWithAggregatesFilter<"RecurringRule"> | string | null
   toAccountId?: Prisma.StringNullableWithAggregatesFilter<"RecurringRule"> | string | null
+  creditCardId?: Prisma.StringNullableWithAggregatesFilter<"RecurringRule"> | string | null
   dayOfMonth?: Prisma.IntWithAggregatesFilter<"RecurringRule"> | number
   active?: Prisma.BoolWithAggregatesFilter<"RecurringRule"> | boolean
   notifyDaysBefore?: Prisma.IntWithAggregatesFilter<"RecurringRule"> | number
   lastNotifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"RecurringRule"> | Date | string | null
   lastMaterializedMonth?: Prisma.StringNullableWithAggregatesFilter<"RecurringRule"> | string | null
+  lastPaidMonth?: Prisma.StringNullableWithAggregatesFilter<"RecurringRule"> | string | null
   position?: Prisma.IntWithAggregatesFilter<"RecurringRule"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"RecurringRule"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"RecurringRule"> | Date | string
@@ -443,13 +470,15 @@ export type RecurringRuleCreateInput = {
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRecurringRulesInput
   category?: Prisma.CategoryCreateNestedOneWithoutRecurringRulesInput
-  account: Prisma.AccountCreateNestedOneWithoutRecurringRulesInput
+  account?: Prisma.AccountCreateNestedOneWithoutRecurringRulesInput
   toAccount?: Prisma.AccountCreateNestedOneWithoutRecurringIncomingInput
+  creditCard?: Prisma.CreditCardCreateNestedOneWithoutRecurringRulesInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutRecurringRuleInput
 }
 
@@ -461,13 +490,15 @@ export type RecurringRuleUncheckedCreateInput = {
   kind?: string
   type: string
   categoryId?: string | null
-  accountId: string
+  accountId?: string | null
   toAccountId?: string | null
+  creditCardId?: string | null
   dayOfMonth: number
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -485,13 +516,15 @@ export type RecurringRuleUpdateInput = {
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRecurringRulesNestedInput
   category?: Prisma.CategoryUpdateOneWithoutRecurringRulesNestedInput
-  account?: Prisma.AccountUpdateOneRequiredWithoutRecurringRulesNestedInput
+  account?: Prisma.AccountUpdateOneWithoutRecurringRulesNestedInput
   toAccount?: Prisma.AccountUpdateOneWithoutRecurringIncomingNestedInput
+  creditCard?: Prisma.CreditCardUpdateOneWithoutRecurringRulesNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutRecurringRuleNestedInput
 }
 
@@ -503,13 +536,15 @@ export type RecurringRuleUncheckedUpdateInput = {
   kind?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   toAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditCardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -524,13 +559,15 @@ export type RecurringRuleCreateManyInput = {
   kind?: string
   type: string
   categoryId?: string | null
-  accountId: string
+  accountId?: string | null
   toAccountId?: string | null
+  creditCardId?: string | null
   dayOfMonth: number
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -547,6 +584,7 @@ export type RecurringRuleUpdateManyMutationInput = {
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -560,13 +598,15 @@ export type RecurringRuleUncheckedUpdateManyInput = {
   kind?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   toAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditCardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -592,11 +632,13 @@ export type RecurringRuleCountOrderByAggregateInput = {
   categoryId?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
   toAccountId?: Prisma.SortOrder
+  creditCardId?: Prisma.SortOrder
   dayOfMonth?: Prisma.SortOrder
   active?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
   lastNotifiedAt?: Prisma.SortOrder
   lastMaterializedMonth?: Prisma.SortOrder
+  lastPaidMonth?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -619,11 +661,13 @@ export type RecurringRuleMaxOrderByAggregateInput = {
   categoryId?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
   toAccountId?: Prisma.SortOrder
+  creditCardId?: Prisma.SortOrder
   dayOfMonth?: Prisma.SortOrder
   active?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
   lastNotifiedAt?: Prisma.SortOrder
   lastMaterializedMonth?: Prisma.SortOrder
+  lastPaidMonth?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -639,11 +683,13 @@ export type RecurringRuleMinOrderByAggregateInput = {
   categoryId?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
   toAccountId?: Prisma.SortOrder
+  creditCardId?: Prisma.SortOrder
   dayOfMonth?: Prisma.SortOrder
   active?: Prisma.SortOrder
   notifyDaysBefore?: Prisma.SortOrder
   lastNotifiedAt?: Prisma.SortOrder
   lastMaterializedMonth?: Prisma.SortOrder
+  lastPaidMonth?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -829,10 +875,6 @@ export type RecurringRuleUncheckedUpdateManyWithoutCategoryNestedInput = {
   deleteMany?: Prisma.RecurringRuleScalarWhereInput | Prisma.RecurringRuleScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type RecurringRuleCreateNestedOneWithoutTransactionsInput = {
   create?: Prisma.XOR<Prisma.RecurringRuleCreateWithoutTransactionsInput, Prisma.RecurringRuleUncheckedCreateWithoutTransactionsInput>
   connectOrCreate?: Prisma.RecurringRuleCreateOrConnectWithoutTransactionsInput
@@ -849,6 +891,48 @@ export type RecurringRuleUpdateOneWithoutTransactionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.RecurringRuleUpdateToOneWithWhereWithoutTransactionsInput, Prisma.RecurringRuleUpdateWithoutTransactionsInput>, Prisma.RecurringRuleUncheckedUpdateWithoutTransactionsInput>
 }
 
+export type RecurringRuleCreateNestedManyWithoutCreditCardInput = {
+  create?: Prisma.XOR<Prisma.RecurringRuleCreateWithoutCreditCardInput, Prisma.RecurringRuleUncheckedCreateWithoutCreditCardInput> | Prisma.RecurringRuleCreateWithoutCreditCardInput[] | Prisma.RecurringRuleUncheckedCreateWithoutCreditCardInput[]
+  connectOrCreate?: Prisma.RecurringRuleCreateOrConnectWithoutCreditCardInput | Prisma.RecurringRuleCreateOrConnectWithoutCreditCardInput[]
+  createMany?: Prisma.RecurringRuleCreateManyCreditCardInputEnvelope
+  connect?: Prisma.RecurringRuleWhereUniqueInput | Prisma.RecurringRuleWhereUniqueInput[]
+}
+
+export type RecurringRuleUncheckedCreateNestedManyWithoutCreditCardInput = {
+  create?: Prisma.XOR<Prisma.RecurringRuleCreateWithoutCreditCardInput, Prisma.RecurringRuleUncheckedCreateWithoutCreditCardInput> | Prisma.RecurringRuleCreateWithoutCreditCardInput[] | Prisma.RecurringRuleUncheckedCreateWithoutCreditCardInput[]
+  connectOrCreate?: Prisma.RecurringRuleCreateOrConnectWithoutCreditCardInput | Prisma.RecurringRuleCreateOrConnectWithoutCreditCardInput[]
+  createMany?: Prisma.RecurringRuleCreateManyCreditCardInputEnvelope
+  connect?: Prisma.RecurringRuleWhereUniqueInput | Prisma.RecurringRuleWhereUniqueInput[]
+}
+
+export type RecurringRuleUpdateManyWithoutCreditCardNestedInput = {
+  create?: Prisma.XOR<Prisma.RecurringRuleCreateWithoutCreditCardInput, Prisma.RecurringRuleUncheckedCreateWithoutCreditCardInput> | Prisma.RecurringRuleCreateWithoutCreditCardInput[] | Prisma.RecurringRuleUncheckedCreateWithoutCreditCardInput[]
+  connectOrCreate?: Prisma.RecurringRuleCreateOrConnectWithoutCreditCardInput | Prisma.RecurringRuleCreateOrConnectWithoutCreditCardInput[]
+  upsert?: Prisma.RecurringRuleUpsertWithWhereUniqueWithoutCreditCardInput | Prisma.RecurringRuleUpsertWithWhereUniqueWithoutCreditCardInput[]
+  createMany?: Prisma.RecurringRuleCreateManyCreditCardInputEnvelope
+  set?: Prisma.RecurringRuleWhereUniqueInput | Prisma.RecurringRuleWhereUniqueInput[]
+  disconnect?: Prisma.RecurringRuleWhereUniqueInput | Prisma.RecurringRuleWhereUniqueInput[]
+  delete?: Prisma.RecurringRuleWhereUniqueInput | Prisma.RecurringRuleWhereUniqueInput[]
+  connect?: Prisma.RecurringRuleWhereUniqueInput | Prisma.RecurringRuleWhereUniqueInput[]
+  update?: Prisma.RecurringRuleUpdateWithWhereUniqueWithoutCreditCardInput | Prisma.RecurringRuleUpdateWithWhereUniqueWithoutCreditCardInput[]
+  updateMany?: Prisma.RecurringRuleUpdateManyWithWhereWithoutCreditCardInput | Prisma.RecurringRuleUpdateManyWithWhereWithoutCreditCardInput[]
+  deleteMany?: Prisma.RecurringRuleScalarWhereInput | Prisma.RecurringRuleScalarWhereInput[]
+}
+
+export type RecurringRuleUncheckedUpdateManyWithoutCreditCardNestedInput = {
+  create?: Prisma.XOR<Prisma.RecurringRuleCreateWithoutCreditCardInput, Prisma.RecurringRuleUncheckedCreateWithoutCreditCardInput> | Prisma.RecurringRuleCreateWithoutCreditCardInput[] | Prisma.RecurringRuleUncheckedCreateWithoutCreditCardInput[]
+  connectOrCreate?: Prisma.RecurringRuleCreateOrConnectWithoutCreditCardInput | Prisma.RecurringRuleCreateOrConnectWithoutCreditCardInput[]
+  upsert?: Prisma.RecurringRuleUpsertWithWhereUniqueWithoutCreditCardInput | Prisma.RecurringRuleUpsertWithWhereUniqueWithoutCreditCardInput[]
+  createMany?: Prisma.RecurringRuleCreateManyCreditCardInputEnvelope
+  set?: Prisma.RecurringRuleWhereUniqueInput | Prisma.RecurringRuleWhereUniqueInput[]
+  disconnect?: Prisma.RecurringRuleWhereUniqueInput | Prisma.RecurringRuleWhereUniqueInput[]
+  delete?: Prisma.RecurringRuleWhereUniqueInput | Prisma.RecurringRuleWhereUniqueInput[]
+  connect?: Prisma.RecurringRuleWhereUniqueInput | Prisma.RecurringRuleWhereUniqueInput[]
+  update?: Prisma.RecurringRuleUpdateWithWhereUniqueWithoutCreditCardInput | Prisma.RecurringRuleUpdateWithWhereUniqueWithoutCreditCardInput[]
+  updateMany?: Prisma.RecurringRuleUpdateManyWithWhereWithoutCreditCardInput | Prisma.RecurringRuleUpdateManyWithWhereWithoutCreditCardInput[]
+  deleteMany?: Prisma.RecurringRuleScalarWhereInput | Prisma.RecurringRuleScalarWhereInput[]
+}
+
 export type RecurringRuleCreateWithoutUserInput = {
   id?: string
   description: string
@@ -860,12 +944,14 @@ export type RecurringRuleCreateWithoutUserInput = {
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   category?: Prisma.CategoryCreateNestedOneWithoutRecurringRulesInput
-  account: Prisma.AccountCreateNestedOneWithoutRecurringRulesInput
+  account?: Prisma.AccountCreateNestedOneWithoutRecurringRulesInput
   toAccount?: Prisma.AccountCreateNestedOneWithoutRecurringIncomingInput
+  creditCard?: Prisma.CreditCardCreateNestedOneWithoutRecurringRulesInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutRecurringRuleInput
 }
 
@@ -876,13 +962,15 @@ export type RecurringRuleUncheckedCreateWithoutUserInput = {
   kind?: string
   type: string
   categoryId?: string | null
-  accountId: string
+  accountId?: string | null
   toAccountId?: string | null
+  creditCardId?: string | null
   dayOfMonth: number
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -926,13 +1014,15 @@ export type RecurringRuleScalarWhereInput = {
   kind?: Prisma.StringFilter<"RecurringRule"> | string
   type?: Prisma.StringFilter<"RecurringRule"> | string
   categoryId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
-  accountId?: Prisma.StringFilter<"RecurringRule"> | string
+  accountId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
   toAccountId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
+  creditCardId?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
   dayOfMonth?: Prisma.IntFilter<"RecurringRule"> | number
   active?: Prisma.BoolFilter<"RecurringRule"> | boolean
   notifyDaysBefore?: Prisma.IntFilter<"RecurringRule"> | number
   lastNotifiedAt?: Prisma.DateTimeNullableFilter<"RecurringRule"> | Date | string | null
   lastMaterializedMonth?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
+  lastPaidMonth?: Prisma.StringNullableFilter<"RecurringRule"> | string | null
   position?: Prisma.IntFilter<"RecurringRule"> | number
   createdAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RecurringRule"> | Date | string
@@ -949,12 +1039,14 @@ export type RecurringRuleCreateWithoutAccountInput = {
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRecurringRulesInput
   category?: Prisma.CategoryCreateNestedOneWithoutRecurringRulesInput
   toAccount?: Prisma.AccountCreateNestedOneWithoutRecurringIncomingInput
+  creditCard?: Prisma.CreditCardCreateNestedOneWithoutRecurringRulesInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutRecurringRuleInput
 }
 
@@ -967,11 +1059,13 @@ export type RecurringRuleUncheckedCreateWithoutAccountInput = {
   type: string
   categoryId?: string | null
   toAccountId?: string | null
+  creditCardId?: string | null
   dayOfMonth: number
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -999,12 +1093,14 @@ export type RecurringRuleCreateWithoutToAccountInput = {
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRecurringRulesInput
   category?: Prisma.CategoryCreateNestedOneWithoutRecurringRulesInput
-  account: Prisma.AccountCreateNestedOneWithoutRecurringRulesInput
+  account?: Prisma.AccountCreateNestedOneWithoutRecurringRulesInput
+  creditCard?: Prisma.CreditCardCreateNestedOneWithoutRecurringRulesInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutRecurringRuleInput
 }
 
@@ -1016,12 +1112,14 @@ export type RecurringRuleUncheckedCreateWithoutToAccountInput = {
   kind?: string
   type: string
   categoryId?: string | null
-  accountId: string
+  accountId?: string | null
+  creditCardId?: string | null
   dayOfMonth: number
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1081,12 +1179,14 @@ export type RecurringRuleCreateWithoutCategoryInput = {
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRecurringRulesInput
-  account: Prisma.AccountCreateNestedOneWithoutRecurringRulesInput
+  account?: Prisma.AccountCreateNestedOneWithoutRecurringRulesInput
   toAccount?: Prisma.AccountCreateNestedOneWithoutRecurringIncomingInput
+  creditCard?: Prisma.CreditCardCreateNestedOneWithoutRecurringRulesInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutRecurringRuleInput
 }
 
@@ -1097,13 +1197,15 @@ export type RecurringRuleUncheckedCreateWithoutCategoryInput = {
   amountCents: number
   kind?: string
   type: string
-  accountId: string
+  accountId?: string | null
   toAccountId?: string | null
+  creditCardId?: string | null
   dayOfMonth: number
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1147,13 +1249,15 @@ export type RecurringRuleCreateWithoutTransactionsInput = {
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutRecurringRulesInput
   category?: Prisma.CategoryCreateNestedOneWithoutRecurringRulesInput
-  account: Prisma.AccountCreateNestedOneWithoutRecurringRulesInput
+  account?: Prisma.AccountCreateNestedOneWithoutRecurringRulesInput
   toAccount?: Prisma.AccountCreateNestedOneWithoutRecurringIncomingInput
+  creditCard?: Prisma.CreditCardCreateNestedOneWithoutRecurringRulesInput
 }
 
 export type RecurringRuleUncheckedCreateWithoutTransactionsInput = {
@@ -1164,13 +1268,15 @@ export type RecurringRuleUncheckedCreateWithoutTransactionsInput = {
   kind?: string
   type: string
   categoryId?: string | null
-  accountId: string
+  accountId?: string | null
   toAccountId?: string | null
+  creditCardId?: string | null
   dayOfMonth: number
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1203,13 +1309,15 @@ export type RecurringRuleUpdateWithoutTransactionsInput = {
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRecurringRulesNestedInput
   category?: Prisma.CategoryUpdateOneWithoutRecurringRulesNestedInput
-  account?: Prisma.AccountUpdateOneRequiredWithoutRecurringRulesNestedInput
+  account?: Prisma.AccountUpdateOneWithoutRecurringRulesNestedInput
   toAccount?: Prisma.AccountUpdateOneWithoutRecurringIncomingNestedInput
+  creditCard?: Prisma.CreditCardUpdateOneWithoutRecurringRulesNestedInput
 }
 
 export type RecurringRuleUncheckedUpdateWithoutTransactionsInput = {
@@ -1220,16 +1328,88 @@ export type RecurringRuleUncheckedUpdateWithoutTransactionsInput = {
   kind?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   toAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditCardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RecurringRuleCreateWithoutCreditCardInput = {
+  id?: string
+  description: string
+  amountCents: number
+  kind?: string
+  type: string
+  dayOfMonth: number
+  active?: boolean
+  notifyDaysBefore?: number
+  lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
+  position?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutRecurringRulesInput
+  category?: Prisma.CategoryCreateNestedOneWithoutRecurringRulesInput
+  account?: Prisma.AccountCreateNestedOneWithoutRecurringRulesInput
+  toAccount?: Prisma.AccountCreateNestedOneWithoutRecurringIncomingInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutRecurringRuleInput
+}
+
+export type RecurringRuleUncheckedCreateWithoutCreditCardInput = {
+  id?: string
+  userId: string
+  description: string
+  amountCents: number
+  kind?: string
+  type: string
+  categoryId?: string | null
+  accountId?: string | null
+  toAccountId?: string | null
+  dayOfMonth: number
+  active?: boolean
+  notifyDaysBefore?: number
+  lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
+  position?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutRecurringRuleInput
+}
+
+export type RecurringRuleCreateOrConnectWithoutCreditCardInput = {
+  where: Prisma.RecurringRuleWhereUniqueInput
+  create: Prisma.XOR<Prisma.RecurringRuleCreateWithoutCreditCardInput, Prisma.RecurringRuleUncheckedCreateWithoutCreditCardInput>
+}
+
+export type RecurringRuleCreateManyCreditCardInputEnvelope = {
+  data: Prisma.RecurringRuleCreateManyCreditCardInput | Prisma.RecurringRuleCreateManyCreditCardInput[]
+  skipDuplicates?: boolean
+}
+
+export type RecurringRuleUpsertWithWhereUniqueWithoutCreditCardInput = {
+  where: Prisma.RecurringRuleWhereUniqueInput
+  update: Prisma.XOR<Prisma.RecurringRuleUpdateWithoutCreditCardInput, Prisma.RecurringRuleUncheckedUpdateWithoutCreditCardInput>
+  create: Prisma.XOR<Prisma.RecurringRuleCreateWithoutCreditCardInput, Prisma.RecurringRuleUncheckedCreateWithoutCreditCardInput>
+}
+
+export type RecurringRuleUpdateWithWhereUniqueWithoutCreditCardInput = {
+  where: Prisma.RecurringRuleWhereUniqueInput
+  data: Prisma.XOR<Prisma.RecurringRuleUpdateWithoutCreditCardInput, Prisma.RecurringRuleUncheckedUpdateWithoutCreditCardInput>
+}
+
+export type RecurringRuleUpdateManyWithWhereWithoutCreditCardInput = {
+  where: Prisma.RecurringRuleScalarWhereInput
+  data: Prisma.XOR<Prisma.RecurringRuleUpdateManyMutationInput, Prisma.RecurringRuleUncheckedUpdateManyWithoutCreditCardInput>
 }
 
 export type RecurringRuleCreateManyUserInput = {
@@ -1239,13 +1419,15 @@ export type RecurringRuleCreateManyUserInput = {
   kind?: string
   type: string
   categoryId?: string | null
-  accountId: string
+  accountId?: string | null
   toAccountId?: string | null
+  creditCardId?: string | null
   dayOfMonth: number
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1262,12 +1444,14 @@ export type RecurringRuleUpdateWithoutUserInput = {
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneWithoutRecurringRulesNestedInput
-  account?: Prisma.AccountUpdateOneRequiredWithoutRecurringRulesNestedInput
+  account?: Prisma.AccountUpdateOneWithoutRecurringRulesNestedInput
   toAccount?: Prisma.AccountUpdateOneWithoutRecurringIncomingNestedInput
+  creditCard?: Prisma.CreditCardUpdateOneWithoutRecurringRulesNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutRecurringRuleNestedInput
 }
 
@@ -1278,13 +1462,15 @@ export type RecurringRuleUncheckedUpdateWithoutUserInput = {
   kind?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   toAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditCardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1298,13 +1484,15 @@ export type RecurringRuleUncheckedUpdateManyWithoutUserInput = {
   kind?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   toAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditCardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1319,11 +1507,13 @@ export type RecurringRuleCreateManyAccountInput = {
   type: string
   categoryId?: string | null
   toAccountId?: string | null
+  creditCardId?: string | null
   dayOfMonth: number
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1337,12 +1527,14 @@ export type RecurringRuleCreateManyToAccountInput = {
   kind?: string
   type: string
   categoryId?: string | null
-  accountId: string
+  accountId?: string | null
+  creditCardId?: string | null
   dayOfMonth: number
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1359,12 +1551,14 @@ export type RecurringRuleUpdateWithoutAccountInput = {
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRecurringRulesNestedInput
   category?: Prisma.CategoryUpdateOneWithoutRecurringRulesNestedInput
   toAccount?: Prisma.AccountUpdateOneWithoutRecurringIncomingNestedInput
+  creditCard?: Prisma.CreditCardUpdateOneWithoutRecurringRulesNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutRecurringRuleNestedInput
 }
 
@@ -1377,11 +1571,13 @@ export type RecurringRuleUncheckedUpdateWithoutAccountInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   toAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditCardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1397,11 +1593,13 @@ export type RecurringRuleUncheckedUpdateManyWithoutAccountInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   toAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditCardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1418,12 +1616,14 @@ export type RecurringRuleUpdateWithoutToAccountInput = {
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRecurringRulesNestedInput
   category?: Prisma.CategoryUpdateOneWithoutRecurringRulesNestedInput
-  account?: Prisma.AccountUpdateOneRequiredWithoutRecurringRulesNestedInput
+  account?: Prisma.AccountUpdateOneWithoutRecurringRulesNestedInput
+  creditCard?: Prisma.CreditCardUpdateOneWithoutRecurringRulesNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutRecurringRuleNestedInput
 }
 
@@ -1435,12 +1635,14 @@ export type RecurringRuleUncheckedUpdateWithoutToAccountInput = {
   kind?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditCardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1455,12 +1657,14 @@ export type RecurringRuleUncheckedUpdateManyWithoutToAccountInput = {
   kind?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditCardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1473,13 +1677,15 @@ export type RecurringRuleCreateManyCategoryInput = {
   amountCents: number
   kind?: string
   type: string
-  accountId: string
+  accountId?: string | null
   toAccountId?: string | null
+  creditCardId?: string | null
   dayOfMonth: number
   active?: boolean
   notifyDaysBefore?: number
   lastNotifiedAt?: Date | string | null
   lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
   position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1496,12 +1702,14 @@ export type RecurringRuleUpdateWithoutCategoryInput = {
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutRecurringRulesNestedInput
-  account?: Prisma.AccountUpdateOneRequiredWithoutRecurringRulesNestedInput
+  account?: Prisma.AccountUpdateOneWithoutRecurringRulesNestedInput
   toAccount?: Prisma.AccountUpdateOneWithoutRecurringIncomingNestedInput
+  creditCard?: Prisma.CreditCardUpdateOneWithoutRecurringRulesNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutRecurringRuleNestedInput
 }
 
@@ -1512,13 +1720,15 @@ export type RecurringRuleUncheckedUpdateWithoutCategoryInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   kind?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
-  accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   toAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditCardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1532,13 +1742,101 @@ export type RecurringRuleUncheckedUpdateManyWithoutCategoryInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   kind?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
-  accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  toAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditCardId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
+  lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RecurringRuleCreateManyCreditCardInput = {
+  id?: string
+  userId: string
+  description: string
+  amountCents: number
+  kind?: string
+  type: string
+  categoryId?: string | null
+  accountId?: string | null
+  toAccountId?: string | null
+  dayOfMonth: number
+  active?: boolean
+  notifyDaysBefore?: number
+  lastNotifiedAt?: Date | string | null
+  lastMaterializedMonth?: string | null
+  lastPaidMonth?: string | null
+  position?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RecurringRuleUpdateWithoutCreditCardInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  kind?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
+  lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutRecurringRulesNestedInput
+  category?: Prisma.CategoryUpdateOneWithoutRecurringRulesNestedInput
+  account?: Prisma.AccountUpdateOneWithoutRecurringRulesNestedInput
+  toAccount?: Prisma.AccountUpdateOneWithoutRecurringIncomingNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutRecurringRuleNestedInput
+}
+
+export type RecurringRuleUncheckedUpdateWithoutCreditCardInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  kind?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   toAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
   lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutRecurringRuleNestedInput
+}
+
+export type RecurringRuleUncheckedUpdateManyWithoutCreditCardInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  kind?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  toAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dayOfMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notifyDaysBefore?: Prisma.IntFieldUpdateOperationsInput | number
+  lastNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastMaterializedMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastPaidMonth?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1585,18 +1883,21 @@ export type RecurringRuleSelect<ExtArgs extends runtime.Types.Extensions.Interna
   categoryId?: boolean
   accountId?: boolean
   toAccountId?: boolean
+  creditCardId?: boolean
   dayOfMonth?: boolean
   active?: boolean
   notifyDaysBefore?: boolean
   lastNotifiedAt?: boolean
   lastMaterializedMonth?: boolean
+  lastPaidMonth?: boolean
   position?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.RecurringRule$categoryArgs<ExtArgs>
-  account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
+  account?: boolean | Prisma.RecurringRule$accountArgs<ExtArgs>
   toAccount?: boolean | Prisma.RecurringRule$toAccountArgs<ExtArgs>
+  creditCard?: boolean | Prisma.RecurringRule$creditCardArgs<ExtArgs>
   transactions?: boolean | Prisma.RecurringRule$transactionsArgs<ExtArgs>
   _count?: boolean | Prisma.RecurringRuleCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recurringRule"]>
@@ -1611,18 +1912,21 @@ export type RecurringRuleSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   categoryId?: boolean
   accountId?: boolean
   toAccountId?: boolean
+  creditCardId?: boolean
   dayOfMonth?: boolean
   active?: boolean
   notifyDaysBefore?: boolean
   lastNotifiedAt?: boolean
   lastMaterializedMonth?: boolean
+  lastPaidMonth?: boolean
   position?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.RecurringRule$categoryArgs<ExtArgs>
-  account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
+  account?: boolean | Prisma.RecurringRule$accountArgs<ExtArgs>
   toAccount?: boolean | Prisma.RecurringRule$toAccountArgs<ExtArgs>
+  creditCard?: boolean | Prisma.RecurringRule$creditCardArgs<ExtArgs>
 }, ExtArgs["result"]["recurringRule"]>
 
 export type RecurringRuleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1635,18 +1939,21 @@ export type RecurringRuleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   categoryId?: boolean
   accountId?: boolean
   toAccountId?: boolean
+  creditCardId?: boolean
   dayOfMonth?: boolean
   active?: boolean
   notifyDaysBefore?: boolean
   lastNotifiedAt?: boolean
   lastMaterializedMonth?: boolean
+  lastPaidMonth?: boolean
   position?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.RecurringRule$categoryArgs<ExtArgs>
-  account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
+  account?: boolean | Prisma.RecurringRule$accountArgs<ExtArgs>
   toAccount?: boolean | Prisma.RecurringRule$toAccountArgs<ExtArgs>
+  creditCard?: boolean | Prisma.RecurringRule$creditCardArgs<ExtArgs>
 }, ExtArgs["result"]["recurringRule"]>
 
 export type RecurringRuleSelectScalar = {
@@ -1659,36 +1966,41 @@ export type RecurringRuleSelectScalar = {
   categoryId?: boolean
   accountId?: boolean
   toAccountId?: boolean
+  creditCardId?: boolean
   dayOfMonth?: boolean
   active?: boolean
   notifyDaysBefore?: boolean
   lastNotifiedAt?: boolean
   lastMaterializedMonth?: boolean
+  lastPaidMonth?: boolean
   position?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type RecurringRuleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "description" | "amountCents" | "kind" | "type" | "categoryId" | "accountId" | "toAccountId" | "dayOfMonth" | "active" | "notifyDaysBefore" | "lastNotifiedAt" | "lastMaterializedMonth" | "position" | "createdAt" | "updatedAt", ExtArgs["result"]["recurringRule"]>
+export type RecurringRuleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "description" | "amountCents" | "kind" | "type" | "categoryId" | "accountId" | "toAccountId" | "creditCardId" | "dayOfMonth" | "active" | "notifyDaysBefore" | "lastNotifiedAt" | "lastMaterializedMonth" | "lastPaidMonth" | "position" | "createdAt" | "updatedAt", ExtArgs["result"]["recurringRule"]>
 export type RecurringRuleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.RecurringRule$categoryArgs<ExtArgs>
-  account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
+  account?: boolean | Prisma.RecurringRule$accountArgs<ExtArgs>
   toAccount?: boolean | Prisma.RecurringRule$toAccountArgs<ExtArgs>
+  creditCard?: boolean | Prisma.RecurringRule$creditCardArgs<ExtArgs>
   transactions?: boolean | Prisma.RecurringRule$transactionsArgs<ExtArgs>
   _count?: boolean | Prisma.RecurringRuleCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RecurringRuleIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.RecurringRule$categoryArgs<ExtArgs>
-  account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
+  account?: boolean | Prisma.RecurringRule$accountArgs<ExtArgs>
   toAccount?: boolean | Prisma.RecurringRule$toAccountArgs<ExtArgs>
+  creditCard?: boolean | Prisma.RecurringRule$creditCardArgs<ExtArgs>
 }
 export type RecurringRuleIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.RecurringRule$categoryArgs<ExtArgs>
-  account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
+  account?: boolean | Prisma.RecurringRule$accountArgs<ExtArgs>
   toAccount?: boolean | Prisma.RecurringRule$toAccountArgs<ExtArgs>
+  creditCard?: boolean | Prisma.RecurringRule$creditCardArgs<ExtArgs>
 }
 
 export type $RecurringRulePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1696,8 +2008,9 @@ export type $RecurringRulePayload<ExtArgs extends runtime.Types.Extensions.Inter
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     category: Prisma.$CategoryPayload<ExtArgs> | null
-    account: Prisma.$AccountPayload<ExtArgs>
+    account: Prisma.$AccountPayload<ExtArgs> | null
     toAccount: Prisma.$AccountPayload<ExtArgs> | null
+    creditCard: Prisma.$CreditCardPayload<ExtArgs> | null
     transactions: Prisma.$TransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1708,13 +2021,15 @@ export type $RecurringRulePayload<ExtArgs extends runtime.Types.Extensions.Inter
     kind: string
     type: string
     categoryId: string | null
-    accountId: string
+    accountId: string | null
     toAccountId: string | null
+    creditCardId: string | null
     dayOfMonth: number
     active: boolean
     notifyDaysBefore: number
     lastNotifiedAt: Date | null
     lastMaterializedMonth: string | null
+    lastPaidMonth: string | null
     position: number
     createdAt: Date
     updatedAt: Date
@@ -2114,8 +2429,9 @@ export interface Prisma__RecurringRuleClient<T, Null = never, ExtArgs extends ru
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   category<T extends Prisma.RecurringRule$categoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecurringRule$categoryArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  account<T extends Prisma.AccountDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AccountDefaultArgs<ExtArgs>>): Prisma.Prisma__AccountClient<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  account<T extends Prisma.RecurringRule$accountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecurringRule$accountArgs<ExtArgs>>): Prisma.Prisma__AccountClient<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   toAccount<T extends Prisma.RecurringRule$toAccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecurringRule$toAccountArgs<ExtArgs>>): Prisma.Prisma__AccountClient<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  creditCard<T extends Prisma.RecurringRule$creditCardArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecurringRule$creditCardArgs<ExtArgs>>): Prisma.Prisma__CreditCardClient<runtime.Types.Result.GetResult<Prisma.$CreditCardPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   transactions<T extends Prisma.RecurringRule$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecurringRule$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2155,11 +2471,13 @@ export interface RecurringRuleFieldRefs {
   readonly categoryId: Prisma.FieldRef<"RecurringRule", 'String'>
   readonly accountId: Prisma.FieldRef<"RecurringRule", 'String'>
   readonly toAccountId: Prisma.FieldRef<"RecurringRule", 'String'>
+  readonly creditCardId: Prisma.FieldRef<"RecurringRule", 'String'>
   readonly dayOfMonth: Prisma.FieldRef<"RecurringRule", 'Int'>
   readonly active: Prisma.FieldRef<"RecurringRule", 'Boolean'>
   readonly notifyDaysBefore: Prisma.FieldRef<"RecurringRule", 'Int'>
   readonly lastNotifiedAt: Prisma.FieldRef<"RecurringRule", 'DateTime'>
   readonly lastMaterializedMonth: Prisma.FieldRef<"RecurringRule", 'String'>
+  readonly lastPaidMonth: Prisma.FieldRef<"RecurringRule", 'String'>
   readonly position: Prisma.FieldRef<"RecurringRule", 'Int'>
   readonly createdAt: Prisma.FieldRef<"RecurringRule", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"RecurringRule", 'DateTime'>
@@ -2583,6 +2901,25 @@ export type RecurringRule$categoryArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
+ * RecurringRule.account
+ */
+export type RecurringRule$accountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Account
+   */
+  select?: Prisma.AccountSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Account
+   */
+  omit?: Prisma.AccountOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccountInclude<ExtArgs> | null
+  where?: Prisma.AccountWhereInput
+}
+
+/**
  * RecurringRule.toAccount
  */
 export type RecurringRule$toAccountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2599,6 +2936,25 @@ export type RecurringRule$toAccountArgs<ExtArgs extends runtime.Types.Extensions
    */
   include?: Prisma.AccountInclude<ExtArgs> | null
   where?: Prisma.AccountWhereInput
+}
+
+/**
+ * RecurringRule.creditCard
+ */
+export type RecurringRule$creditCardArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CreditCard
+   */
+  select?: Prisma.CreditCardSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CreditCard
+   */
+  omit?: Prisma.CreditCardOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CreditCardInclude<ExtArgs> | null
+  where?: Prisma.CreditCardWhereInput
 }
 
 /**

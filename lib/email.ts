@@ -93,9 +93,8 @@ export async function sendVerificationCode(to: string, code: string): Promise<vo
     try {
       await sendViaSmtp(to, code)
       return
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro desconhecido'
-      throw new Error(`Falha ao enviar o e-mail (SMTP): ${message}`)
+    } catch {
+      // SMTP failed, try Resend fallback
     }
   }
 
@@ -114,9 +113,8 @@ export async function sendPasswordResetCode(to: string, code: string): Promise<v
     try {
       await sendViaSmtpRaw(to, subject, html)
       return
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro desconhecido'
-      throw new Error(`Falha ao enviar o e-mail (SMTP): ${message}`)
+    } catch {
+      // SMTP failed, try Resend fallback
     }
   }
   if (process.env.RESEND_API_KEY) {
@@ -157,9 +155,8 @@ export async function sendDeleteAccountCode(to: string, code: string): Promise<v
     try {
       await sendViaSmtpRaw(to, subject, html)
       return
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro desconhecido'
-      throw new Error(`Falha ao enviar o e-mail (SMTP): ${message}`)
+    } catch {
+      // SMTP failed, try Resend fallback
     }
   }
   if (process.env.RESEND_API_KEY) {
@@ -208,9 +205,8 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
         process.env.EMAIL_FROM ?? `Gestor Financeiro <${process.env.SMTP_USER}>`
       await transporter.sendMail({ from, to, subject, html })
       return
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro desconhecido'
-      throw new Error(`Falha ao enviar o e-mail (SMTP): ${message}`)
+    } catch {
+      // SMTP failed, try Resend fallback
     }
   }
 

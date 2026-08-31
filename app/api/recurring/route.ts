@@ -8,6 +8,7 @@ import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
 
 const ruleInclude = {
   account: { select: { name: true, color: true } },
+  creditCard: { select: { name: true } },
   category: { select: { name: true, color: true } },
   toAccount: { select: { name: true, color: true } },
 } as const
@@ -118,12 +119,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(toRecurringRuleDto(rule), { status: 201 })
   }
 
-  const account = await prisma.account.findFirst({
-    where: { id: input.accountId, userId: session.user.id },
-    select: { id: true },
-  })
-  if (!account) {
-    return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
+  const resolvedAccountId = input.accountId ?? null
+  const resolvedCardId = input.creditCardId ?? null
+
+  if (resolvedCardId) {
+    const card = await prisma.creditCard.findFirst({
+      where: { id: resolvedCardId, userId: session.user.id },
+      select: { id: true },
+    })
+    if (!card) {
+      return NextResponse.json({ error: 'Cartão não encontrado' }, { status: 404 })
+    }
+  } else {
+    const account = await prisma.account.findFirst({
+      where: { id: resolvedAccountId ?? '', userId: session.user.id },
+      select: { id: true },
+    })
+    if (!account) {
+      return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
+    }
   }
 
   if (input.categoryId) {
@@ -144,7 +158,8 @@ export async function POST(request: NextRequest) {
       kind: 'TRANSACTION',
       type: input.type,
       categoryId: input.categoryId ?? null,
-      accountId: input.accountId,
+      accountId: resolvedAccountId,
+      creditCardId: resolvedCardId,
       dayOfMonth: input.dayOfMonth,
       notifyDaysBefore: input.notifyDaysBefore,
     },

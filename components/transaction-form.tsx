@@ -7,8 +7,9 @@ import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
 import Modal from '@/components/modal'
 import { formatBRL } from '@/lib/format'
+import { flattenCategories } from '@/lib/category'
 import type { TransactionType } from '@/lib/categories'
-import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
+import type { AccountDto, CategoryDto, CreditCardDto, TransactionDto } from '@/lib/types'
 
 type Props = {
   open: boolean
@@ -17,6 +18,7 @@ type Props = {
   transaction?: TransactionDto | null
   accounts: AccountDto[]
   categories: CategoryDto[]
+  creditCards: CreditCardDto[]
 }
 
 export default function TransactionForm({
@@ -26,6 +28,7 @@ export default function TransactionForm({
   transaction,
   accounts,
   categories,
+  creditCards,
 }: Props) {
   if (!open) return null
   return (
@@ -36,6 +39,7 @@ export default function TransactionForm({
       onSaved={onSaved}
       accounts={accounts}
       categories={categories}
+      creditCards={creditCards}
     />
   )
 }
@@ -46,6 +50,7 @@ type BodyProps = {
   onSaved: () => void
   accounts: AccountDto[]
   categories: CategoryDto[]
+  creditCards: CreditCardDto[]
 }
 
 function TransactionFormBody({
@@ -54,6 +59,7 @@ function TransactionFormBody({
   onSaved,
   accounts,
   categories,
+  creditCards,
 }: BodyProps) {
   const [type, setType] = useState<TransactionType>(
     transaction?.transactionType ?? 'INCOME'
@@ -64,6 +70,10 @@ function TransactionFormBody({
   )
   const [accountId, setAccountId] = useState(
     transaction?.accountId ?? accounts[0]?.id ?? ''
+  )
+  const [cardId, setCardId] = useState(transaction?.creditCardId ?? '')
+  const [paySource, setPaySource] = useState<'ACCOUNT' | 'CARD'>(
+    transaction?.creditCardId ? 'CARD' : 'ACCOUNT'
   )
   const [categoryId, setCategoryId] = useState(
     transaction?.categoryId ?? ''
@@ -81,7 +91,7 @@ function TransactionFormBody({
 
   const availableCategories = categories.filter((c) => c.type === type)
   const selectedAccount = accounts.find((a) => a.id === accountId)
-  const showTransferHint = selectedAccount !== undefined && selectedAccount.type !== 'CARTEIRA'
+  const showTransferHint = paySource === 'ACCOUNT' && selectedAccount !== undefined && selectedAccount.type !== 'CARTEIRA'
 
   function switchType(next: TransactionType) {
     setType(next)
@@ -93,11 +103,13 @@ function TransactionFormBody({
     setError('')
     setLoading(true)
     try {
+      const useCard = type === 'EXPENSE' && paySource === 'CARD' && !!cardId
       const payload = {
         transactionType: type,
         description,
         amount: Number(amount),
-        accountId,
+        accountId: useCard ? '' : accountId,
+        creditCardId: useCard ? cardId : null,
         categoryId: categoryId || null,
         date,
         ...(!transaction && type === 'EXPENSE' && installments > 1 ? { installments } : {}),
@@ -124,14 +136,9 @@ function TransactionFormBody({
   const inputClass =
     'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
 
-  const categoryOptions: SelectOption[] = [
-    { value: '', label: 'Selecione...', disabled: true },
-    ...availableCategories.map((c) => ({ value: c.id, label: c.name })),
-  ]
-  const accountOptions: SelectOption[] = [
-    { value: '', label: 'Selecione...', disabled: true },
-    ...accounts.map((a) => ({ value: a.id, label: a.name })),
-  ]
+  const categoryOptions: SelectOption[] = flattenCategories(availableCategories)
+  const accountOptions: SelectOption[] = accounts.map((a) => ({ value: a.id, label: a.name }))
+  const cardOptions: SelectOption[] = creditCards.map((c) => ({ value: c.id, label: c.name }))
 
   return (
     <Modal
@@ -206,6 +213,7 @@ function TransactionFormBody({
               value={categoryId}
               onChange={setCategoryId}
               options={categoryOptions}
+              placeholder="Selecione..."
               id="category"
               required
             />
@@ -238,16 +246,66 @@ function TransactionFormBody({
           </div>
 
           <div>
-            <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
+            <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Pagamento <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
             </label>
-            <Select
-              value={accountId}
-              onChange={setAccountId}
-              options={accountOptions}
-              id="account"
-              required
-            />
+
+            {type === 'EXPENSE' && creditCards.length > 0 && (
+              <div role="tablist" className="mb-2 grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={paySource === 'ACCOUNT'}
+                  onClick={() => {
+                    setPaySource('ACCOUNT')
+                    setCardId('')
+                  }}
+                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                    paySource === 'ACCOUNT'
+                      ? 'bg-emerald-600 text-white shadow'
+                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  }`}
+                >
+                  Conta
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={paySource === 'CARD'}
+                  onClick={() => {
+                    setPaySource('CARD')
+                    setAccountId('')
+                  }}
+                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                    paySource === 'CARD'
+                      ? 'bg-emerald-600 text-white shadow'
+                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  }`}
+                >
+                  Cartão
+                </button>
+              </div>
+            )}
+
+            {type === 'EXPENSE' && paySource === 'CARD' ? (
+              <Select
+                value={cardId}
+                onChange={setCardId}
+                options={cardOptions}
+                placeholder="Selecione o cartão..."
+                id="card"
+                required
+              />
+            ) : (
+              <Select
+                value={accountId}
+                onChange={setAccountId}
+                options={accountOptions}
+                placeholder="Selecione..."
+                id="account"
+                required
+              />
+            )}
           </div>
 
           {type === 'EXPENSE' && !transaction && (

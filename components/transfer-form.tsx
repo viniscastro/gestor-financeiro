@@ -81,14 +81,9 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
             <Select
               value={fromAccountId}
               onChange={setFromAccountId}
-              options={[
-                { value: '', label: 'Selecione...', disabled: true },
-                ...accounts.map((a) => ({ value: a.id, label: a.name })),
-              ]}
-              placeholder="Selecione..."
+              options={accounts.map((a) => ({ value: a.id, label: a.name }))}
               id="fromAccount"
               required
-              className={inputClass}
             />
           </div>
 
@@ -99,16 +94,11 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
             <Select
               value={toAccountId}
               onChange={setToAccountId}
-              options={[
-                { value: '', label: 'Selecione...', disabled: true },
-                ...accounts
+              options={accounts
                   .filter((a) => a.id !== fromAccountId)
-                  .map((a) => ({ value: a.id, label: a.name })),
-              ]}
-              placeholder="Selecione..."
+                  .map((a) => ({ value: a.id, label: a.name }))}
               id="toAccount"
               required
-              className={inputClass}
             />
           </div>
 

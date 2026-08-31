@@ -84,8 +84,9 @@ export function exportMonthlyReportPdf(
       footStyles: { fillColor: [243, 244, 246], textColor: [40, 40, 40], fontStyle: 'bold' },
       alternateRowStyles: { fillColor: [249, 250, 251] },
       columnStyles: {
-        1: { halign: 'right' },
-        2: { halign: 'right' },
+        0: { cellWidth: 112 },
+        1: { cellWidth: 40, halign: 'center' },
+        2: { cellWidth: 28, halign: 'center' },
       },
     })
 
@@ -114,7 +115,12 @@ export function exportMonthlyReportPdf(
     headStyles: { fillColor: [16, 185, 129], textColor: [255, 255, 255], fontStyle: 'bold' },
     alternateRowStyles: { fillColor: [249, 250, 251] },
     columnStyles: {
-      3: { halign: 'right' },
+      0: { cellWidth: 19 },
+      1: { cellWidth: 17 },
+      2: { cellWidth: 41 },
+      3: { cellWidth: 25, halign: 'center' },
+      4: { cellWidth: 28 },
+      5: { cellWidth: 32 },
     },
     didParseCell(data) {
       if (data.section === 'body' && data.column.index === 1) {

@@ -4,7 +4,14 @@ import { prisma } from '@/lib/prisma'
 
 async function requireAdmin() {
   const session = await auth()
-  if (!session?.user?.id || session.user.role !== 'ADMIN') {
+  if (!session?.user?.id) {
+    return null
+  }
+  const adminUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true },
+  })
+  if (adminUser?.role !== 'ADMIN') {
     return null
   }
   return session

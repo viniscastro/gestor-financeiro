@@ -59,7 +59,9 @@ export const ModelName = {
   Transaction: 'Transaction',
   SavingsGoal: 'SavingsGoal',
   Notification: 'Notification',
-  PushSubscription: 'PushSubscription'
+  PushSubscription: 'PushSubscription',
+  CreditCard: 'CreditCard',
+  CreditCardStatement: 'CreditCardStatement'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -83,9 +85,11 @@ export const UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   password: 'password',
+  role: 'role',
   image: 'image',
   theme: 'theme',
   dashboardCards: 'dashboardCards',
+  monthlyReport: 'monthlyReport',
   emailVerified: 'emailVerified',
   verificationCode: 'verificationCode',
   verificationExpires: 'verificationExpires',
@@ -126,6 +130,7 @@ export const CategoryScalarFieldEnum = {
   color: 'color',
   icon: 'icon',
   position: 'position',
+  parentId: 'parentId',
   createdAt: 'createdAt'
 } as const
 
@@ -154,11 +159,13 @@ export const RecurringRuleScalarFieldEnum = {
   categoryId: 'categoryId',
   accountId: 'accountId',
   toAccountId: 'toAccountId',
+  creditCardId: 'creditCardId',
   dayOfMonth: 'dayOfMonth',
   active: 'active',
   notifyDaysBefore: 'notifyDaysBefore',
   lastNotifiedAt: 'lastNotifiedAt',
   lastMaterializedMonth: 'lastMaterializedMonth',
+  lastPaidMonth: 'lastPaidMonth',
   position: 'position',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -183,7 +190,8 @@ export const TransactionScalarFieldEnum = {
   occurrenceMonth: 'occurrenceMonth',
   installmentGroupId: 'installmentGroupId',
   installmentCurrent: 'installmentCurrent',
-  installmentTotal: 'installmentTotal'
+  installmentTotal: 'installmentTotal',
+  creditCardId: 'creditCardId'
 } as const
 
 export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
@@ -233,6 +241,38 @@ export const PushSubscriptionScalarFieldEnum = {
 } as const
 
 export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
+
+
+export const CreditCardScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  last4: 'last4',
+  creditLimit: 'creditLimit',
+  closingDay: 'closingDay',
+  dueDay: 'dueDay',
+  color: 'color',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CreditCardScalarFieldEnum = (typeof CreditCardScalarFieldEnum)[keyof typeof CreditCardScalarFieldEnum]
+
+
+export const CreditCardStatementScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  cardId: 'cardId',
+  monthKey: 'monthKey',
+  dueDate: 'dueDate',
+  status: 'status',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CreditCardStatementScalarFieldEnum = (typeof CreditCardStatementScalarFieldEnum)[keyof typeof CreditCardStatementScalarFieldEnum]
 
 
 export const SortOrder = {

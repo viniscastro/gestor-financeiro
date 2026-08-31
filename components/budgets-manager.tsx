@@ -9,6 +9,7 @@ import Select from '@/components/select'
 import Modal from '@/components/modal'
 import { toast } from 'sonner'
 import { formatBRL } from '@/lib/format'
+import { flattenCategories } from '@/lib/category'
 import type { BudgetDto, CategoryDto } from '@/lib/types'
 
 export default function BudgetsManager() {
@@ -69,11 +70,11 @@ export default function BudgetsManager() {
 
   const expenseCategories = categories.filter((c) => c.type === 'EXPENSE')
   const budgetedIds = new Set(budgets.map((b) => b.categoryId))
-  const available = expenseCategories.filter((c) => !budgetedIds.has(c.id))
+  const available = expenseCategories.filter((c) => !budgetedIds.has(c.id) && c.children.length === 0)
 
   function openCreate() {
     setEditing(null)
-    setCategoryId(available[0]?.id ?? '')
+    setCategoryId('')
     setAmount('')
     setFormError('')
     setModalOpen(true)
@@ -291,12 +292,12 @@ export default function BudgetsManager() {
                   options={
                     editing
                       ? [{ value: editing.categoryId, label: editing.categoryName }]
-                      : available.map((c) => ({ value: c.id, label: c.name }))
+                      : flattenCategories(available)
                   }
+                  placeholder="Selecione..."
                   id="category"
                   required
                   disabled={Boolean(editing)}
-                  className={inputClass}
                 />
               </div>
               <div>

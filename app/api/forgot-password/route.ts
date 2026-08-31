@@ -14,56 +14,61 @@ const forgotSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
-  const rateLimited = withRateLimit(request, RATE_LIMITS.auth, 'forgot-password')
-  if (rateLimited) return rateLimited
-
-  let body: unknown
   try {
-    body = await request.json()
-  } catch {
-    return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
-  }
+    const rateLimited = withRateLimit(request, RATE_LIMITS.auth, 'forgot-password')
+    if (rateLimited) return rateLimited
 
-  const parsed = forgotSchema.safeParse(body)
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: parsed.error.issues[0]?.message ?? 'Dados inválidos' },
-      { status: 400 }
-    )
-  }
+    let body: unknown
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+    }
 
-  const { email } = parsed.data
-  const normalizedEmail = email.toLowerCase()
-
-  const user = await prisma.user.findUnique({
-    where: { email: normalizedEmail },
-  })
-
-  // Não revelar se o e-mail existe: para e-mails desconhecidos também retorna ok.
-  if (!user || !user.password) {
-    return NextResponse.json({ ok: true })
-  }
-
-  if (user.resetSentAt) {
-    const elapsed = Date.now() - user.resetSentAt.getTime()
-    if (elapsed < RESEND_COOLDOWN_MS) {
-      const waitSeconds = Math.ceil((RESEND_COOLDOWN_MS - elapsed) / 1000)
+    const parsed = forgotSchema.safeParse(body)
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: `Aguarde ${waitSeconds}s para reenviar o código.` },
-        { status: 429 }
+        { error: parsed.error.issues[0]?.message ?? 'Dados inválidos' },
+        { status: 400 }
       )
     }
-  }
 
-  const code = generateVerificationCode()
-  await storeResetCode(user.id, code)
+    const { email } = parsed.data
+    const normalizedEmail = email.toLowerCase()
 
-  try {
-    await sendPasswordResetCode(normalizedEmail, code)
+    const user = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+    })
+
+    // Não revelar se o e-mail existe: para e-mails desconhecidos também retorna ok.
+    if (!user || !user.password) {
+      return NextResponse.json({ ok: true })
+    }
+
+    if (user.resetSentAt) {
+      const elapsed = Date.now() - user.resetSentAt.getTime()
+      if (elapsed < RESEND_COOLDOWN_MS) {
+        const waitSeconds = Math.ceil((RESEND_COOLDOWN_MS - elapsed) / 1000)
+        return NextResponse.json(
+          { error: `Aguarde ${waitSeconds}s para reenviar o código.` },
+          { status: 429 }
+        )
+      }
+    }
+
+    const code = generateVerificationCode()
+    await storeResetCode(user.id, code)
+
+    try {
+      await sendPasswordResetCode(normalizedEmail, code)
+    } catch {
+      console.error(`[forgot-password] Falha ao enviar e-mail para ${normalizedEmail}. Código: ${code}`)
+    }
+
+    return NextResponse.json({ ok: true })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Erro desconhecido'
-    return NextResponse.json({ error: message }, { status: 500 })
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('[forgot-password] Erro inesperado:', message)
+    return NextResponse.json({ error: 'Erro interno. Tente novamente.' }, { status: 500 })
   }
-
-  return NextResponse.json({ ok: true })
 }

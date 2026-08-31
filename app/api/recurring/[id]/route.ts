@@ -7,6 +7,7 @@ import { amountToCents } from '@/lib/transactions'
 
 const ruleInclude = {
   account: { select: { name: true, color: true } },
+  creditCard: { select: { name: true } },
   category: { select: { name: true, color: true } },
   toAccount: { select: { name: true, color: true } },
 } as const
@@ -45,8 +46,8 @@ export async function PATCH(request: NextRequest, ctx: Params) {
       { status: 400 }
     )
   }
-  if (kind === 'TRANSACTION' && !input.accountId) {
-    return NextResponse.json({ error: 'Escolha a conta' }, { status: 400 })
+  if (kind === 'TRANSACTION' && !input.accountId && !input.creditCardId) {
+    return NextResponse.json({ error: 'Escolha a conta ou o cartão' }, { status: 400 })
   }
 
   const accountsToCheck = new Set<string>()
@@ -66,6 +67,16 @@ export async function PATCH(request: NextRequest, ctx: Params) {
     })
     if (found !== accountsToCheck.size) {
       return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
+    }
+  }
+
+  if (input.creditCardId) {
+    const card = await prisma.creditCard.findFirst({
+      where: { id: input.creditCardId, userId: session.user.id },
+      select: { id: true },
+    })
+    if (!card) {
+      return NextResponse.json({ error: 'Cartão não encontrado' }, { status: 404 })
     }
   }
 
@@ -90,7 +101,7 @@ export async function PATCH(request: NextRequest, ctx: Params) {
     data.kind = 'TRANSFER'
     data.type = 'TRANSFER'
     data.category = { disconnect: true }
-    if (input.accountId !== undefined) {
+    if (input.accountId) {
       data.account = { connect: { id: input.accountId } }
     }
     if (input.toAccountId !== undefined) {
@@ -106,8 +117,20 @@ export async function PATCH(request: NextRequest, ctx: Params) {
         ? { connect: { id: input.categoryId } }
         : { disconnect: true }
     }
-    if (input.accountId !== undefined) {
+    if (input.accountId && !input.creditCardId) {
       data.account = { connect: { id: input.accountId } }
+      data.creditCard = { disconnect: true }
+    }
+    if (input.creditCardId !== undefined) {
+      data.creditCard = input.creditCardId
+        ? { connect: { id: input.creditCardId } }
+        : { disconnect: true }
+    }
+    if (input.creditCardId) {
+      data.account = { disconnect: true }
+    }
+    if (input.accountId === null && !input.creditCardId) {
+      data.account = { disconnect: true }
     }
     data.toAccount = { disconnect: true }
   }

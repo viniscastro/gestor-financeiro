@@ -10,8 +10,16 @@ export async function GET() {
   }
 
   const categories = await prisma.category.findMany({
-    where: { userId: session.user.id },
+    where: { userId: session.user.id, parentId: null },
     orderBy: { position: 'asc' },
+    include: {
+      children: {
+        orderBy: { position: 'asc' },
+        include: {
+          children: { orderBy: { position: 'asc' } },
+        },
+      },
+    },
   })
 
   return NextResponse.json(categories.map(toCategoryDto))
@@ -38,7 +46,20 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { name, type, color, icon } = parsed.data
+  const { name, type, color, icon, parentId } = parsed.data
+
+  if (parentId) {
+    const parent = await prisma.category.findFirst({
+      where: { id: parentId, userId: session.user.id },
+      select: { id: true, type: true },
+    })
+    if (!parent) {
+      return NextResponse.json({ error: 'Categoria pai não encontrada' }, { status: 404 })
+    }
+    if (parent.type !== type) {
+      return NextResponse.json({ error: 'Subcategoria deve ser do mesmo tipo da pai' }, { status: 400 })
+    }
+  }
 
   const existing = await prisma.category.findUnique({
     where: {
@@ -57,6 +78,11 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  const maxPos = await prisma.category.aggregate({
+    where: { userId: session.user.id, parentId: parentId ?? null },
+    _max: { position: true },
+  })
+
   const category = await prisma.category.create({
     data: {
       userId: session.user.id,
@@ -64,6 +90,8 @@ export async function POST(request: NextRequest) {
       type,
       color,
       icon,
+      parentId: parentId ?? null,
+      position: (maxPos._max.position ?? -1) + 1,
     },
   })
 

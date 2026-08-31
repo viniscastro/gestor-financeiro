@@ -14,7 +14,15 @@ export const dynamic = 'force-dynamic'
 
 export default async function AdminPage() {
   const session = await auth()
-  if (!session?.user?.id || session.user.role !== 'ADMIN') {
+  if (!session?.user?.id) {
+    redirect('/dashboard')
+  }
+
+  const adminUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true },
+  })
+  if (adminUser?.role !== 'ADMIN') {
     redirect('/dashboard')
   }
 

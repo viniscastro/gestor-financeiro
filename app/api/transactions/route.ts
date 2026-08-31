@@ -7,6 +7,7 @@ import { notifyTransaction } from '@/lib/notifications'
 
 const transactionInclude = {
   account: { select: { name: true, color: true } },
+  creditCard: { select: { name: true } },
   category: { select: { id: true, name: true, color: true } },
 } as const
 
@@ -60,14 +61,29 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { transactionType, description, amount, accountId, categoryId, date, recurringId, occurrenceMonth, installments } = parsed.data
+  const { transactionType, description, amount, accountId, creditCardId, categoryId, date, recurringId, occurrenceMonth, installments } = parsed.data
 
-  const account = await prisma.account.findFirst({
-    where: { id: accountId, userId: session.user.id },
-    select: { id: true },
-  })
-  if (!account) {
-    return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
+  let resolvedAccountId: string | null = accountId ?? null
+  let resolvedCardId: string | null = creditCardId ?? null
+
+  if (transactionType === 'EXPENSE' && creditCardId) {
+    const card = await prisma.creditCard.findFirst({
+      where: { id: creditCardId, userId: session.user.id },
+      select: { id: true },
+    })
+    if (!card) {
+      return NextResponse.json({ error: 'Cartão não encontrado' }, { status: 404 })
+    }
+    resolvedAccountId = null
+  } else {
+    const account = await prisma.account.findFirst({
+      where: { id: accountId!, userId: session.user.id },
+      select: { id: true },
+    })
+    if (!account) {
+      return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
+    }
+    resolvedCardId = null
   }
 
   if (categoryId) {
@@ -93,7 +109,8 @@ export async function POST(request: NextRequest) {
         amount: totalCents,
         date: new Date(date),
         userId: session.user.id,
-        accountId,
+        accountId: resolvedAccountId,
+        creditCardId: resolvedCardId,
         categoryId: categoryId ?? null,
         recurringId: recurringId ?? null,
         occurrenceMonth: occurrenceMonth ?? null,
@@ -123,7 +140,8 @@ export async function POST(request: NextRequest) {
           amount: installmentAmount,
           date: installmentDate,
           userId: session.user.id,
-          accountId,
+          accountId: resolvedAccountId,
+          creditCardId: resolvedCardId,
           categoryId: categoryId ?? null,
           installmentGroupId: groupId,
           installmentCurrent: i + 1,

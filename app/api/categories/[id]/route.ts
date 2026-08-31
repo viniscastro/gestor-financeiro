@@ -28,12 +28,12 @@ export async function PATCH(request: NextRequest, ctx: Params) {
     )
   }
 
-  const { name, type, color, icon } = parsed.data
+  const { name, type, color, icon, parentId } = parsed.data
 
   try {
     const category = await prisma.category.update({
       where: { id, userId: session.user.id },
-      data: { name, type, color, icon },
+      data: { name, type, color, icon, parentId: parentId ?? null },
     })
     return NextResponse.json(toCategoryDto(category))
   } catch {

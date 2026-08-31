@@ -127,7 +127,7 @@ export default function GoalsManager() {
   function openTopup(goalId?: string) {
     setTopupGoalId(goalId ?? (goals.find((g) => g.percent < 100)?.id ?? ''))
     setTopupAmount('')
-    setTopupAccountId(accounts[0]?.id ?? '')
+    setTopupAccountId('')
     setTopupLoading(false)
     setTopupOpen(true)
   }
@@ -414,7 +414,6 @@ export default function GoalsManager() {
                   options={goalOptions.length > 0 ? goalOptions : [{ value: '', label: 'Nenhuma meta disponível' }]}
                   placeholder="Selecione a meta"
                   required
-                  className={inputClass}
                 />
               </div>
               <div>
@@ -440,7 +439,6 @@ export default function GoalsManager() {
                   options={accountOptions}
                   placeholder="Selecione a conta"
                   required
-                  className={inputClass}
                 />
               </div>
               <div className="flex gap-3 pt-2">
@@ -557,7 +555,6 @@ export default function GoalsManager() {
                     onChange={setAccountId}
                     options={accountOptions}
                     placeholder="Selecione a conta"
-                    className={inputClass}
                   />
                 </div>
               )}
@@ -588,7 +585,7 @@ export default function GoalsManager() {
                 </div>
                 {autoEnabled && (
                   <div className="mt-3 space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <div>
                         <label htmlFor="autoAmount" className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
                           Valor (R$) <span className="text-rose-500">*</span>
@@ -628,7 +625,6 @@ export default function GoalsManager() {
                         options={accountOptions}
                         placeholder="Selecione a conta"
                         required
-                        className={inputClass}
                       />
                     </div>
                   </div>

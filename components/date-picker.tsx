@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState, useId } from 'react'
+import { useEffect, useRef, useState, useId, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { DayPicker } from 'react-day-picker'
 import { ptBR } from 'date-fns/locale'
 import { format, parse } from 'date-fns'
@@ -96,6 +97,38 @@ export default function DatePicker({ value, onChange, required, className }: Pro
     }
   }, [open])
 
+  const [pos, setPos] = useState<{ top: number; left: number; width: number } | null>(null)
+
+  const updatePos = useCallback(() => {
+    if (!inputRef.current) return
+    const r = inputRef.current.getBoundingClientRect()
+    const width = Math.min(320, window.innerWidth - 16)
+    const left = Math.max(8, Math.min(r.left, window.innerWidth - 16 - width))
+    const calHeight = 340
+    const top =
+      r.bottom + 6 + calHeight <= window.innerHeight
+        ? r.bottom + 6
+        : Math.max(8, r.top - 6 - calHeight)
+    setPos({ top, left, width })
+  }, [])
+
+  const openCalendar = useCallback(() => {
+    updatePos()
+    commitInput()
+    setOpen(true)
+  }, [updatePos, commitInput])
+
+  useEffect(() => {
+    if (!open) return
+    const listeners: Parameters<typeof window.addEventListener>[] = []
+    window.addEventListener('scroll', updatePos, true)
+    window.addEventListener('resize', updatePos)
+    return () => {
+      window.removeEventListener('scroll', updatePos, true)
+      window.removeEventListener('resize', updatePos)
+    }
+  }, [open, updatePos])
+
   return (
     <div ref={ref} className={`relative ${className ?? ''}`}>
       <div className="relative">
@@ -127,22 +160,22 @@ export default function DatePicker({ value, onChange, required, className }: Pro
         <button
           type="button"
           aria-label="Abrir calendário"
-          onClick={() => {
-            commitInput()
-            setOpen((o) => !o)
-          }}
+          onClick={openCalendar}
           className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
         >
           <CalendarIcon className="h-4 w-4" />
         </button>
       </div>
 
-      {open && (
-        <div
-          role="dialog"
-          aria-label="Selecionar data"
-          className="absolute right-0 top-full z-50 mt-1 max-w-[calc(100vw-2rem)] overflow-auto rounded-xl border border-zinc-200 bg-white p-3 shadow-xl dark:border-zinc-700 dark:bg-zinc-800"
-        >
+      {open &&
+        createPortal(
+          <div
+            role="dialog"
+            aria-label="Selecionar data"
+            style={pos ? { top: pos.top, left: pos.left, width: pos.width } : undefined}
+            onClick={(e) => e.stopPropagation()}
+            className="fixed z-[60] max-h-[70vh] overflow-y-auto rounded-xl border border-zinc-200 bg-white p-3 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800"
+          >
           <DayPicker
             mode="single"
             selected={selected}
@@ -163,14 +196,14 @@ export default function DatePicker({ value, onChange, required, className }: Pro
               button_next:
                 'inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700',
               chevron: 'h-4 w-4',
-              month_grid: 'w-full border-collapse',
-              weekdays: 'flex mb-1',
+              month_grid: 'w-full',
+              weekdays: 'grid grid-cols-7 gap-1 mb-1',
               weekday:
-                'w-11 h-8 text-[11px] font-medium text-zinc-400 dark:text-zinc-500 flex items-center justify-center',
-              week: 'flex w-full',
+                'flex h-8 items-center justify-center text-[11px] font-medium text-zinc-400 dark:text-zinc-500',
+              week: 'grid w-full grid-cols-7 gap-1',
+              day: 'w-full',
               day_button:
-                'relative flex h-11 w-11 items-center justify-center rounded-lg text-sm text-zinc-900 transition hover:bg-emerald-100 dark:text-zinc-100 dark:hover:bg-emerald-900/30',
-              day: 'w-11 h-11 p-0',
+                'relative flex aspect-square w-full items-center justify-center rounded-lg text-sm text-zinc-900 transition hover:bg-emerald-100 dark:text-zinc-100 dark:hover:bg-emerald-900/30',
               selected:
                 'bg-emerald-600 text-white hover:bg-emerald-600 dark:bg-emerald-500 dark:text-white dark:hover:bg-emerald-500',
               today: 'font-bold text-emerald-600 dark:text-emerald-400',
@@ -178,8 +211,9 @@ export default function DatePicker({ value, onChange, required, className }: Pro
               disabled: 'text-zinc-300 dark:text-zinc-600',
             }}
           />
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   )
 }

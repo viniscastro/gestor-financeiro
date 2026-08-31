@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertTriangle, LoaderCircle } from 'lucide-react'
+import { AlertTriangle, LoaderCircle, ShieldCheck } from 'lucide-react'
 import Modal from '@/components/modal'
 
 interface ConfirmDialogProps {
@@ -32,8 +32,16 @@ export default function ConfirmDialog({
   return (
     <Modal open={open} onClose={onCancel} title={title}>
       <div className="flex items-start gap-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-500">
-          <AlertTriangle aria-hidden="true" className="h-5 w-5 text-white" />
+        <div
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+            confirmVariant === 'primary' ? 'bg-emerald-500' : 'bg-rose-500'
+          }`}
+        >
+          {confirmVariant === 'primary' ? (
+            <ShieldCheck aria-hidden="true" className="h-5 w-5 text-white" />
+          ) : (
+            <AlertTriangle aria-hidden="true" className="h-5 w-5 text-white" />
+          )}
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm text-zinc-500 dark:text-zinc-400">

@@ -52,6 +52,10 @@ export async function PATCH(request: NextRequest) {
     data.dashboardCards = JSON.stringify(body.dashboardCards)
   }
 
+  if (body.monthlyReport !== undefined) {
+    data.monthlyReport = Boolean(body.monthlyReport)
+  }
+
   if (Object.keys(data).length === 0) {
     return NextResponse.json({ error: 'Nenhum dado para atualizar' }, { status: 400 })
   }

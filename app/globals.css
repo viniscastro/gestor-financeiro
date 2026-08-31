@@ -39,12 +39,19 @@ body {
 
 button,
 a,
-[role="button"] {
+[role="button"],
+label,
+summary,
+select,
+input[type="checkbox"],
+input[type="radio"] {
   cursor: pointer;
 }
 
 button:disabled,
-[role="button"]:disabled {
+[role="button"]:disabled,
+select:disabled,
+input:disabled {
   cursor: not-allowed;
 }
 

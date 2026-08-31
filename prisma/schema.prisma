@@ -16,6 +16,7 @@ model User {
   image                String?
   theme                String          @default("light")
   dashboardCards       String?
+  monthlyReport        Boolean         @default(false)
   emailVerified        DateTime?
   verificationCode     String?
   verificationExpires  DateTime?
@@ -36,6 +37,8 @@ model User {
   goals                SavingsGoal[]
   notifications        Notification[]
   pushSubscriptions    PushSubscription[]
+  creditCards          CreditCard[]
+  creditCardStatements CreditCardStatement[]
 }
 
 model Account {
@@ -67,6 +70,9 @@ model Category {
   color          String          @default("#78716c")
   icon           String          @default("tag")
   position       Int             @default(0)
+  parentId       String?
+  parent         Category?       @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children       Category[]      @relation("CategoryTree")
   createdAt      DateTime        @default(now())
   transactions   Transaction[]
   budgets        Budget[]
@@ -99,15 +105,18 @@ model RecurringRule {
   type             String
   categoryId       String?
   category         Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  accountId        String
-  account          Account       @relation("RecurringFromAccount", fields: [accountId], references: [id], onDelete: Cascade)
+  accountId        String?
+  account          Account?       @relation("RecurringFromAccount", fields: [accountId], references: [id], onDelete: Cascade)
   toAccountId      String?
   toAccount        Account?      @relation("RecurringToAccount", fields: [toAccountId], references: [id], onDelete: SetNull)
+  creditCardId     String?
+  creditCard       CreditCard?   @relation(fields: [creditCardId], references: [id], onDelete: SetNull)
   dayOfMonth       Int
   active           Boolean       @default(true)
   notifyDaysBefore     Int           @default(3)
   lastNotifiedAt       DateTime?
   lastMaterializedMonth String?
+  lastPaidMonth         String?
   position             Int           @default(0)
   createdAt            DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
@@ -137,6 +146,8 @@ model Transaction {
   installmentGroupId String?
   installmentCurrent Int?
   installmentTotal   Int?
+  creditCardId       String?
+  creditCard         CreditCard? @relation(fields: [creditCardId], references: [id], onDelete: SetNull)
 
   @@index([userId, date])
   @@index([userId, accountId])
@@ -192,4 +203,41 @@ model PushSubscription {
 
   @@unique([userId, endpoint])
   @@index([userId])
+}
+
+model CreditCard {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  last4         String?
+  creditLimit   Int       @default(0)
+  closingDay    Int       @default(1)
+  dueDay        Int       @default(10)
+  color         String    @default("#10b981")
+  position      Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  transactions  Transaction[]
+  statements    CreditCardStatement[]
+  recurringRules RecurringRule[]
+
+  @@index([userId])
+}
+
+model CreditCardStatement {
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cardId    String
+  card      CreditCard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  monthKey  String
+  dueDate   DateTime
+  status    String     @default("OPEN")
+  paidAt    DateTime?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@unique([cardId, monthKey])
+  @@index([userId, monthKey])
 }

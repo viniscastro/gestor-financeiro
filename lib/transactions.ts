@@ -8,7 +8,8 @@ export const transactionSchema = z.object({
   amount: z
     .number()
     .positive('O valor deve ser maior que zero'),
-  accountId: z.string().min(1, 'Escolha uma conta'),
+  accountId: z.string().nullable().optional(),
+  creditCardId: z.string().nullable().optional(),
   categoryId: z.string().nullable().optional(),
   date: z.string().min(1, 'Informe a data'),
   recurringId: z.string().nullable().optional(),
@@ -33,10 +34,12 @@ type TransactionWithRelations = {
   transferGroupId: string | null
   recurringId: string | null
   occurrenceMonth: string | null
+  creditCardId: string | null
   installmentGroupId: string | null
   installmentCurrent: number | null
   installmentTotal: number | null
   account: { name: string; color: string } | null
+  creditCard?: { name: string } | null
   category: { id: string; name: string; color: string } | null
 }
 
@@ -50,6 +53,8 @@ export function toTransactionDto(t: TransactionWithRelations): TransactionDto {
     accountId: t.accountId,
     accountName: t.account?.name ?? '',
     accountColor: t.account?.color ?? '#10b981',
+    creditCardId: t.creditCardId,
+    creditCardName: t.creditCard?.name ?? null,
     categoryId: t.category?.id ?? null,
     categoryName: t.category?.name ?? null,
     categoryColor: t.category?.color ?? null,

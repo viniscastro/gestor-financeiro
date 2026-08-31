@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Bell, Check, CheckCheck, CircleAlert, Download, Info, Sparkles, Trash2 } from 'lucide-react'
 import { formatBRL, formatDate } from '@/lib/format'
+import ConfirmDialog from '@/components/confirm-dialog'
 
 type Notification = {
   id: string
@@ -40,6 +41,8 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const [confirmDelete, setConfirmDelete] = useState<Notification | null>(null)
+  const [confirmClearAll, setConfirmClearAll] = useState(false)
 
   const unread = notifications.filter((n) => !n.read).length
 
@@ -146,7 +149,7 @@ export default function NotificationBell() {
               {notifications.length > 0 && (
                 <button
                   type="button"
-                  onClick={clearAll}
+                  onClick={() => setConfirmClearAll(true)}
                   className="rounded-lg p-1.5 text-zinc-400 transition hover:bg-zinc-100 hover:text-red-500 dark:hover:bg-zinc-700"
                   title="Limpar todas"
                   aria-label="Limpar todas"
@@ -211,7 +214,7 @@ export default function NotificationBell() {
                       )}
                       <button
                         type="button"
-                        onClick={() => deleteNotification(n.id)}
+                        onClick={() => setConfirmDelete(n)}
                         className="rounded p-1.5 text-zinc-400 transition hover:bg-zinc-200 hover:text-red-500 dark:hover:bg-zinc-600"
                         title="Excluir"
                         aria-label="Excluir notificação"
@@ -226,6 +229,29 @@ export default function NotificationBell() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!confirmDelete}
+        title="Excluir notificação"
+        message={`Tem certeza que deseja excluir a notificação "${confirmDelete?.title}"? Esta ação não pode ser desfeita.`}
+        confirmLabel="Excluir"
+        confirmVariant="danger"
+        onConfirm={() => confirmDelete && deleteNotification(confirmDelete.id)}
+        onCancel={() => setConfirmDelete(null)}
+      />
+
+      <ConfirmDialog
+        open={confirmClearAll}
+        title="Limpar todas as notificações"
+        message="Tem certeza que deseja excluir todas as notificações? Esta ação não pode ser desfeita."
+        confirmLabel="Limpar todas"
+        confirmVariant="danger"
+        onConfirm={() => {
+          clearAll()
+          setConfirmClearAll(false)
+        }}
+        onCancel={() => setConfirmClearAll(false)}
+      />
     </div>
   )
 }

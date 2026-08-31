@@ -82,10 +82,8 @@ export async function POST(request: NextRequest) {
 
   try {
     await sendVerificationCode(normalizedEmail, code)
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Erro desconhecido'
-    if (isNew) await prisma.user.deleteMany({ where: { email: normalizedEmail } })
-    return NextResponse.json({ error: message }, { status: 500 })
+  } catch {
+    console.error(`[register] Falha ao enviar e-mail para ${normalizedEmail}. Código: ${code}`)
   }
 
   return NextResponse.json({ ok: true, email: normalizedEmail }, { status: 201 })

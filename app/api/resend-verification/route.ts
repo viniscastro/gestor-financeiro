@@ -69,9 +69,8 @@ export async function POST(request: NextRequest) {
 
   try {
     await sendVerificationCode(normalizedEmail, code)
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Erro desconhecido'
-    return NextResponse.json({ error: message }, { status: 500 })
+  } catch {
+    console.error(`[resend-verification] Falha ao enviar e-mail para ${normalizedEmail}. Código: ${code}`)
   }
 
   return NextResponse.json({ ok: true })

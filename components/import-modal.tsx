@@ -199,6 +199,7 @@ export default function ImportModal({ open, onClose, onSaved, accounts, categori
                 value={accountId}
                 onChange={setAccountId}
                 options={accountOptions}
+                placeholder="Selecione..."
                 className="w-full"
               />
             </div>

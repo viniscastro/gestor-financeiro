@@ -7,6 +7,7 @@ import { signOut } from 'next-auth/react'
 import {
   ArrowLeftRight,
   Calculator,
+  CreditCard,
   LayoutGrid,
   LayoutDashboard,
   LoaderCircle,
@@ -41,6 +42,7 @@ const NAV_ITEMS = [
   { href: '/budgets', label: 'Orçamentos', icon: Calculator },
   { href: '/goals', label: 'Metas', icon: Target },
   { href: '/recurring', label: 'Recorrentes', icon: Repeat },
+  { href: '/cards', label: 'Cartões', icon: CreditCard },
   { href: '/stats', label: 'Estatísticas', icon: PieChart },
   { href: '/account', label: 'Conta', icon: Settings },
 ]
@@ -167,14 +169,14 @@ export default function Sidebar({ user }: { user: SessionUser }) {
       </button>
       )}
 
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-[#0e0e12] lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-y-auto border-r border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-[#0e0e12] lg:flex">
         {nav}
       </aside>
 
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
-          <aside id="mobile-nav" className="absolute inset-y-0 left-0 flex w-64 flex-col border-r border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-[#0e0e12]">
+          <aside id="mobile-nav" className="absolute inset-y-0 left-0 flex w-64 flex-col overflow-y-auto border-r border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-[#0e0e12]">
             {nav}
           </aside>
         </div>

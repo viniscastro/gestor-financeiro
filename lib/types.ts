@@ -11,6 +11,8 @@ export type TransactionDto = {
   accountId: string | null
   accountName: string
   accountColor: string
+  creditCardId: string | null
+  creditCardName: string | null
   categoryId: string | null
   categoryName: string | null
   categoryColor: string | null
@@ -39,6 +41,8 @@ export type CategoryDto = {
   color: string
   icon: string
   position: number
+  parentId: string | null
+  children: CategoryDto[]
 }
 
 export type BudgetDto = {
@@ -72,9 +76,11 @@ export type RecurringRuleDto = {
   categoryId: string | null
   categoryName: string | null
   categoryColor: string | null
-  accountId: string
+  accountId: string | null
   accountName: string
   accountColor: string
+  creditCardId: string | null
+  creditCardName: string | null
   toAccountId: string | null
   toAccountName: string | null
   toAccountColor: string | null
@@ -84,3 +90,27 @@ export type RecurringRuleDto = {
   position: number
   nextDate: string
 }
+
+export type CreditCardDto = {
+  id: string
+  name: string
+  last4: string | null
+  creditLimit: number
+  closingDay: number
+  dueDay: number
+  color: string
+  position: number
+}
+
+export type CreditCardStatementDto = {
+  id: string
+  cardId: string
+  cardName: string
+  monthlyLabel: string
+  monthKey: string
+  dueDate: string
+  status: 'OPEN' | 'PAID'
+  totalAmount: number
+  paidAt: string | null
+}
+

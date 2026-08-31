@@ -490,11 +490,6 @@ export type AccountSumOrderByAggregateInput = {
   position?: Prisma.SortOrder
 }
 
-export type AccountScalarRelationFilter = {
-  is?: Prisma.AccountWhereInput
-  isNot?: Prisma.AccountWhereInput
-}
-
 export type AccountNullableScalarRelationFilter = {
   is?: Prisma.AccountWhereInput | null
   isNot?: Prisma.AccountWhereInput | null
@@ -562,10 +557,12 @@ export type AccountCreateNestedOneWithoutRecurringIncomingInput = {
   connect?: Prisma.AccountWhereUniqueInput
 }
 
-export type AccountUpdateOneRequiredWithoutRecurringRulesNestedInput = {
+export type AccountUpdateOneWithoutRecurringRulesNestedInput = {
   create?: Prisma.XOR<Prisma.AccountCreateWithoutRecurringRulesInput, Prisma.AccountUncheckedCreateWithoutRecurringRulesInput>
   connectOrCreate?: Prisma.AccountCreateOrConnectWithoutRecurringRulesInput
   upsert?: Prisma.AccountUpsertWithoutRecurringRulesInput
+  disconnect?: Prisma.AccountWhereInput | boolean
+  delete?: Prisma.AccountWhereInput | boolean
   connect?: Prisma.AccountWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutRecurringRulesInput, Prisma.AccountUpdateWithoutRecurringRulesInput>, Prisma.AccountUncheckedUpdateWithoutRecurringRulesInput>
 }

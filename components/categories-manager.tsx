@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import {
+  ChevronDown,
   GripVertical,
   LoaderCircle,
   Pencil,
@@ -16,6 +17,7 @@ import type { CategoryDto } from '@/lib/types'
 import CategoryIcon from '@/components/category-icon'
 import ConfirmDialog from '@/components/confirm-dialog'
 import Modal from '@/components/modal'
+import Select from '@/components/select'
 import { toast } from 'sonner'
 import { CATEGORY_COLORS, CATEGORY_ICONS } from '@/lib/categories'
 import ColorPicker from '@/components/color-picker'
@@ -29,12 +31,14 @@ export default function CategoriesManager() {
   const [newType, setNewType] = useState<TransactionType>('INCOME')
   const [newColor, setNewColor] = useState<string>(CATEGORY_COLORS[0])
   const [newIcon, setNewIcon] = useState<string>(CATEGORY_ICONS[0])
+  const [newParentId, setNewParentId] = useState<string>('')
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
   const [tab, setTab] = useState<TransactionType>('INCOME')
   const [editing, setEditing] = useState<CategoryDto | null>(null)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<CategoryDto | null>(null)
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
   const dragItem = useRef<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const [touchDragging, setTouchDragging] = useState(false)
@@ -45,9 +49,9 @@ export default function CategoriesManager() {
       const grip = (e.target as HTMLElement).closest('[data-touch-grip]')
       if (!grip) return
       e.preventDefault()
-      const li = grip.closest('li[data-drag-index]')
-      if (!li) return
-      const idx = Number(li.getAttribute('data-drag-index'))
+      const item = grip.closest('[data-drag-index]')
+      if (!item) return
+      const idx = Number(item.getAttribute('data-drag-index'))
       if (isNaN(idx)) return
       touchCurrentIndex.current = idx
       dragItem.current = idx
@@ -65,19 +69,23 @@ export default function CategoriesManager() {
       e.preventDefault()
       const touch = e.touches[0]
       const el = document.elementFromPoint(touch.clientX, touch.clientY)
-      const li = el?.closest('li[data-drag-index]') as HTMLElement | null
-      if (li) {
-        const idx = Number(li.getAttribute('data-drag-index'))
+      const item = el?.closest('[data-drag-index]') as HTMLElement | null
+      if (item) {
+        const idx = Number(item.getAttribute('data-drag-index'))
         if (!isNaN(idx)) setDragOverIndex(idx)
       }
     }
 
     function onEnd() {
       if (dragItem.current !== null && dragOverIndex !== null && dragItem.current !== dragOverIndex) {
-        const updated = [...categories]
-        const [moved] = updated.splice(dragItem.current, 1)
-        updated.splice(dragOverIndex, 0, moved)
+        const filteredNow = categories.filter((c) => c.type === tab)
+        const [moved] = filteredNow.splice(dragItem.current, 1)
+        filteredNow.splice(dragOverIndex, 0, moved)
+
+        const others = categories.filter((c) => c.type !== tab)
+        const updated = tab === 'INCOME' ? [...filteredNow, ...others] : [...others, ...filteredNow]
         setCategories(updated)
+
         const ids = updated.map((c) => c.id)
         fetch('/api/categories', {
           method: 'PATCH',
@@ -99,7 +107,7 @@ export default function CategoriesManager() {
       document.removeEventListener('touchend', onEnd)
       document.removeEventListener('touchcancel', onEnd)
     }
-  }, [touchDragging, dragOverIndex, categories])
+  }, [touchDragging, dragOverIndex, categories, tab])
 
   async function reload() {
     try {
@@ -133,12 +141,13 @@ export default function CategoriesManager() {
     return () => { cancelled = true }
   }, [])
 
-  function openCreate(type: TransactionType) {
+  function openCreate(type: TransactionType, parentId?: string) {
     setEditing(null)
     setNewName('')
     setNewType(type)
     setNewColor(CATEGORY_COLORS[0])
     setNewIcon(CATEGORY_ICONS[0])
+    setNewParentId(parentId ?? '')
     setFormError('')
     setModalOpen(true)
   }
@@ -149,6 +158,7 @@ export default function CategoriesManager() {
     setNewType(cat.type)
     setNewColor(cat.color)
     setNewIcon(cat.icon)
+    setNewParentId(cat.parentId ?? '')
     setFormError('')
     setModalOpen(true)
   }
@@ -163,6 +173,7 @@ export default function CategoriesManager() {
         type: newType,
         color: newColor,
         icon: newIcon,
+        parentId: newParentId || null,
       }
       const res = await fetch(
         editing ? `/api/categories/${editing.id}` : '/api/categories',
@@ -235,9 +246,12 @@ export default function CategoriesManager() {
       return
     }
 
-    const updated = [...categories]
-    const [moved] = updated.splice(dragItem.current, 1)
-    updated.splice(dragOverIndex, 0, moved)
+    const filteredNow = categories.filter((c) => c.type === tab)
+    const [moved] = filteredNow.splice(dragItem.current, 1)
+    filteredNow.splice(dragOverIndex, 0, moved)
+
+    const others = categories.filter((c) => c.type !== tab)
+    const updated = tab === 'INCOME' ? [...filteredNow, ...others] : [...others, ...filteredNow]
     setCategories(updated)
 
     const ids = updated.map((c) => c.id)
@@ -259,6 +273,110 @@ export default function CategoriesManager() {
     'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
 
   const filtered = categories.filter((c) => c.type === tab)
+
+  const parentOptions = filtered.map((c) => ({ value: c.id, label: c.name }))
+
+  function renderCategory(cat: CategoryDto, index: number, depth: number = 0) {
+    const hasChildren = cat.children.length > 0
+    const isCollapsed = collapsed.has(cat.id)
+    return (
+      <Fragment key={cat.id}>
+        <li
+          data-drag-index={depth === 0 ? index : undefined}
+          draggable={depth === 0}
+          onDragStart={depth === 0 ? () => handleDragStart(index) : undefined}
+          onDragEnter={depth === 0 ? () => handleDragEnter(index) : undefined}
+          onDragEnd={depth === 0 ? handleDragEnd : undefined}
+          onDragOver={depth === 0 ? handleDragOver : undefined}
+          className={`group flex items-center gap-2 py-3 transition hover:bg-zinc-50 dark:hover:bg-zinc-800 ${
+            depth === 0 && dragOverIndex === index ? 'border-t-2 border-t-emerald-500' : ''
+          }`}
+          style={{ paddingLeft: `${16 + depth * 40}px`, paddingRight: '16px' }}
+        >
+          {depth === 0 && (
+            <div
+              data-touch-grip
+              className="flex h-10 w-10 shrink-0 touch-none cursor-grab items-center justify-center text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+            >
+              <GripVertical aria-hidden="true" className="h-5 w-5" />
+            </div>
+          )}
+          {depth > 0 && (
+            <span className="flex w-4 shrink-0 items-center text-zinc-300 dark:text-zinc-600">
+              <span className="block h-px w-4 bg-zinc-300 dark:bg-zinc-600" />
+            </span>
+          )}
+          {hasChildren ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setCollapsed((prev) => {
+                  const next = new Set(prev)
+                  if (next.has(cat.id)) next.delete(cat.id)
+                  else next.add(cat.id)
+                  return next
+                })
+              }}
+              className="flex h-6 w-6 shrink-0 items-center justify-center self-center rounded text-zinc-400 transition hover:bg-zinc-200 hover:text-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
+              aria-label={isCollapsed ? 'Expandir subcategorias' : 'Recolher subcategorias'}
+            >
+              <ChevronDown
+                aria-hidden="true"
+                className={`h-3.5 w-3.5 transition-transform ${isCollapsed ? '-rotate-90' : ''}`}
+              />
+            </button>
+          ) : (
+            <span className="w-6 shrink-0" />
+          )}
+          <div
+            className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg"
+            style={{ backgroundColor: cat.color }}
+          >
+            <CategoryIcon icon={cat.icon} className="h-4 w-4 text-white" />
+          </div>
+          <span className="flex-1 truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
+            {cat.name}
+          </span>
+          {depth > 0 && (
+            <span className="shrink-0 rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+              sub
+            </span>
+          )}
+          <div className="flex shrink-0 gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+            {depth === 0 && (
+              <button
+                type="button"
+                onClick={() => openCreate(tab, cat.id)}
+                className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+                aria-label="Adicionar subcategoria"
+                title="Adicionar subcategoria"
+              >
+                <Plus aria-hidden="true" className="h-4 w-4" />
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => openEdit(cat)}
+              className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+              aria-label="Editar"
+            >
+              <Pencil aria-hidden="true" className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleDelete(cat)}
+              className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
+              aria-label="Excluir"
+            >
+              <Trash2 aria-hidden="true" className="h-4 w-4" />
+            </button>
+          </div>
+        </li>
+        {hasChildren && !isCollapsed && cat.children.map((child, ci) => renderCategory(child, ci, depth + 1))}
+      </Fragment>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -297,7 +415,7 @@ export default function CategoriesManager() {
               : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
           }`}
         >
-                  <TrendingUp aria-hidden="true" className="h-4 w-4" />
+          <TrendingUp aria-hidden="true" className="h-4 w-4" />
           Entrada
         </button>
         <button
@@ -311,7 +429,7 @@ export default function CategoriesManager() {
               : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
           }`}
         >
-                  <TrendingDown aria-hidden="true" className="h-4 w-4" />
+          <TrendingDown aria-hidden="true" className="h-4 w-4" />
           Saída
         </button>
       </div>
@@ -330,56 +448,7 @@ export default function CategoriesManager() {
       ) : (
         <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
           <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
-            {filtered.map((cat, index) => (
-              <li
-                key={cat.id}
-                data-drag-index={index}
-                draggable
-                onDragStart={() => handleDragStart(index)}
-                onDragEnter={() => handleDragEnter(index)}
-                onDragEnd={handleDragEnd}
-                onDragOver={handleDragOver}
-                className={`group flex items-center gap-3 px-4 py-3 transition hover:bg-zinc-50 dark:hover:bg-zinc-800 ${
-                  dragOverIndex === index ? 'border-t-2 border-t-emerald-500' : ''
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    data-touch-grip
-                    className="flex h-10 w-10 touch-none cursor-grab items-center justify-center text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
-                  >
-                    <GripVertical aria-hidden="true" className="h-5 w-5" />
-                  </div>
-                  <div
-                    className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg"
-                    style={{ backgroundColor: cat.color }}
-                  >
-                    <CategoryIcon icon={cat.icon} className="h-4 w-4 text-white" />
-                  </div>
-                </div>
-                <span className="flex-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                  {cat.name}
-                </span>
-                <div className="flex gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
-                  <button
-                    type="button"
-                    onClick={() => openEdit(cat)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
-                    aria-label="Editar"
-                  >
-                    <Pencil aria-hidden="true" className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(cat)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
-                    aria-label="Excluir"
-                  >
-                    <Trash2 aria-hidden="true" className="h-4 w-4" />
-                  </button>
-                </div>
-              </li>
-            ))}
+            {filtered.map((cat, index) => renderCategory(cat, index))}
           </ul>
         </div>
       )}
@@ -407,12 +476,25 @@ export default function CategoriesManager() {
                 />
               </div>
 
+              <div>
+                <label htmlFor="catParent" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Categoria pai
+                </label>
+                <Select
+                  id="catParent"
+                  value={newParentId}
+                  onChange={setNewParentId}
+                  placeholder="Nenhuma (categoria raiz)"
+                  options={parentOptions}
+                />
+              </div>
+
               <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
                 <button
                   type="button"
                   role="tab"
                   aria-selected={newType === 'INCOME'}
-                  onClick={() => setNewType('INCOME')}
+                  onClick={() => { setNewType('INCOME'); setNewParentId('') }}
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     newType === 'INCOME'
                       ? 'bg-emerald-600 text-white shadow'
@@ -426,7 +508,7 @@ export default function CategoriesManager() {
                   type="button"
                   role="tab"
                   aria-selected={newType === 'EXPENSE'}
-                  onClick={() => setNewType('EXPENSE')}
+                  onClick={() => { setNewType('EXPENSE'); setNewParentId('') }}
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     newType === 'EXPENSE'
                       ? 'bg-rose-500 text-white shadow'

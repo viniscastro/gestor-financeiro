@@ -5,6 +5,7 @@ import { amountToCents, toTransactionDto, transactionSchema } from '@/lib/transa
 
 const transactionInclude = {
   account: { select: { name: true, color: true } },
+  creditCard: { select: { name: true } },
   category: { select: { id: true, name: true, color: true } },
 } as const
 
@@ -33,14 +34,29 @@ export async function PATCH(request: NextRequest, ctx: Params) {
     )
   }
 
-  const { transactionType, description, amount, accountId, categoryId, date } = parsed.data
+  const { transactionType, description, amount, accountId, creditCardId, categoryId, date } = parsed.data
 
-  const account = await prisma.account.findFirst({
-    where: { id: accountId, userId: session.user.id },
-    select: { id: true },
-  })
-  if (!account) {
-    return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
+  let resolvedAccountId: string | null = accountId ?? null
+  let resolvedCardId: string | null = creditCardId ?? null
+
+  if (transactionType === 'EXPENSE' && creditCardId) {
+    const card = await prisma.creditCard.findFirst({
+      where: { id: creditCardId, userId: session.user.id },
+      select: { id: true },
+    })
+    if (!card) {
+      return NextResponse.json({ error: 'Cartão não encontrado' }, { status: 404 })
+    }
+    resolvedAccountId = null
+  } else {
+    const account = await prisma.account.findFirst({
+      where: { id: accountId!, userId: session.user.id },
+      select: { id: true },
+    })
+    if (!account) {
+      return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
+    }
+    resolvedCardId = null
   }
 
   if (categoryId) {
@@ -61,7 +77,8 @@ export async function PATCH(request: NextRequest, ctx: Params) {
         description,
         amount: amountToCents(amount),
         date: new Date(date),
-        accountId,
+        accountId: resolvedAccountId,
+        creditCardId: resolvedCardId,
         categoryId: categoryId ?? null,
       },
       include: transactionInclude,

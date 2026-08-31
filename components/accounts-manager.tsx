@@ -20,7 +20,7 @@ export default function AccountsManager() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<AccountDto | null>(null)
   const [name, setName] = useState('')
-  const [type, setType] = useState('CARTEIRA')
+  const [type, setType] = useState('')
   const [color, setColor] = useState<string>(CATEGORY_COLORS[0])
   const [initialBalance, setInitialBalance] = useState('')
   const [saving, setSaving] = useState(false)
@@ -163,7 +163,7 @@ export default function AccountsManager() {
   function openCreate() {
     setEditing(null)
     setName('')
-    setType('CARTEIRA')
+    setType('')
     setColor(CATEGORY_COLORS[0])
     setInitialBalance('')
     setFormError('')
@@ -418,8 +418,8 @@ export default function AccountsManager() {
                   value={type}
                   onChange={setType}
                   options={ACCOUNT_TYPES.map((t) => ({ value: t.id, label: t.label }))}
+                  placeholder="Selecione..."
                   id="type"
-                  className={inputClass}
                 />
               </div>
               <div>

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { Download, LoaderCircle, Plus, Search, FileText, Upload } from 'lucide-react'
+import { Download, LoaderCircle, Plus, Search, FileText, Trash2, Upload } from 'lucide-react'
 import TransactionForm from '@/components/transaction-form'
 import TransactionList from '@/components/transaction-list'
 import ConfirmDialog from '@/components/confirm-dialog'
@@ -11,7 +11,8 @@ import ImportModal from '@/components/import-modal'
 import { formatBRL, formatDate } from '@/lib/format'
 import { exportTransactionsToExcel } from '@/lib/excel'
 import { exportMonthlyReportPdf } from '@/lib/pdf'
-import type { AccountDto, CategoryDto, TransactionDto } from '@/lib/types'
+import { flattenCategories } from '@/lib/category'
+import type { AccountDto, CategoryDto, CreditCardDto, TransactionDto } from '@/lib/types'
 import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
 
@@ -21,6 +22,7 @@ export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<TransactionDto[]>([])
   const [accounts, setAccounts] = useState<AccountDto[]>([])
   const [categories, setCategories] = useState<CategoryDto[]>([])
+  const [cards, setCards] = useState<CreditCardDto[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
@@ -34,6 +36,8 @@ export default function TransactionsPage() {
   const [editing, setEditing] = useState<TransactionDto | null>(null)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<TransactionDto | null>(null)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [bulkOpen, setBulkOpen] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
   const router = useRouter()
 
@@ -43,15 +47,17 @@ export default function TransactionsPage() {
 
   async function reload() {
     try {
-      const [txRes, accRes, catRes] = await Promise.all([
+      const [txRes, accRes, catRes, cardRes] = await Promise.all([
         fetch('/api/transactions', { cache: 'no-store' }),
         fetch('/api/accounts', { cache: 'no-store' }),
         fetch('/api/categories', { cache: 'no-store' }),
+        fetch('/api/cards', { cache: 'no-store' }),
       ])
       if (!txRes.ok || !accRes.ok || !catRes.ok) throw new Error('Erro ao carregar')
       setTransactions((await txRes.json()) as TransactionDto[])
       setAccounts((await accRes.json()) as AccountDto[])
       setCategories((await catRes.json()) as CategoryDto[])
+      if (cardRes.ok) setCards((await cardRes.json()) as CreditCardDto[])
       setError('')
     } catch {
       setError('Não foi possível carregar os dados.')
@@ -63,10 +69,11 @@ export default function TransactionsPage() {
 
     async function fetchAll() {
       try {
-        const [txRes, accRes, catRes] = await Promise.all([
+        const [txRes, accRes, catRes, cardRes] = await Promise.all([
           fetch('/api/transactions', { cache: 'no-store' }),
           fetch('/api/accounts', { cache: 'no-store' }),
           fetch('/api/categories', { cache: 'no-store' }),
+          fetch('/api/cards', { cache: 'no-store' }),
         ])
         if (!txRes.ok || !accRes.ok || !catRes.ok) throw new Error('Erro ao carregar')
         const data = (await txRes.json()) as TransactionDto[]
@@ -74,6 +81,7 @@ export default function TransactionsPage() {
           setTransactions(data)
           setAccounts((await accRes.json()) as AccountDto[])
           setCategories((await catRes.json()) as CategoryDto[])
+          if (cardRes.ok) setCards((await cardRes.json()) as CreditCardDto[])
           setError('')
         }
       } catch {
@@ -136,6 +144,46 @@ export default function TransactionsPage() {
     }
     return { income, expense, balance: income - expense }
   }, [filtered])
+
+  const selectedCount = filtered.filter((t) => selectedIds.has(t.id)).length
+  const allSelected = filtered.length > 0 && selectedCount === filtered.length
+
+  function toggleSelect(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function toggleSelectAll() {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (allSelected) {
+        for (const t of filtered) next.delete(t.id)
+      } else {
+        for (const t of filtered) next.add(t.id)
+      }
+      return next
+    })
+  }
+
+  async function confirmBulkDelete() {
+    const ids = filtered.filter((t) => selectedIds.has(t.id)).map((t) => t.id)
+    if (ids.length === 0) return
+    const results = await Promise.all(ids.map((id) => fetch(`/api/transactions/${id}`, { method: 'DELETE' })))
+    setBulkOpen(false)
+    setSelectedIds(new Set())
+    const ok = results.every((r) => r.ok)
+    if (!ok) {
+      toast.error('Algumas transações não puderam ser excluídas.')
+    } else {
+      toast.success(`${ids.length} transações excluídas`)
+    }
+    reload()
+    router.refresh()
+  }
 
   async function handleDelete(id: string) {
     const tx = transactions.find((t) => t.id === id)
@@ -260,7 +308,7 @@ export default function TransactionsPage() {
 
   const categoryOptions = [
     { value: 'ALL', label: 'Todas as categorias' },
-    ...categories.map((c) => ({ value: c.id, label: c.name })),
+    ...flattenCategories(categories),
   ]
 
   const monthOptions = [
@@ -393,6 +441,30 @@ export default function TransactionsPage() {
         />
       </div>
 
+      {filtered.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-800">
+          <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <input
+              type="checkbox"
+              checked={allSelected}
+              onChange={toggleSelectAll}
+              className="h-4 w-4 rounded border-zinc-300 accent-emerald-600"
+            />
+            Selecionar todas ({filtered.length})
+          </label>
+          {selectedCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setBulkOpen(true)}
+              className="ml-auto flex items-center gap-2 rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-rose-500"
+            >
+              <Trash2 aria-hidden="true" className="h-4 w-4" />
+              Excluir selecionadas ({selectedCount})
+            </button>
+          )}
+        </div>
+      )}
+
       {error && (
         <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
           {error}
@@ -406,6 +478,8 @@ export default function TransactionsPage() {
       ) : (
         <TransactionList
           transactions={filtered}
+          selectedIds={selectedIds}
+          onToggleSelect={toggleSelect}
           onEdit={(t) => {
             setEditing(t)
             setFormOpen(true)
@@ -424,6 +498,7 @@ export default function TransactionsPage() {
         transaction={editing}
         accounts={accounts}
         categories={categories}
+        creditCards={cards}
       />
 
       <ConfirmDialog
@@ -432,6 +507,14 @@ export default function TransactionsPage() {
         message="Tem certeza que deseja excluir esta transação? Essa ação não pode ser desfeita."
         onConfirm={confirmDelete}
         onCancel={() => { setConfirmOpen(false); setConfirmTarget(null) }}
+      />
+
+      <ConfirmDialog
+        open={bulkOpen}
+        title="Excluir transações"
+        message={`Tem certeza que deseja excluir ${selectedCount} transação(ões) selecionada(s)? Essa ação não pode ser desfeita.`}
+        onConfirm={confirmBulkDelete}
+        onCancel={() => { setBulkOpen(false); setSelectedIds(new Set()) }}
       />
 
       <ImportModal

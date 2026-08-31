@@ -405,7 +405,9 @@ export const ModelName = {
   Transaction: 'Transaction',
   SavingsGoal: 'SavingsGoal',
   Notification: 'Notification',
-  PushSubscription: 'PushSubscription'
+  PushSubscription: 'PushSubscription',
+  CreditCard: 'CreditCard',
+  CreditCardStatement: 'CreditCardStatement'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -421,7 +423,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "category" | "budget" | "recurringRule" | "transaction" | "savingsGoal" | "notification" | "pushSubscription"
+    modelProps: "user" | "account" | "category" | "budget" | "recurringRule" | "transaction" | "savingsGoal" | "notification" | "pushSubscription" | "creditCard" | "creditCardStatement"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1091,6 +1093,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CreditCard: {
+      payload: Prisma.$CreditCardPayload<ExtArgs>
+      fields: Prisma.CreditCardFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CreditCardFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CreditCardFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardPayload>
+        }
+        findFirst: {
+          args: Prisma.CreditCardFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CreditCardFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardPayload>
+        }
+        findMany: {
+          args: Prisma.CreditCardFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardPayload>[]
+        }
+        create: {
+          args: Prisma.CreditCardCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardPayload>
+        }
+        createMany: {
+          args: Prisma.CreditCardCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CreditCardCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardPayload>[]
+        }
+        delete: {
+          args: Prisma.CreditCardDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardPayload>
+        }
+        update: {
+          args: Prisma.CreditCardUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardPayload>
+        }
+        deleteMany: {
+          args: Prisma.CreditCardDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CreditCardUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CreditCardUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardPayload>[]
+        }
+        upsert: {
+          args: Prisma.CreditCardUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardPayload>
+        }
+        aggregate: {
+          args: Prisma.CreditCardAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCreditCard>
+        }
+        groupBy: {
+          args: Prisma.CreditCardGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditCardGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CreditCardCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditCardCountAggregateOutputType> | number
+        }
+      }
+    }
+    CreditCardStatement: {
+      payload: Prisma.$CreditCardStatementPayload<ExtArgs>
+      fields: Prisma.CreditCardStatementFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CreditCardStatementFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardStatementPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CreditCardStatementFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardStatementPayload>
+        }
+        findFirst: {
+          args: Prisma.CreditCardStatementFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardStatementPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CreditCardStatementFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardStatementPayload>
+        }
+        findMany: {
+          args: Prisma.CreditCardStatementFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardStatementPayload>[]
+        }
+        create: {
+          args: Prisma.CreditCardStatementCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardStatementPayload>
+        }
+        createMany: {
+          args: Prisma.CreditCardStatementCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CreditCardStatementCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardStatementPayload>[]
+        }
+        delete: {
+          args: Prisma.CreditCardStatementDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardStatementPayload>
+        }
+        update: {
+          args: Prisma.CreditCardStatementUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardStatementPayload>
+        }
+        deleteMany: {
+          args: Prisma.CreditCardStatementDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CreditCardStatementUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CreditCardStatementUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardStatementPayload>[]
+        }
+        upsert: {
+          args: Prisma.CreditCardStatementUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditCardStatementPayload>
+        }
+        aggregate: {
+          args: Prisma.CreditCardStatementAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCreditCardStatement>
+        }
+        groupBy: {
+          args: Prisma.CreditCardStatementGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditCardStatementGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CreditCardStatementCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditCardStatementCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1135,9 +1285,11 @@ export const UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   password: 'password',
+  role: 'role',
   image: 'image',
   theme: 'theme',
   dashboardCards: 'dashboardCards',
+  monthlyReport: 'monthlyReport',
   emailVerified: 'emailVerified',
   verificationCode: 'verificationCode',
   verificationExpires: 'verificationExpires',
@@ -1178,6 +1330,7 @@ export const CategoryScalarFieldEnum = {
   color: 'color',
   icon: 'icon',
   position: 'position',
+  parentId: 'parentId',
   createdAt: 'createdAt'
 } as const
 
@@ -1206,11 +1359,13 @@ export const RecurringRuleScalarFieldEnum = {
   categoryId: 'categoryId',
   accountId: 'accountId',
   toAccountId: 'toAccountId',
+  creditCardId: 'creditCardId',
   dayOfMonth: 'dayOfMonth',
   active: 'active',
   notifyDaysBefore: 'notifyDaysBefore',
   lastNotifiedAt: 'lastNotifiedAt',
   lastMaterializedMonth: 'lastMaterializedMonth',
+  lastPaidMonth: 'lastPaidMonth',
   position: 'position',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1235,7 +1390,8 @@ export const TransactionScalarFieldEnum = {
   occurrenceMonth: 'occurrenceMonth',
   installmentGroupId: 'installmentGroupId',
   installmentCurrent: 'installmentCurrent',
-  installmentTotal: 'installmentTotal'
+  installmentTotal: 'installmentTotal',
+  creditCardId: 'creditCardId'
 } as const
 
 export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
@@ -1287,6 +1443,38 @@ export const PushSubscriptionScalarFieldEnum = {
 export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
 
 
+export const CreditCardScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  last4: 'last4',
+  creditLimit: 'creditLimit',
+  closingDay: 'closingDay',
+  dueDay: 'dueDay',
+  color: 'color',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CreditCardScalarFieldEnum = (typeof CreditCardScalarFieldEnum)[keyof typeof CreditCardScalarFieldEnum]
+
+
+export const CreditCardStatementScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  cardId: 'cardId',
+  monthKey: 'monthKey',
+  dueDate: 'dueDate',
+  status: 'status',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CreditCardStatementScalarFieldEnum = (typeof CreditCardStatementScalarFieldEnum)[keyof typeof CreditCardStatementScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1332,6 +1520,13 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -1356,13 +1551,6 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -1539,6 +1727,8 @@ export type GlobalOmitConfig = {
   savingsGoal?: Prisma.SavingsGoalOmit
   notification?: Prisma.NotificationOmit
   pushSubscription?: Prisma.PushSubscriptionOmit
+  creditCard?: Prisma.CreditCardOmit
+  creditCardStatement?: Prisma.CreditCardStatementOmit
 }
 
 /* Types for Logging */

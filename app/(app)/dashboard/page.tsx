@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import {
-  AlarmClock,
   ArrowLeftRight,
   Target,
 } from 'lucide-react'
@@ -10,10 +9,12 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { formatBRL, formatDate } from '@/lib/format'
 import { getUpcomingBills } from '@/lib/recurring'
+import { getUpcomingCreditCardStatements } from '@/lib/cards'
 import { materializeGoalContributions } from '@/lib/goal'
 import DashboardCards from '@/components/dashboard-cards'
 import DashboardCardEditor, { type DashboardCardId } from '@/components/dashboard-card-editor'
 import MonthlyTrendChart from '@/components/monthly-trend-chart'
+import UpcomingBills from '@/components/upcoming-bills'
 
 export const metadata: Metadata = {
   title: 'Dashboard | Gestor Financeiro',
@@ -123,6 +124,7 @@ export default async function DashboardPage() {
 
   const upcoming = await getUpcomingBills(userId)
   const upcomingDue = upcoming.filter((b) => b.days <= 7)
+  const cardUpcoming = await getUpcomingCreditCardStatements(userId, 7)
 
   const totalSaved = goals.reduce((sum, g) => sum + g.currentAmount, 0)
 
@@ -348,37 +350,26 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {upcomingDue.length > 0 && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 dark:border-amber-900/50 dark:bg-amber-950/40">
-          <div className="mb-2 flex items-center gap-2">
-            <AlarmClock aria-hidden="true" className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-            <h2 className="text-base font-semibold text-amber-800 dark:text-amber-300">
-              Contas a vencer
-            </h2>
-          </div>
-          <ul className="space-y-1.5">
-            {upcomingDue.map((b) => (
-              <li key={b.id} className="flex items-center justify-between gap-2 text-sm text-amber-700 dark:text-amber-400">
-                <span className="truncate font-medium">{b.description}</span>
-                <span className="shrink-0">
-                  {b.days === 0
-                    ? 'vence hoje'
-                    : b.days === 1
-                      ? 'vence amanhã'
-                      : `em ${b.days} dias`}{' '}
-                  · {formatBRL(b.amountCents)}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <Link
-            href="/recurring"
-            className="mt-3 inline-flex text-xs font-medium text-amber-700 hover:text-amber-800 dark:text-amber-400"
-          >
-            Gerenciar recorrentes
-          </Link>
-        </div>
-      )}
+      {upcomingDue.length > 0 || cardUpcoming.length > 0 ? (
+        <UpcomingBills
+          bills={[
+            ...upcomingDue.map((b) => ({
+              id: b.id,
+              description: b.description,
+              amountCents: b.amountCents,
+              days: b.days,
+              kind: 'BILL' as const,
+            })),
+            ...cardUpcoming.map((s) => ({
+              id: s.id,
+              description: `Fatura ${s.cardName}`,
+              amountCents: s.totalAmount,
+              days: s.days,
+              kind: 'CARD' as const,
+            })),
+          ]}
+        />
+      ) : null}
 
       <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
         <div className="mb-4 flex items-center justify-between">

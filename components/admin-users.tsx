@@ -19,6 +19,7 @@ export default function AdminUsers() {
   const [search, setSearch] = useState('')
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<AdminUser | null>(null)
+  const [confirmRole, setConfirmRole] = useState<AdminUser | null>(null)
 
   async function fetchUsers() {
     setLoading(true)
@@ -48,6 +49,7 @@ export default function AdminUsers() {
       })
       if (res.ok) {
         setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u)))
+        setConfirmRole(null)
       }
     } finally {
       setActionLoading(null)
@@ -134,7 +136,7 @@ export default function AdminUsers() {
                 <div className="flex shrink-0 items-center gap-1">
                   <button
                     type="button"
-                    onClick={() => toggleRole(u.id, u.role)}
+                    onClick={() => setConfirmRole(u)}
                     disabled={actionLoading === u.id}
                     title={u.role === 'ADMIN' ? 'Reverter para USER' : 'Promover a ADMIN'}
                     className="rounded-lg p-2 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-white disabled:opacity-50"
@@ -162,6 +164,21 @@ export default function AdminUsers() {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={!!confirmRole}
+        title={confirmRole?.role === 'ADMIN' ? 'Remover permissão de admin' : 'Promover a admin'}
+        message={
+          confirmRole?.role === 'ADMIN'
+            ? `Tem certeza que deseja remover a permissão de admin de "${confirmRole?.name}" (${confirmRole?.email})?`
+            : `Tem certeza que deseja promover "${confirmRole?.name}" (${confirmRole?.email}) a admin?`
+        }
+        confirmLabel={confirmRole?.role === 'ADMIN' ? 'Remover admin' : 'Promover'}
+        confirmVariant={confirmRole?.role === 'ADMIN' ? 'danger' : 'primary'}
+        loading={confirmRole !== null && actionLoading === confirmRole.id}
+        onConfirm={() => confirmRole && toggleRole(confirmRole.id, confirmRole.role)}
+        onCancel={() => setConfirmRole(null)}
+      />
 
       <ConfirmDialog
         open={!!confirmDelete}

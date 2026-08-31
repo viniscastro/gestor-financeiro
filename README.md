@@ -4,7 +4,7 @@
 
 ### Controle suas finanças pessoais de forma simples e elegante.
 
-Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, com **múltiplas contas e transferências**, orçamentos por categoria, lançamentos recorrentes, **metas de economia** e gráficos estatísticos — tudo em **tempo real**, construída com Next.js e PostgreSQL.
+Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, com **múltiplas contas e transferências**, **cartões de crédito com faturas e importação CSV/OFX**, orçamentos por categoria, lançamentos recorrentes, **metas de economia** e gráficos estatísticos — tudo em **tempo real**, construída com Next.js e PostgreSQL.
 
 ![Next.js](https://img.shields.io/badge/Next.js%2016-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![React 19](https://img.shields.io/badge/React%2019-61DAFB?style=for-the-badge&logo=react&logoColor=black)
@@ -42,6 +42,11 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 - 📱 **PWA instalável** — manifest, ícones 192/512/maskable, theme-color dinâmico (claro/escuro) e suporte a iOS (apple-touch-icon); instale o app no celular/desktop como atalho de tela cheia
 - 🛡️ **Proteção de rotas** — áreas privadas redirecionam para o login; APIs exigem sessão válida (401 sem cookie)
 - 💱 **Valores em centavos** — o dinheiro é armazenado como inteiro (cents), sem problemas de ponto flutuante
+- 💳 **Cartões de crédito** — cadastre cartões (nome, últimos 4 dígitos, **limite obrigatório**, cor, dia de fechamento e vencimento) e **reordene arrastando**; acompanhe o **limite usado** com barra de progresso na cor do cartão e navegue pelos **meses das faturas**
+- 🧾 **Compras e faturas** — adicione compras manualmente por mês, veja o **vencimento em dd/mm/aaaa**, selo de fatura **paga** e botão **"Marcar como paga"** que lança a despesa na conta bancária escolhida (ex.: "Pagamento fatura 15/09")
+- 📥 **Importar CSV/OFX de cartão** — importe o extrato da fatura com **pop-up de revisão**: uma caixa de seleção por lançamento para definir **o que é abatido da fatura** (saídas somam, entradas subtraem — ex.: saiu R$18, entrou R$10 → fatura de R$8) ou o que fica como entrada sem vínculo com a fatura; botões "Marcar/Desmarcar todas"
+- ☑️ **Exclusão em massa** — no menu Transações, selecione várias transações por vez (com "Selecionar todas") e exclua com **botão de confirmação**
+- 🔔 **Notificações** — central de notificações (sino) **no app + push notification**, avisos de **fatura a vencer**, e painel de **Admin** para notificar todos os usuários (novidade/bug/sistema)
 
 ## 🛡️ Segurança & Operação
 
@@ -74,15 +79,17 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 gestor-financeiro/
 ├── app/
 │   ├── (app)/                  # Áreas protegidas (após login)
-│   │   ├── dashboard/          #   Resumo financeiro
-│   │   ├── transactions/       #   Entradas/saídas (busca + filtros + exportar CSV)
+│   │   ├── dashboard/          #   Resumo financeiro (faturas a vencer)
+│   │   ├── transactions/       #   Entradas/saídas (busca + filtros + exclusão em massa)
 │   │   ├── accounts/           #   Multi-contas e transferências
 │   │   ├── budgets/            #   Orçamentos mensais por categoria
 │   │   ├── categories/         #   Gerenciar categorias (criar/excluir)
 │   │   ├── recurring/          #   Lançamentos recorrentes (arrastar p/ reordenar)
+│   │   ├── cards/              #   Cartões de crédito, faturas e import CSV/OFX
 │   │   ├── goals/              #   Metas de economia
-│   │   ├── stats/              #   Gráficos e estatísticas
+│   │   ├── stats/              #   Gráficos e estatísticas (exportar Excel)
 │   │   ├── account/            #   Conta (foto, tema, excluir)
+│   │   ├── admin/              #   Painel admin (usuários, notificar, relatórios)
 │   │   └── layout.tsx          #   Layout com sidebar
 │   ├── (auth)/page.tsx         # Tela única de login + cadastro
 │   ├── verify-email/page.tsx   # Confirmação de e-mail com código
@@ -93,7 +100,11 @@ gestor-financeiro/
 │   ├── api/                    # Rotas: auth, register, verify-email, resend-verification,
 │   │                           # forgot-password, verify-reset-code, reset-password,
 │   │                           # transactions, transfers, accounts, categories, budgets,
-│   │                           # recurring, goals, account (avatar), backup
+│   │                           # recurring, goals, cards, cards/[id] (import/transactions),
+│   │                           # cards/statements, bills (statement-paid/mark-paid),
+│   │                           # notifications, push/subscribe, admin (users/notify),
+│   │                           # stats/category-comparison, reports/monthly, backups,
+│   │                           # account (avatar), user/preferences
 │   └── layout.tsx · globals.css
 ├── __tests__/                  # Testes automatizados (Vitest)
 │   ├── rate-limit.test.ts
@@ -178,27 +189,33 @@ model RecurringRule {
   kind                  String    @default("TRANSACTION") // TRANSACTION | TRANSFER
   type                  String    // INCOME | EXPENSE (para TRANSACTION)
   categoryId            String?
-  accountId             String    // conta de origem
+  accountId             String?   // conta de origem (cartão = null)
   toAccountId           String?   // conta de destino (kind = TRANSFER)
+  creditCardId          String?   // cartão de crédito (despesa em cartão)
   dayOfMonth            Int
   active                Boolean   @default(true)
   notifyDaysBefore      Int       @default(3)
   lastNotifiedAt        DateTime?
   lastMaterializedMonth String?   // controla materialização (anti-duplicação)
+  lastPaidMonth         String?   // mês da última marcação como paga
   position              Int       @default(0) // ordem de exibição (drag-and-drop)
 }
 
 model Transaction {
-  id              String         @id @default(cuid())
-  transactionType String         // INCOME | EXPENSE
-  description     String
-  amount          Int            // centavos
-  date            DateTime
-  accountId       String
-  categoryId      String?
-  transferGroupId String?        // vincula as duas pernas de uma transferência
-  recurringId     String?
-  occurrenceMonth String?        // "YYYY-MM" (materialização de recorrente)
+  id                 String         @id @default(cuid())
+  transactionType    String         // INCOME | EXPENSE
+  description        String
+  amount             Int            // centavos
+  date               DateTime
+  accountId          String?
+  categoryId         String?
+  transferGroupId    String?        // vincula as duas pernas de uma transferência
+  recurringId        String?
+  occurrenceMonth    String?        // "YYYY-MM" (materialização de recorrente)
+  creditCardId       String?        // se a transação pertence a um cartão de crédito
+  installmentGroupId String?        // agrupa parcelas de uma compra
+  installmentCurrent Int?
+  installmentTotal   Int?
 }
 
 model SavingsGoal {
@@ -210,6 +227,35 @@ model SavingsGoal {
   accountId     String?               // se vinculada, progresso = saldo da conta
   targetDate    DateTime?
 }
+
+model CreditCard {
+  id          String    @id @default(cuid())
+  userId      String
+  name        String
+  last4       String?
+  creditLimit Int       @default(0)   // centavos (campo obrigatório no cadastro)
+  closingDay  Int       @default(1)
+  dueDay      Int       @default(10)
+  color       String    @default("#10b981")
+  position    Int       @default(0)   // ordem de exibição (drag-and-drop)
+  transactions Transaction[]
+  statements  CreditCardStatement[]
+  @@index([userId])
+}
+
+model CreditCardStatement {
+  id       String     @id @default(cuid())
+  userId   String
+  cardId   String
+  monthKey String     // "YYYY-MM"
+  dueDate  DateTime
+  status   String     @default("OPEN") // OPEN | PAID
+  paidAt   DateTime?
+  @@unique([cardId, monthKey])
+  @@index([userId, monthKey])
+}
+
+
 ```
 
 > 💡 Os valores são salvos em **centavos** (inteiro). Ex.: R$ 1.200,00 → `120000`.
@@ -254,6 +300,23 @@ model SavingsGoal {
 | DELETE | `/api/goals/[id]`                | Exclui uma meta                                     | 🔒 Auth |
 | PATCH  | `/api/account/avatar`            | Atualiza a foto de perfil                           | 🔒 Auth |
 | DELETE | `/api/account`                   | Exclui a conta do usuário (requer senha)            | 🔒 Auth |
+| GET    | `/api/cards`                     | Lista cartões (ordenados por posição)               | 🔒 Auth |
+| POST   | `/api/cards`                     | Cria um cartão de crédito (limite obrigatório)      | 🔒 Auth |
+| PATCH  | `/api/cards`                     | Reordena cartões (envia `ids[]` na ordem desejada)  | 🔒 Auth |
+| PATCH  | `/api/cards/[id]`                | Edita um cartão                                     | 🔒 Auth |
+| DELETE | `/api/cards/[id]`                | Exclui um cartão                                    | 🔒 Auth |
+| GET    | `/api/cards/[id]/transactions`   | Lista transações de um cartão (por mês da fatura)   | 🔒 Auth |
+| POST   | `/api/cards/[id]/transactions`   | Adiciona compra a um cartão                        | 🔒 Auth |
+| POST   | `/api/cards/[id]/import`         | Importa CSV/OFX (com flag `abate` para a fatura)    | 🔒 Auth |
+| GET    | `/api/cards/statements`          | Lista faturas dos cartões                           | 🔒 Auth |
+| POST   | `/api/bills/statement-paid`      | Marca fatura paga + debita a conta escolhida        | 🔒 Auth |
+| POST   | `/api/bills/mark-paid`           | Marca fatura recorrente como paga (sem debitar)     | 🔒 Auth |
+| GET    | `/api/notifications`             | Lista notificações do usuário                       | 🔒 Auth |
+| POST   | `/api/push/subscribe`            | Registra assinatura de push notification            | 🔒 Auth |
+| POST   | `/api/admin/notify`              | Envia notificação a todos os usuários (admin)       | 🔒 Admin |
+| GET    | `/api/admin/users`               | Lista usuários (admin)                              | 🔒 Admin |
+| GET    | `/api/stats/category-comparison` | Compara gastos por categoria entre datas (admin)    | 🔒 Auth |
+| GET    | `/api/reports/monthly`           | Relatório mensal (dados de entradas/saídas)         | 🔒 Auth |
 | GET    | `/api/backup`                    | Lista backups (admin)                               | 🔒 Admin |
 | POST   | `/api/backup`                    | Cria um backup manual do banco (admin)              | 🔒 Admin |
 
@@ -415,10 +478,10 @@ npx prisma migrate deploy
 
 ## 🗺️ Próximas ideias
 
-- [ ] Parcelamento de compras
 - [ ] Recorrências semanais/quinzenais/anuais
-- [ ] Upload de comprovantes
-- [ ] Importação de extratos (OFX)
+- [ ] Upload de comprovantes (jpeg/png/pdf)
+- [ ] Dashboards/relatórios personalizados por período
+- [ ] Suporte a mais bancos no importador de extrato
 
 ---
 
