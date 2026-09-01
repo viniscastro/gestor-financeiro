@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowRightLeft, Pencil, Repeat, Trash2 } from 'lucide-react'
-import { formatBRL, formatDate } from '@/lib/format'
+import { formatBRL, formatDate, parseLocalDate } from '@/lib/format'
 import type { TransactionDto } from '@/lib/types'
 
 type Props = {
@@ -103,7 +103,7 @@ export default function TransactionList({ transactions, selectedIds, onToggleSel
                   />
                   {t.categoryName ?? 'Transferência'}
                 </span>
-                · {t.accountName} · {formatDate(new Date(t.date))}
+                · {t.accountName} · {formatDate(parseLocalDate(t.date))}
                 {t.installmentGroupId && t.installmentCurrent && t.installmentTotal && (
                   <span className="inline-flex items-center gap-0.5 font-medium text-amber-600 dark:text-amber-400">
                     <Repeat aria-hidden="true" className="h-3 w-3" />

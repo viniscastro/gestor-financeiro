@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { transferSchema } from '@/lib/transfer'
 import { amountToCents } from '@/lib/transactions'
+import { parseLocalDate } from '@/lib/format'
 import { createNotification } from '@/lib/notifications'
 
 export async function POST(request: NextRequest) {
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
         transactionType: 'EXPENSE',
         description: cleanDescription || `Transferência para ${to.name}`,
         amount: cents,
-        date: new Date(date),
+        date: parseLocalDate(date),
         userId: session.user.id,
         accountId: from.id,
         categoryId: null,
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
         transactionType: 'INCOME',
         description: cleanDescription || `Transferência de ${from.name}`,
         amount: cents,
-        date: new Date(date),
+        date: parseLocalDate(date),
         userId: session.user.id,
         accountId: to.id,
         categoryId: null,

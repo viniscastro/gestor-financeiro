@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { parseLocalDate } from '@/lib/format'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest, ctx: Params) {
         transactionType,
         description: t.description,
         amount: Math.abs(t.amountCents),
-        date: new Date(t.date),
+        date: parseLocalDate(t.date),
         userId: session.user.id,
         categoryId: categoryId ?? null,
         creditCardId: abate ? card.id : null,

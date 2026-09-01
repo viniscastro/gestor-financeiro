@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { amountToCents, toTransactionDto, transactionSchema } from '@/lib/transactions'
+import { parseLocalDate } from '@/lib/format'
 
 const transactionInclude = {
   account: { select: { name: true, color: true } },
@@ -76,7 +77,7 @@ export async function PATCH(request: NextRequest, ctx: Params) {
         transactionType,
         description,
         amount: amountToCents(amount),
-        date: new Date(date),
+        date: parseLocalDate(date),
         accountId: resolvedAccountId,
         creditCardId: resolvedCardId,
         categoryId: categoryId ?? null,

@@ -16,6 +16,7 @@ import Modal from '@/components/modal'
 import ConfirmDialog from '@/components/confirm-dialog'
 import ColorPicker from '@/components/color-picker'
 import CurrencyInput from '@/components/currency-input'
+import DatePicker from '@/components/date-picker'
 import Select from '@/components/select'
 import { toast } from 'sonner'
 import { CATEGORY_COLORS } from '@/lib/categories'
@@ -596,22 +597,24 @@ export default function CardsManager() {
                               onClick={() => changeMonth(card.id, s.monthKey)}
                               onMouseEnter={() => setHoverMonth((p) => ({ ...p, [card.id]: s.monthKey }))}
                               onMouseLeave={() => setHoverMonth((p) => ({ ...p, [card.id]: '' }))}
-                              style={isHover ? { backgroundColor: card.color } : undefined}
+                              style={isSel || isHover ? { backgroundColor: card.color } : undefined}
                               className={`flex flex-col items-start rounded-lg border px-3 py-1.5 text-left transition ${
                                 isSel
-                                  ? 'border-emerald-500 ring-2 ring-emerald-500/30'
-                                  : 'border-zinc-200 hover:border-transparent dark:border-zinc-700'
-                              } ${isHover ? 'shadow-md' : ''}`}
+                                  ? 'border-transparent shadow-md'
+                                  : isHover
+                                    ? 'border-transparent shadow-md'
+                                    : 'border-zinc-200 hover:border-transparent dark:border-zinc-700'
+                              }`}
                             >
-                              <span className={`flex items-center gap-1.5 text-xs font-semibold ${isHover ? 'text-white' : 'text-zinc-700 dark:text-zinc-300'}`}>
+                              <span className={`flex items-center gap-1.5 text-xs font-semibold ${isSel || isHover ? 'text-white' : 'text-zinc-700 dark:text-zinc-300'}`}>
                                 {monthLabel(s.monthKey)}
                                 {s.status === 'PAID' && (
-                                  <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${isHover ? 'bg-black/25 text-white' : 'bg-emerald-600 text-white'}`}>
+                                  <span className="rounded bg-black/25 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
                                     Paga
                                   </span>
                                 )}
                               </span>
-                              <span className={`text-[11px] font-medium ${isHover ? 'text-white/85' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                              <span className={`text-[11px] font-medium ${isSel || isHover ? 'text-white/85' : 'text-zinc-500 dark:text-zinc-400'}`}>
                                 {formatBRL(s.totalAmount)}
                               </span>
                             </button>
@@ -829,12 +832,7 @@ export default function CardsManager() {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">Data</label>
-              <input
-                type="date"
-                value={addDate}
-                onChange={(e) => setAddDate(e.target.value)}
-                className={inputClass}
-              />
+              <DatePicker value={addDate} onChange={setAddDate} />
             </div>
           </div>
           <div>

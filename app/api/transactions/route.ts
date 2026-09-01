@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { amountToCents, toTransactionDto, transactionSchema } from '@/lib/transactions'
+import { parseLocalDate } from '@/lib/format'
 import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
 import { notifyTransaction } from '@/lib/notifications'
 
@@ -107,7 +108,7 @@ export async function POST(request: NextRequest) {
         transactionType,
         description,
         amount: totalCents,
-        date: new Date(date),
+        date: parseLocalDate(date),
         userId: session.user.id,
         accountId: resolvedAccountId,
         creditCardId: resolvedCardId,
@@ -124,7 +125,7 @@ export async function POST(request: NextRequest) {
   }
 
   const groupId = crypto.randomUUID()
-  const baseDate = new Date(date)
+  const baseDate = parseLocalDate(date)
 
   const transactions = await prisma.$transaction(
     Array.from({ length: totalInstallments }, (_, i) => {

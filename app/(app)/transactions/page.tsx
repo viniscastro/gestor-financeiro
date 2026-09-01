@@ -8,7 +8,7 @@ import TransactionForm from '@/components/transaction-form'
 import TransactionList from '@/components/transaction-list'
 import ConfirmDialog from '@/components/confirm-dialog'
 import ImportModal from '@/components/import-modal'
-import { formatBRL, formatDate } from '@/lib/format'
+import { formatBRL, formatDate, parseLocalDate } from '@/lib/format'
 import { exportTransactionsToExcel } from '@/lib/excel'
 import { exportMonthlyReportPdf } from '@/lib/pdf'
 import { flattenCategories } from '@/lib/category'
@@ -100,7 +100,7 @@ export default function TransactionsPage() {
   const months = useMemo(() => {
     const map = new Map<string, string>()
     for (const t of transactions) {
-      const d = new Date(t.date)
+      const d = parseLocalDate(t.date)
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
       if (!map.has(key)) {
         map.set(key, d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }))
@@ -236,7 +236,7 @@ export default function TransactionsPage() {
 
   function exportExcel() {
     const rows = filtered.map((t) => ({
-      date: formatDate(new Date(t.date)),
+      date: formatDate(parseLocalDate(t.date)),
       type: t.transferGroupId
         ? 'Transferência'
         : t.transactionType === 'INCOME'
@@ -252,7 +252,7 @@ export default function TransactionsPage() {
 
   function exportPdf() {
     const rows = filtered.map((t) => ({
-      date: formatDate(new Date(t.date)),
+      date: formatDate(parseLocalDate(t.date)),
       type: t.transferGroupId
         ? 'Transferencia'
         : t.transactionType === 'INCOME'

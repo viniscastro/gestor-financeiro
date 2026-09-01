@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
 import { createNotification } from '@/lib/notifications'
+import { parseLocalDate } from '@/lib/format'
 
 type ImportItem = {
   date: string
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
       transactionType: t.type,
       description: t.description.slice(0, 200),
       amount: Math.abs(t.amountCents),
-      date: new Date(t.date),
+      date: parseLocalDate(t.date),
       userId: session.user.id,
       accountId,
       categoryId: null,

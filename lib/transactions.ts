@@ -49,7 +49,7 @@ export function toTransactionDto(t: TransactionWithRelations): TransactionDto {
     transactionType: t.transactionType as TransactionDto['transactionType'],
     description: t.description,
     amount: t.amount,
-    date: t.date.toISOString(),
+    date: t.date.toISOString().slice(0, 10),
     accountId: t.accountId,
     accountName: t.account?.name ?? '',
     accountColor: t.account?.color ?? '#10b981',

@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { invoiceWindow } from '@/lib/cards'
 import { amountToCents, toTransactionDto } from '@/lib/transactions'
+import { parseLocalDate } from '@/lib/format'
 import { z } from 'zod'
 
 type Params = { params: Promise<{ id: string }> }
@@ -99,7 +100,7 @@ export async function POST(request: NextRequest, ctx: Params) {
       transactionType: 'EXPENSE',
       description,
       amount: amountToCents(amount),
-      date: new Date(date),
+      date: parseLocalDate(date),
       userId: session.user.id,
       categoryId: categoryId ?? null,
       creditCardId: card.id,

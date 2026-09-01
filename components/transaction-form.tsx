@@ -85,8 +85,8 @@ function TransactionFormBody({
   )
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [installments, setInstallments] = useState(
-    transaction?.installmentTotal ?? 1
+  const [installments, setInstallments] = useState<number | ''>(
+    transaction?.installmentTotal ?? ''
   )
 
   const availableCategories = categories.filter((c) => c.type === type)
@@ -101,6 +101,10 @@ function TransactionFormBody({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError('')
+    if (!transaction && type === 'EXPENSE' && (typeof installments !== 'number' || installments <= 0)) {
+      setError('Informe o número de parcelas')
+      return
+    }
     setLoading(true)
     try {
       const useCard = type === 'EXPENSE' && paySource === 'CARD' && !!cardId
@@ -112,7 +116,7 @@ function TransactionFormBody({
         creditCardId: useCard ? cardId : null,
         categoryId: categoryId || null,
         date,
-        ...(!transaction && type === 'EXPENSE' && installments > 1 ? { installments } : {}),
+        ...(!transaction && type === 'EXPENSE' && typeof installments === 'number' && installments > 1 ? { installments } : {}),
       }
       const res = await fetch(
         transaction ? `/api/transactions/${transaction.id}` : '/api/transactions',
@@ -312,22 +316,30 @@ function TransactionFormBody({
             <div>
               <label htmlFor="installments" className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 <Repeat className="h-3.5 w-3.5" />
-                Parcelas
+                Parcelas <span className="text-rose-500">*</span>
               </label>
               <input
                 id="installments"
                 type="number"
                 min={1}
+                required
+                inputMode="numeric"
+                placeholder="1"
                 value={installments}
                 onChange={(e) => {
-                  const v = parseInt(e.target.value, 10)
-                  setInstallments(isNaN(v) || v < 1 ? 1 : v)
+                  const raw = e.target.value
+                  if (raw === '') {
+                    setInstallments('')
+                    return
+                  }
+                  const v = parseInt(raw.replace(/^0+(?=\d)/, ''), 10)
+                  setInstallments(isNaN(v) || v <= 0 ? '' : v)
                 }}
                 className={inputClass}
               />
-              {installments > 1 && amount && (
+              {typeof installments === 'number' && installments > 1 && amount && (
                 <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                  {installments}x de {formatBRL(Math.round(Number(amount) * 100 / installments) / 100)}
+                  {installments}x de {formatBRL(Math.round((Math.round(Number(amount) * 100)) / installments))}
                 </p>
               )}
             </div>
