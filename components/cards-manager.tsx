@@ -89,8 +89,7 @@ export default function CardsManager() {
   const [addDate, setAddDate] = useState<string>(new Date().toISOString().slice(0, 10))
   const [addCategory, setAddCategory] = useState('')
   const [addSaving, setAddSaving] = useState(false)
-  const [addType, setAddType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE')
-  const [addInstallments, setAddInstallments] = useState(1)
+  const [addInstallments, setAddInstallments] = useState('')
 
   const [editTx, setEditTx] = useState<TransactionDto | null>(null)
   const [editDesc, setEditDesc] = useState('')
@@ -384,8 +383,8 @@ export default function CardsManager() {
           amount: Number(addAmount),
           date: addDate,
           categoryId: addCategory || null,
-          transactionType: addType,
-          installments: addInstallments,
+          transactionType: 'EXPENSE',
+          installments: addInstallments ? Math.max(1, Math.min(48, Number(addInstallments))) : 1,
         }),
       })
       const data = await res.json().catch(() => ({}))
@@ -393,7 +392,7 @@ export default function CardsManager() {
         toast.error(data.error ?? 'Erro ao adicionar')
         return
       }
-      toast.success(addType === 'INCOME' ? 'Desconto aplicado' : 'Compra adicionada')
+      toast.success('Compra adicionada')
       setAddOpen(false)
       reload()
       await loadMonth(addCardId, selectedMonth[addCardId] ?? '')
@@ -738,8 +737,7 @@ export default function CardsManager() {
                             setAddAmount('')
                             setAddDate(new Date().toISOString().slice(0, 10))
                             setAddCategory('')
-                            setAddType('EXPENSE')
-                            setAddInstallments(1)
+                            setAddInstallments('')
                             setAddOpen(true)
                           }}
                           className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-500"
@@ -940,24 +938,8 @@ export default function CardsManager() {
         </form>
       </Modal>
 
-      <Modal open={addOpen} onClose={() => setAddOpen(false)} title={addType === 'INCOME' ? 'Aplicar desconto no cartão' : 'Adicionar compra no cartão'}>
+      <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Adicionar compra no cartão">
         <form onSubmit={handleAddPurchase} className="space-y-4">
-          <div className="grid grid-cols-2 gap-2 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-900">
-            <button
-              type="button"
-              onClick={() => setAddType('EXPENSE')}
-              className={`rounded-md px-3 py-2 text-sm font-semibold transition ${addType === 'EXPENSE' ? 'bg-emerald-600 text-white shadow' : 'text-zinc-600 hover:bg-zinc-200 dark:text-zinc-300 dark:hover:bg-zinc-800'}`}
-            >
-              Compra
-            </button>
-            <button
-              type="button"
-              onClick={() => setAddType('INCOME')}
-              className={`rounded-md px-3 py-2 text-sm font-semibold transition ${addType === 'INCOME' ? 'bg-emerald-600 text-white shadow' : 'text-zinc-600 hover:bg-zinc-200 dark:text-zinc-300 dark:hover:bg-zinc-800'}`}
-            >
-              Desconto
-            </button>
-          </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Descrição <span className="text-rose-500">*</span>
@@ -983,21 +965,20 @@ export default function CardsManager() {
               <DatePicker value={addDate} onChange={setAddDate} required />
             </div>
           </div>
-          {addType === 'EXPENSE' && (
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Número de parcelas
-              </label>
-              <Select
-                value={String(addInstallments)}
-                onChange={(v) => setAddInstallments(Number(v))}
-                options={Array.from({ length: 48 }, (_, i) => ({
-                  value: String(i + 1),
-                  label: i === 0 ? '1 (à vista)' : `${i + 1}x`,
-                }))}
-              />
-            </div>
-          )}
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Número de parcelas
+            </label>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={addInstallments}
+              onChange={(e) => setAddInstallments(e.target.value.replace(/\D/g, '').slice(0, 2))}
+              placeholder="Ex: 1, 3, 6, 12"
+              className={inputClass}
+            />
+          </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">Categoria</label>
             <Select
@@ -1012,7 +993,7 @@ export default function CardsManager() {
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:opacity-60"
           >
             {addSaving && <LoaderCircle className="h-4 w-4 animate-spin" />}
-            {addType === 'INCOME' ? 'Aplicar desconto' : 'Adicionar compra'}
+            Adicionar compra
           </button>
         </form>
       </Modal>
