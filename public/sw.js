@@ -17,6 +17,8 @@ self.addEventListener('push', (event) => {
     INCOME: 'Entrada',
     EXPENSE: 'Saída',
     BILL: 'Conta a vencer',
+    BUDGET: 'Alerta de orçamento',
+    MONTHLY_SUMMARY: 'Resumo mensal',
     SYSTEM: 'Sistema',
   }
   const typeLabel = data.type ? typeLabels[data.type] : ''
