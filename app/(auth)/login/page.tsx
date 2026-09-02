@@ -5,9 +5,16 @@ import AuthThemeToggle from '@/components/auth-theme-toggle'
 
 export const dynamic = 'force-dynamic'
 
-export default async function LoginPage() {
+type Props = {
+  searchParams?: Promise<{ mode?: string | string[] }>
+}
+
+export default async function LoginPage({ searchParams }: Props) {
   const session = await auth()
   if (session?.user?.id) redirect('/dashboard')
+
+  const params = await searchParams
+  const mode = Array.isArray(params?.mode) ? params.mode[0] : params?.mode
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-y-auto p-4">
@@ -22,7 +29,7 @@ export default async function LoginPage() {
         <AuthThemeToggle />
       </div>
       <div className="relative">
-        <AuthForm />
+        <AuthForm key={mode ?? 'login'} initialMode={mode === 'register' ? 'register' : undefined} />
       </div>
     </div>
   )

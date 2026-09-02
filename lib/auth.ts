@@ -14,8 +14,18 @@ class EmailNotVerified extends CredentialsSignin {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  useSecureCookies: true,
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
+  },
+  cookies: {
+    sessionToken: {
+      options: {
+        maxAge: 30 * 24 * 60 * 60,
+      },
+    },
   },
   pages: {
     signIn: '/login',

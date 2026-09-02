@@ -30,7 +30,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               Entrar
             </Link>
             <Link
-              href="/login"
+              href="/login?mode=register"
               className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600"
             >
               Criar conta

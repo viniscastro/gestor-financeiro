@@ -21,6 +21,7 @@ import Select from '@/components/select'
 import { toast } from 'sonner'
 import { CATEGORY_COLORS } from '@/lib/categories'
 import { formatBRL } from '@/lib/format'
+import { flattenCategories } from '@/lib/category'
 import type { AccountDto, CategoryDto, CreditCardDto, CreditCardStatementDto, TransactionDto } from '@/lib/types'
 import { parseCardCsv, parseCardOfx } from '@/lib/card-import'
 
@@ -104,7 +105,7 @@ export default function CardsManager() {
   const [paySaving, setPaySaving] = useState(false)
 
   const expenseCategories = categories.filter((c) => c.type === 'EXPENSE')
-  const categoryOptions = expenseCategories.map((c) => ({ value: c.id, label: c.name }))
+  const categoryOptions = flattenCategories(expenseCategories)
 
   const inputClass =
     'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
@@ -831,8 +832,10 @@ export default function CardsManager() {
               <CurrencyInput value={addAmount} onChange={setAddAmount} className={inputClass} />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">Data</label>
-              <DatePicker value={addDate} onChange={setAddDate} />
+              <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Data <span className="text-rose-500">*</span>
+              </label>
+              <DatePicker value={addDate} onChange={setAddDate} required />
             </div>
           </div>
           <div>

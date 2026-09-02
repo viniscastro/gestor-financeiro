@@ -18,6 +18,11 @@ import Select, { type SelectOption } from '@/components/select'
 
 type TypeFilter = 'ALL' | 'INCOME' | 'EXPENSE'
 
+function currentMonthKey() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<TransactionDto[]>([])
   const [accounts, setAccounts] = useState<AccountDto[]>([])
@@ -27,7 +32,7 @@ export default function TransactionsPage() {
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('ALL')
-  const [monthFilter, setMonthFilter] = useState('ALL')
+  const [monthFilter, setMonthFilter] = useState(currentMonthKey)
   const [accountFilter, setAccountFilter] = useState('ALL')
   const [categoryFilter, setCategoryFilter] = useState('ALL')
   const [dateFrom, setDateFrom] = useState('')
@@ -311,10 +316,17 @@ export default function TransactionsPage() {
     ...flattenCategories(categories),
   ]
 
-  const monthOptions = [
-    { value: 'ALL', label: 'Todos os meses' },
-    ...months.map(([key, label]) => ({ value: key, label })),
-  ]
+  const monthOptions = useMemo(() => {
+    const prev = Array.from(months)
+    const now = new Date()
+    const currentLabel = now.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+    const currentEntry = [currentMonthKey(), currentLabel] as [string, string]
+    const entries = prev.some(([k]) => k === currentEntry[0]) ? prev : [currentEntry, ...prev]
+    return [
+      { value: 'ALL', label: 'Todos os meses' },
+      ...entries.map(([key, label]) => ({ value: key, label })),
+    ]
+  }, [months])
 
   return (
     <div className="space-y-6">

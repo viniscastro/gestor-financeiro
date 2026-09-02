@@ -8,8 +8,12 @@ import { Eye, EyeOff, LoaderCircle, PiggyBank } from 'lucide-react'
 
 type Mode = 'login' | 'register'
 
-export default function AuthForm() {
-  const [mode, setMode] = useState<Mode>('login')
+type Props = {
+  initialMode?: Mode
+}
+
+export default function AuthForm({ initialMode }: Props = {}) {
+  const [mode, setMode] = useState<Mode>(initialMode ?? 'login')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

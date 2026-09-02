@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { Moon, Sun, SlidersHorizontal } from 'lucide-react'
 import NotificationBell from '@/components/notification-bell'
 import PushToggle from '@/components/push-toggle'
+import InstallPwaButton from '@/components/install-pwa-button'
 
 const emptySubscribe = () => () => {}
 
@@ -84,6 +85,7 @@ export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme
   return (
     <div className="flex items-center gap-2">
       <NotificationBell />
+      <InstallPwaButton compact />
       <div className="relative" data-header-menu>
         <button
           type="button"

@@ -127,7 +127,7 @@ export default async function LandingPage() {
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/login"
+              href="/login?mode=register"
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-600"
             >
               Começar agora
@@ -364,7 +364,7 @@ export default async function LandingPage() {
             É rápido, gratuito e você nunca mais vai se perguntar onde seu dinheiro foi parar.
           </p>
           <Link
-            href="/login"
+            href="/login?mode=register"
             className="mt-8 inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-600"
           >
             Criar minha conta grátis
