@@ -119,6 +119,15 @@ export async function notifyFeature(title: string, message: string, type = 'FEAT
   }
 }
 
+export async function notifyCardDiscount(
+  userId: string,
+  description: string,
+  amountCents: number
+) {
+  const message = `${description} — é um desconto de ${formatBRL(amountCents)} na fatura do cartão`
+  await createNotification(userId, 'CARD_DISCOUNT', 'Desconto aplicado no cartão', message)
+}
+
 export async function notifyBudgetAlert(
   userId: string,
   categoryName: string,

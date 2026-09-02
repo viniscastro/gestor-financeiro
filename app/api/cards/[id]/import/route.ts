@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { parseLocalDate } from '@/lib/format'
+import { notifyCardDiscount } from '@/lib/notifications'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -68,5 +69,12 @@ export async function POST(request: NextRequest, ctx: Params) {
     }),
   })
 
-  return NextResponse.json({ ok: true, imported: created.count })
+  const discounts = transactions
+    .filter((t) => t.abate !== false && t.type === 'INCOME')
+    .map((t) => ({ description: t.description, amountCents: Math.abs(t.amountCents) }))
+  for (const d of discounts) {
+    await notifyCardDiscount(session.user.id, d.description, d.amountCents)
+  }
+
+  return NextResponse.json({ ok: true, imported: created.count, discounts: discounts.length })
 }

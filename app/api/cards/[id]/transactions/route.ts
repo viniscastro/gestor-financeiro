@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { invoiceWindow } from '@/lib/cards'
 import { amountToCents, toTransactionDto } from '@/lib/transactions'
 import { parseLocalDate } from '@/lib/format'
+import { notifyCardDiscount } from '@/lib/notifications'
 import { z } from 'zod'
 
 type Params = { params: Promise<{ id: string }> }
@@ -13,6 +14,8 @@ const purchaseSchema = z.object({
   amount: z.number().positive(),
   date: z.string(),
   categoryId: z.string().nullable().optional(),
+  transactionType: z.enum(['EXPENSE', 'INCOME']).default('EXPENSE'),
+  installments: z.number().int().min(1).max(48).default(1),
 })
 
 export async function GET(request: NextRequest, ctx: Params) {
@@ -83,7 +86,7 @@ export async function POST(request: NextRequest, ctx: Params) {
     )
   }
 
-  const { description, amount, date, categoryId } = parsed.data
+  const { description, amount, date, categoryId, transactionType, installments } = parsed.data
 
   if (categoryId) {
     const category = await prisma.category.findFirst({
@@ -95,18 +98,69 @@ export async function POST(request: NextRequest, ctx: Params) {
     }
   }
 
-  const transaction = await prisma.transaction.create({
-    data: {
-      transactionType: 'EXPENSE',
-      description,
-      amount: amountToCents(amount),
-      date: parseLocalDate(date),
-      userId: session.user.id,
-      categoryId: categoryId ?? null,
-      creditCardId: card.id,
-    },
-    include: { account: { select: { name: true, color: true } }, category: { select: { id: true, name: true, color: true } } },
-  })
+  const totalInstallments = transactionType === 'EXPENSE' ? installments : 1
+  const totalCents = amountToCents(amount)
+  const baseAmount = Math.floor(totalCents / totalInstallments)
+  const remainder = totalCents - baseAmount * totalInstallments
 
-  return NextResponse.json(toTransactionDto(transaction), { status: 201 })
+  if (transactionType === 'INCOME') {
+    const discount = await prisma.transaction.create({
+      data: {
+        transactionType: 'INCOME',
+        description,
+        amount: totalCents,
+        date: parseLocalDate(date),
+        userId: session.user.id,
+        categoryId: categoryId ?? null,
+        creditCardId: card.id,
+      },
+      include: { account: { select: { name: true, color: true } }, category: { select: { id: true, name: true, color: true } } },
+    })
+    await notifyCardDiscount(session.user.id, description, totalCents)
+    return NextResponse.json(toTransactionDto(discount), { status: 201 })
+  }
+
+  if (totalInstallments === 1) {
+    const transaction = await prisma.transaction.create({
+      data: {
+        transactionType: 'EXPENSE',
+        description,
+        amount: totalCents,
+        date: parseLocalDate(date),
+        userId: session.user.id,
+        categoryId: categoryId ?? null,
+        creditCardId: card.id,
+      },
+      include: { account: { select: { name: true, color: true } }, category: { select: { id: true, name: true, color: true } } },
+    })
+    return NextResponse.json(toTransactionDto(transaction), { status: 201 })
+  }
+
+  const groupId = crypto.randomUUID()
+  const baseDate = parseLocalDate(date)
+
+  const transactions = await prisma.$transaction(
+    Array.from({ length: totalInstallments }, (_, i) => {
+      const installmentDate = new Date(baseDate)
+      installmentDate.setMonth(installmentDate.getMonth() + i)
+      const installmentAmount = baseAmount + (i < remainder ? 1 : 0)
+      return prisma.transaction.create({
+        data: {
+          transactionType: 'EXPENSE',
+          description: `${description} (${i + 1}/${totalInstallments})`,
+          amount: installmentAmount,
+          date: installmentDate,
+          userId: session.user.id,
+          categoryId: categoryId ?? null,
+          creditCardId: card.id,
+          installmentGroupId: groupId,
+          installmentCurrent: i + 1,
+          installmentTotal: totalInstallments,
+        },
+        include: { account: { select: { name: true, color: true } }, category: { select: { id: true, name: true, color: true } } },
+      })
+    })
+  )
+
+  return NextResponse.json(toTransactionDto(transactions[0]), { status: 201 })
 }

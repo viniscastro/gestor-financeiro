@@ -89,6 +89,8 @@ export default function CardsManager() {
   const [addDate, setAddDate] = useState<string>(new Date().toISOString().slice(0, 10))
   const [addCategory, setAddCategory] = useState('')
   const [addSaving, setAddSaving] = useState(false)
+  const [addType, setAddType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE')
+  const [addInstallments, setAddInstallments] = useState(1)
 
   const [importOpen, setImportOpen] = useState(false)
   const [importCardId, setImportCardId] = useState('')
@@ -373,6 +375,8 @@ export default function CardsManager() {
           amount: Number(addAmount),
           date: addDate,
           categoryId: addCategory || null,
+          transactionType: addType,
+          installments: addInstallments,
         }),
       })
       const data = await res.json().catch(() => ({}))
@@ -380,7 +384,7 @@ export default function CardsManager() {
         toast.error(data.error ?? 'Erro ao adicionar')
         return
       }
-      toast.success('Compra adicionada')
+      toast.success(addType === 'INCOME' ? 'Desconto aplicado' : 'Compra adicionada')
       setAddOpen(false)
       reload()
       await loadMonth(addCardId, selectedMonth[addCardId] ?? '')
@@ -490,7 +494,9 @@ export default function CardsManager() {
             const tx = cardTx[card.id] ?? []
             const month = selectedMonth[card.id] ?? ''
             const cardStatements = statements.filter((s) => s.cardId === card.id)
-            const spent = cardStatements.find((s) => s.status === 'OPEN' && s.totalAmount > 0)?.totalAmount ?? 0
+            const spent = month
+              ? cardStatements.find((s) => s.monthKey === month)?.totalAmount ?? 0
+              : cardStatements.reduce((sum, s) => sum + s.totalAmount, 0)
             const spentPct = card.creditLimit > 0 ? Math.min(100, Math.round((spent / card.creditLimit) * 100)) : 0
             return (
               <div
@@ -569,7 +575,7 @@ export default function CardsManager() {
                 <div className="border-t border-zinc-100 px-4 py-3 dark:border-zinc-700/50">
                   <div className="mb-1.5 flex items-center justify-between text-xs">
                     <span className="font-medium text-zinc-600 dark:text-zinc-300">
-                      Gasto atual: {formatBRL(spent)}
+                      {month ? `Gasto em ${monthLabel(month)}:` : 'Gasto total (todas as faturas):'} {formatBRL(spent)}
                     </span>
                     <span className="text-zinc-500 dark:text-zinc-400">{spentPct}% do limite</span>
                   </div>
@@ -631,6 +637,8 @@ export default function CardsManager() {
                             setAddAmount('')
                             setAddDate(new Date().toISOString().slice(0, 10))
                             setAddCategory('')
+                            setAddType('EXPENSE')
+                            setAddInstallments(1)
                             setAddOpen(true)
                           }}
                           className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-500"
@@ -811,8 +819,24 @@ export default function CardsManager() {
         </form>
       </Modal>
 
-      <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Adicionar compra no cartão">
+      <Modal open={addOpen} onClose={() => setAddOpen(false)} title={addType === 'INCOME' ? 'Aplicar desconto no cartão' : 'Adicionar compra no cartão'}>
         <form onSubmit={handleAddPurchase} className="space-y-4">
+          <div className="grid grid-cols-2 gap-2 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-900">
+            <button
+              type="button"
+              onClick={() => setAddType('EXPENSE')}
+              className={`rounded-md px-3 py-2 text-sm font-semibold transition ${addType === 'EXPENSE' ? 'bg-emerald-600 text-white shadow' : 'text-zinc-600 hover:bg-zinc-200 dark:text-zinc-300 dark:hover:bg-zinc-800'}`}
+            >
+              Compra
+            </button>
+            <button
+              type="button"
+              onClick={() => setAddType('INCOME')}
+              className={`rounded-md px-3 py-2 text-sm font-semibold transition ${addType === 'INCOME' ? 'bg-emerald-600 text-white shadow' : 'text-zinc-600 hover:bg-zinc-200 dark:text-zinc-300 dark:hover:bg-zinc-800'}`}
+            >
+              Desconto
+            </button>
+          </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Descrição <span className="text-rose-500">*</span>
@@ -838,6 +862,21 @@ export default function CardsManager() {
               <DatePicker value={addDate} onChange={setAddDate} required />
             </div>
           </div>
+          {addType === 'EXPENSE' && (
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Número de parcelas
+              </label>
+              <Select
+                value={String(addInstallments)}
+                onChange={(v) => setAddInstallments(Number(v))}
+                options={Array.from({ length: 48 }, (_, i) => ({
+                  value: String(i + 1),
+                  label: i === 0 ? '1 (à vista)' : `${i + 1}x`,
+                }))}
+              />
+            </div>
+          )}
           <div>
             <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">Categoria</label>
             <Select
@@ -852,7 +891,7 @@ export default function CardsManager() {
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:opacity-60"
           >
             {addSaving && <LoaderCircle className="h-4 w-4 animate-spin" />}
-            Adicionar compra
+            {addType === 'INCOME' ? 'Aplicar desconto' : 'Adicionar compra'}
           </button>
         </form>
       </Modal>
