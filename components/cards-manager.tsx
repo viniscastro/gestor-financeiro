@@ -966,8 +966,16 @@ export default function CardsManager() {
             </div>
           </div>
           <div>
+            <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">Categoria</label>
+            <Select
+              value={addCategory}
+              onChange={setAddCategory}
+              options={[{ value: '', label: 'Sem categoria' }, ...categoryOptions]}
+            />
+          </div>
+          <div>
             <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Número de parcelas
+              Número de parcelas <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
@@ -975,16 +983,9 @@ export default function CardsManager() {
               pattern="[0-9]*"
               value={addInstallments}
               onChange={(e) => setAddInstallments(e.target.value.replace(/\D/g, '').slice(0, 2))}
-              placeholder="Ex: 1, 3, 6, 12"
+              placeholder="1"
+              required
               className={inputClass}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">Categoria</label>
-            <Select
-              value={addCategory}
-              onChange={setAddCategory}
-              options={[{ value: '', label: 'Sem categoria' }, ...categoryOptions]}
             />
           </div>
           <button
