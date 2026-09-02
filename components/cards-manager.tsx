@@ -92,6 +92,13 @@ export default function CardsManager() {
   const [addType, setAddType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE')
   const [addInstallments, setAddInstallments] = useState(1)
 
+  const [editTx, setEditTx] = useState<TransactionDto | null>(null)
+  const [editDesc, setEditDesc] = useState('')
+  const [editAmount, setEditAmount] = useState('')
+  const [editDate, setEditDate] = useState('')
+  const [editCategory, setEditCategory] = useState('')
+  const [editSaving, setEditSaving] = useState(false)
+
   const [importOpen, setImportOpen] = useState(false)
   const [importCardId, setImportCardId] = useState('')
   const [importCategory, setImportCategory] = useState('')
@@ -319,8 +326,10 @@ export default function CardsManager() {
   }
 
   function changeMonth(cardId: string, month: string) {
-    setSelectedMonth((prev) => ({ ...prev, [cardId]: month }))
-    loadMonth(cardId, month)
+    const selected = selectedMonth[cardId]
+    const next = selected === month ? '' : month
+    setSelectedMonth((prev) => ({ ...prev, [cardId]: next }))
+    loadMonth(cardId, next)
   }
 
   function canPayStatement(s: CreditCardStatementDto): boolean {
@@ -451,6 +460,98 @@ export default function CardsManager() {
       await loadMonth(importCardId, selectedMonth[importCardId] ?? '')
     } finally {
       setImportSaving(false)
+    }
+  }
+
+  function openEditTx(t: TransactionDto) {
+    setEditTx(t)
+    setEditDesc(t.description)
+    setEditAmount((t.amount / 100).toFixed(2))
+    setEditDate(t.date.slice(0, 10))
+    setEditCategory(t.categoryId ?? '')
+  }
+
+  async function handleEditTx(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editTx) return
+    setEditSaving(true)
+    try {
+      const res = await fetch(`/api/transactions/${editTx.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transactionType: editTx.transactionType,
+          description: editDesc,
+          amount: Number(editAmount),
+          date: editDate,
+          categoryId: editCategory || null,
+          creditCardId: editTx.creditCardId,
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        toast.error(data.error ?? 'Erro ao editar a compra')
+        return
+      }
+      toast.success('Compra atualizada')
+      setEditTx(null)
+      const cardId = editTx.creditCardId
+      if (cardId) await loadMonth(cardId, selectedMonth[cardId] ?? '')
+      reload()
+    } finally {
+      setEditSaving(false)
+    }
+  }
+
+  function printStatementPdf(card: CreditCardDto, monthKey: string, tx: TransactionDto[]) {
+    const items = tx.filter((t) => t.transactionType === 'EXPENSE')
+    const discounts = tx.filter((t) => t.transactionType === 'INCOME')
+    const total = items.reduce((s, t) => s + t.amount, 0) - discounts.reduce((s, t) => s + t.amount, 0)
+    const rows = tx
+      .map((t) => {
+        const sign = t.transactionType === 'INCOME' ? '-' : '+'
+        return `<tr><td>${formatDDMMYYYY(t.date.slice(0, 10))}</td><td>${t.description.replace(/[<>&]/g, '')}</td><td style="text-align:right">${sign} ${formatBRL(t.amount)}</td></tr>`
+      })
+      .join('')
+
+    const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Fatura ${card.name} - ${monthLabel(monthKey)}</title><style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:Arial,Helvetica,sans-serif;color:#111;padding:40px;font-size:14px}
+      h1{font-size:20px;margin-bottom:4px}
+      .sub{color:#555;margin-bottom:24px}
+      table{width:100%;border-collapse:collapse;margin-top:8px}
+      th,td{text-align:left;padding:8px 6px;border-bottom:1px solid #ddd}
+      th{font-size:12px;text-transform:uppercase;color:#888;border-bottom:2px solid #ddd}
+      .total{font-weight:bold;font-size:16px;margin-top:16px;text-align:right}
+      .total span{display:inline-block;min-width:120px}
+    </style></head><body>
+      <h1>${card.name}</h1>
+      <div class="sub">Fatura ${monthLabel(monthKey)}</div>
+      <table><thead><tr><th>Data</th><th>Produto</th><th style="text-align:right">Valor</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="total">Total: <span>${formatBRL(total)}</span></div>
+    </body></html>`
+
+    const frame = window.document.createElement('iframe')
+    frame.style.position = 'fixed'
+    frame.style.right = '0'
+    frame.style.bottom = '0'
+    frame.style.width = '0'
+    frame.style.height = '0'
+    frame.style.border = '0'
+    window.document.body.appendChild(frame)
+    const doc = frame.contentWindow?.document
+    if (!doc) {
+      window.document.body.removeChild(frame)
+      return
+    }
+    doc.open()
+    doc.write(html)
+    doc.close()
+    const pop = frame.contentWindow
+    if (pop) {
+      pop.focus()
+      pop.onafterprint = () => window.document.body.removeChild(frame)
+      pop.print()
     }
   }
 
@@ -648,6 +749,16 @@ export default function CardsManager() {
                         </button>
                         <button
                           type="button"
+                          onClick={() => printStatementPdf(card, month || cardStatements[0]?.monthKey || '', tx)}
+                          disabled={tx.length === 0}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                          title="Exportar esta fatura em PDF"
+                        >
+                          <Upload className="h-3.5 w-3.5" />
+                          PDF
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => {
                             setImportCardId(card.id)
                             setImportCategory('')
@@ -709,15 +820,25 @@ export default function CardsManager() {
                                 {formatDDMMYYYY(t.date.slice(0, 10))}{t.categoryName ? ` · ${t.categoryName}` : ''}
                               </p>
                             </div>
-                            <span
-                              className={`shrink-0 font-semibold ${
-                                t.transactionType === 'INCOME'
-                                  ? 'text-emerald-600 dark:text-emerald-400'
-                                  : 'text-rose-600 dark:text-rose-400'
-                              }`}
-                            >
-                              {t.transactionType === 'INCOME' ? '+' : '-'} {formatBRL(t.amount)}
-                            </span>
+                            <div className="flex shrink-0 items-center gap-1">
+                              <span
+                                className={`font-semibold ${
+                                  t.transactionType === 'INCOME'
+                                    ? 'text-emerald-600 dark:text-emerald-400'
+                                    : 'text-rose-600 dark:text-rose-400'
+                                }`}
+                              >
+                                {t.transactionType === 'INCOME' ? '+' : '-'} {formatBRL(t.amount)}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => openEditTx(t)}
+                                className="rounded p-1.5 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-700"
+                                title="Editar compra"
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
                           </li>
                         ))}
                       </ul>
@@ -892,6 +1013,52 @@ export default function CardsManager() {
           >
             {addSaving && <LoaderCircle className="h-4 w-4 animate-spin" />}
             {addType === 'INCOME' ? 'Aplicar desconto' : 'Adicionar compra'}
+          </button>
+        </form>
+      </Modal>
+
+      <Modal open={!!editTx} onClose={() => setEditTx(null)} title="Editar compra">
+        <form onSubmit={handleEditTx} className="space-y-4">
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Descrição <span className="text-rose-500">*</span>
+            </label>
+            <input
+              value={editDesc}
+              onChange={(e) => setEditDesc(e.target.value)}
+              required
+              className={inputClass}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Valor (R$) <span className="text-rose-500">*</span>
+              </label>
+              <CurrencyInput value={editAmount} onChange={setEditAmount} className={inputClass} />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Data <span className="text-rose-500">*</span>
+              </label>
+              <DatePicker value={editDate} onChange={setEditDate} required />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">Categoria</label>
+            <Select
+              value={editCategory}
+              onChange={setEditCategory}
+              options={[{ value: '', label: 'Sem categoria' }, ...categoryOptions]}
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={editSaving}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:opacity-60"
+          >
+            {editSaving && <LoaderCircle className="h-4 w-4 animate-spin" />}
+            Salvar alterações
           </button>
         </form>
       </Modal>
