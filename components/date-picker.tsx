@@ -28,7 +28,7 @@ function parseDateInput(text: string): string | null {
   const d = parseInt(dd, 10)
   const mo = parseInt(mm, 10)
   const y = parseInt(yyyy, 10)
-  if (mo < 1 || mo > 12 || d < 1 || d > 31 || y < 2000 || y > 2100) return null
+  if (mo < 1 || mo > 12 || d < 1 || d > 31 || y < 1900 || y > 2100) return null
   const test = new Date(y, mo - 1, d)
   if (test.getFullYear() !== y || test.getMonth() !== mo - 1 || test.getDate() !== d) return null
   return `${yyyy}-${mm}-${dd}`

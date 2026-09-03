@@ -987,6 +987,9 @@ export default function CardsManager() {
               required
               className={inputClass}
             />
+            {addInstallments === '1' && (
+              <p className="mt-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">à vista</p>
+            )}
           </div>
           <button
             type="submit"

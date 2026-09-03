@@ -101,33 +101,24 @@ export function exportMonthlyReportPdf(
 
   autoTable(doc, {
     startY: tableStartY,
-    head: [['Data', 'Tipo', 'Descricao', 'Valor', 'Conta', 'Categoria']],
-    body: rows.map((r) => [
-      r.date,
-      r.type,
-      r.description,
-      fmt(r.amount),
-      r.accountName,
-      r.categoryName,
-    ]),
+    head: [['Data', 'Produto', 'Valor']],
+    body: rows.map((r) => [r.date, r.description, `${r.type === 'Entrada' ? '+' : '-'} ${fmt(r.amount)}`]),
+    foot: [['', 'TOTAL', fmt(totals.balance)]],
     margin: { left: 15, right: 15 },
-    styles: { fontSize: 8, cellPadding: 2.5 },
+    styles: { fontSize: 9, cellPadding: 3 },
     headStyles: { fillColor: [16, 185, 129], textColor: [255, 255, 255], fontStyle: 'bold' },
+    footStyles: { fillColor: [243, 244, 246], textColor: [40, 40, 40], fontStyle: 'bold' },
     alternateRowStyles: { fillColor: [249, 250, 251] },
     columnStyles: {
-      0: { cellWidth: 19 },
-      1: { cellWidth: 17 },
-      2: { cellWidth: 41 },
-      3: { cellWidth: 25, halign: 'center' },
-      4: { cellWidth: 28 },
-      5: { cellWidth: 32 },
+      0: { cellWidth: 30 },
+      1: { cellWidth: 130 },
+      2: { cellWidth: 20, halign: 'right' },
     },
     didParseCell(data) {
-      if (data.section === 'body' && data.column.index === 1) {
+      if (data.section === 'body' && data.column.index === 2) {
         const val = String(data.cell.raw)
-        if (val === 'Entrada') data.cell.styles.textColor = [16, 185, 129]
-        else if (val === 'Saida') data.cell.styles.textColor = [244, 63, 94]
-        else data.cell.styles.textColor = [113, 113, 122]
+        data.cell.styles.textColor = val.startsWith('-') ? [244, 63, 94] : [16, 185, 129]
+        data.cell.styles.halign = 'right'
       }
     },
   })
