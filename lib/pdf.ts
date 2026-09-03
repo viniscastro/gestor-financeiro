@@ -9,16 +9,10 @@ const fmt = (cents: number) =>
   (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
 function footerTotal(doc: jsPDF, y: number, amount: number) {
-  const pageW = doc.internal.pageSize.getWidth()
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(40)
-  const label = 'Total:'
-  const value = fmt(amount)
-  const valueWidth = doc.getTextWidth(value)
-  const valueX = pageW - 15
-  doc.text(label, valueX - valueWidth - 6, y, { align: 'right' })
-  doc.text(value, valueX, y, { align: 'right' })
+  doc.text(`Total: ${fmt(amount)}`, 15, y)
 }
 
 export function exportMonthlyReportPdf(
@@ -72,7 +66,7 @@ export function exportMonthlyReportPdf(
     columnStyles: {
       0: { cellWidth: 30 },
       1: { cellWidth: 121 },
-      2: { cellWidth: 29, halign: 'right' },
+      2: { cellWidth: 29 },
     },
   })
 

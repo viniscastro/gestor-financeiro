@@ -504,12 +504,14 @@ export default function CardsManager() {
 
   function printStatementPdf(card: CreditCardDto, monthKey: string, tx: TransactionDto[]) {
     const items = tx.filter((t) => t.transactionType === 'EXPENSE')
-    const rows = items
+    const discounts = tx.filter((t) => t.transactionType === 'INCOME')
+    const total = items.reduce((s, t) => s + t.amount, 0) - discounts.reduce((s, t) => s + t.amount, 0)
+    const rows = tx
       .map((t) => {
-        return `<tr><td>${formatDDMMYYYY(t.date.slice(0, 10))}</td><td>${t.description.replace(/[<>&]/g, '')}</td><td style="text-align:right">${formatBRL(t.amount)}</td></tr>`
+        const label = t.transactionType === 'INCOME' ? ' (estorno)' : ''
+        return `<tr><td>${formatDDMMYYYY(t.date.slice(0, 10))}</td><td>${t.description.replace(/[<>&]/g, '')}${label}</td><td>${formatBRL(t.amount)}</td></tr>`
       })
       .join('')
-    const total = items.reduce((s, t) => s + t.amount, 0)
 
     const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Fatura ${card.name} - ${monthLabel(monthKey)}</title><style>
       *{box-sizing:border-box;margin:0;padding:0}
@@ -519,13 +521,12 @@ export default function CardsManager() {
       table{width:100%;border-collapse:collapse;margin-top:8px}
       th,td{text-align:left;padding:8px 6px;border-bottom:1px solid #ddd}
       th{font-size:12px;text-transform:uppercase;color:#888;border-bottom:2px solid #ddd}
-      .total{font-weight:bold;font-size:16px;margin-top:16px;text-align:right}
-      .total span{display:inline-block;min-width:120px}
+      .total{font-weight:bold;font-size:16px;margin-top:16px}
     </style></head><body>
       <h1>${card.name}</h1>
       <div class="sub">Fatura ${monthLabel(monthKey)}</div>
-      <table><thead><tr><th>Data</th><th>Produto</th><th style="text-align:right">Valor</th></tr></thead><tbody>${rows}</tbody></table>
-      <div class="total">Total: <span>${formatBRL(total)}</span></div>
+      <table><thead><tr><th>Data</th><th>Produto</th><th>Valor</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="total">Total: ${formatBRL(total)}</div>
     </body></html>`
 
     const frame = window.document.createElement('iframe')
