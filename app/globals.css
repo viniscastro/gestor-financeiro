@@ -2,6 +2,12 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@utility app-backdrop-gradient {
+  background:
+    radial-gradient(ellipse at top left, rgba(16, 185, 129, 0.15), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(139, 92, 246, 0.12), transparent 50%);
+}
+
 :root {
   color-scheme: light;
   --background: #fafafa;

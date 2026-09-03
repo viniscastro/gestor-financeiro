@@ -36,6 +36,8 @@ export function exportMonthlyReportPdf(
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
   const pageW = doc.internal.pageSize.getWidth()
 
+  const exits = rows.filter((r) => r.type === 'Saida')
+
   doc.setFontSize(20)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(17, 17, 17)
@@ -49,7 +51,7 @@ export function exportMonthlyReportPdf(
   autoTable(doc, {
     startY: 42,
     head: [['DATA', 'PRODUTO', 'VALOR']],
-    body: rows.map((r) => [r.date, r.description, `${r.type === 'Entrada' ? '+' : '-'} ${fmt(r.amount)}`]),
+    body: exits.map((r) => [r.date, r.description, fmt(r.amount)]),
     margin: { left: 15, right: 15 },
     theme: 'plain',
     headStyles: {
@@ -72,17 +74,10 @@ export function exportMonthlyReportPdf(
       1: { cellWidth: 121 },
       2: { cellWidth: 29, halign: 'right' },
     },
-    didParseCell(data) {
-      if (data.section === 'body' && data.column.index === 2) {
-        const val = String(data.cell.raw)
-        data.cell.styles.textColor = val.startsWith('-') ? [244, 63, 94] : [16, 185, 129]
-        data.cell.styles.halign = 'right'
-      }
-    },
   })
 
   const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY
-  footerTotal(doc, finalY + 12, totals.balance)
+  footerTotal(doc, finalY + 12, totals.expense)
 
   const today = new Date().toISOString().slice(0, 10)
   downloadPdf(doc, `relatorio_${today}.pdf`)

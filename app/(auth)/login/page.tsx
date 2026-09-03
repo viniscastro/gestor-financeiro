@@ -18,13 +18,7 @@ export default async function LoginPage({ searchParams }: Props) {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-y-auto p-4">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse at top left, rgba(16,185,129,0.15), transparent 50%), radial-gradient(ellipse at bottom right, rgba(139,92,246,0.12), transparent 50%)',
-        }}
-      />
+      <div className="pointer-events-none absolute inset-0 app-backdrop-gradient" />
       <div className="absolute right-4 top-4 z-50">
         <AuthThemeToggle />
       </div>

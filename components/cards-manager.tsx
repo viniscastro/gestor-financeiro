@@ -504,14 +504,12 @@ export default function CardsManager() {
 
   function printStatementPdf(card: CreditCardDto, monthKey: string, tx: TransactionDto[]) {
     const items = tx.filter((t) => t.transactionType === 'EXPENSE')
-    const discounts = tx.filter((t) => t.transactionType === 'INCOME')
-    const total = items.reduce((s, t) => s + t.amount, 0) - discounts.reduce((s, t) => s + t.amount, 0)
-    const rows = tx
+    const rows = items
       .map((t) => {
-        const sign = t.transactionType === 'INCOME' ? '-' : '+'
-        return `<tr><td>${formatDDMMYYYY(t.date.slice(0, 10))}</td><td>${t.description.replace(/[<>&]/g, '')}</td><td style="text-align:right">${sign} ${formatBRL(t.amount)}</td></tr>`
+        return `<tr><td>${formatDDMMYYYY(t.date.slice(0, 10))}</td><td>${t.description.replace(/[<>&]/g, '')}</td><td style="text-align:right">${formatBRL(t.amount)}</td></tr>`
       })
       .join('')
+    const total = items.reduce((s, t) => s + t.amount, 0)
 
     const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Fatura ${card.name} - ${monthLabel(monthKey)}</title><style>
       *{box-sizing:border-box;margin:0;padding:0}

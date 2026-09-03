@@ -108,13 +108,7 @@ export default async function LandingPage() {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(ellipse at top left, rgba(16,185,129,0.12), transparent 50%), radial-gradient(ellipse at bottom right, rgba(139,92,246,0.10), transparent 50%)',
-          }}
-        />
+        <div className="pointer-events-none absolute inset-0 app-backdrop-gradient" />
         <div className="relative mx-auto max-w-6xl px-4 py-24 text-center sm:px-6 sm:py-32 lg:py-40">
           <h1 className="mx-auto max-w-3xl text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl lg:text-6xl">
             Controle financeiro{' '}
