@@ -269,28 +269,11 @@ export default function TransactionsPage() {
       categoryName: t.categoryName ?? '',
     }))
 
-    const categoryMap = new Map<string, { label: string; color: string; amount: number }>()
-    for (const t of filtered) {
-      if (t.transferGroupId || t.transactionType !== 'EXPENSE') continue
-      const key = t.categoryId ?? 'sem-categoria'
-      const existing = categoryMap.get(key)
-      if (existing) {
-        existing.amount += t.amount
-      } else {
-        categoryMap.set(key, {
-          label: t.categoryName ?? 'Sem categoria',
-          color: t.categoryColor ?? '#71717A',
-          amount: t.amount,
-        })
-      }
-    }
-    const categoryBreakdown = Array.from(categoryMap.values()).sort((a, b) => b.amount - a.amount)
-
     const monthLabel = monthFilter !== 'ALL'
       ? months.find(([k]) => k === monthFilter)?.[1] ?? monthFilter
       : 'Todos os meses'
 
-    exportMonthlyReportPdf(monthLabel, totals, rows, categoryBreakdown)
+    exportMonthlyReportPdf(monthLabel, totals, rows)
   }
 
   function handleSaved() {

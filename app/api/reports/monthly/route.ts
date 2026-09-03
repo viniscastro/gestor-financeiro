@@ -80,7 +80,6 @@ async function sendMonthlyReport(userId: string) {
 
   let monthIncome = 0
   let monthExpense = 0
-  const categoryMap = new Map<string, { name: string; color: string; amount: number }>()
 
   const rows = transactions.map((t) => {
     const isTransfer = Boolean(t.transferGroupId)
@@ -88,19 +87,7 @@ async function sendMonthlyReport(userId: string) {
 
     if (!isTransfer) {
       if (t.transactionType === 'INCOME') monthIncome += t.amount
-      else {
-        monthExpense += t.amount
-        const key = t.category ? t.category.id : 'sem-categoria'
-        if (key !== 'sem-categoria') {
-          const existing = categoryMap.get(key)
-          if (existing) existing.amount += t.amount
-          else categoryMap.set(key, { name: t.category!.name, color: t.category!.color, amount: t.amount })
-        } else {
-          const existing = categoryMap.get(key)
-          if (existing) existing.amount += t.amount
-          else categoryMap.set(key, { name: 'Sem categoria', color: '#71717a', amount: t.amount })
-        }
-      }
+      else monthExpense += t.amount
     }
 
     return {
@@ -113,15 +100,10 @@ async function sendMonthlyReport(userId: string) {
     }
   })
 
-  const categoryBreakdown = Array.from(categoryMap.values())
-    .map((c) => ({ label: c.name, color: c.color, amount: c.amount }))
-    .sort((a, b) => b.amount - a.amount)
-
   const pdfBuffer = generateMonthlyReportPdf(
     monthLabel,
     { income: monthIncome, expense: monthExpense, balance: monthIncome - monthExpense },
-    rows,
-    categoryBreakdown
+    rows
   )
 
   const subject = `Relatório Mensal — ${monthLabel}`
