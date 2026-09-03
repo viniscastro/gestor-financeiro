@@ -15,8 +15,10 @@ function footerTotal(doc: jsPDF, y: number, amount: number) {
   doc.setTextColor(40)
   const label = 'Total:'
   const value = fmt(amount)
-  doc.text(label, pageW - 15 - doc.getTextWidth(value), y)
-  doc.text(value, pageW - 15, y, { align: 'right' })
+  const valueWidth = doc.getTextWidth(value)
+  const valueX = pageW - 15
+  doc.text(label, valueX - valueWidth - 6, y, { align: 'right' })
+  doc.text(value, valueX, y, { align: 'right' })
 }
 
 export function exportMonthlyReportPdf(
