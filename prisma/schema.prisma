@@ -39,6 +39,7 @@ model User {
   pushSubscriptions    PushSubscription[]
   creditCards          CreditCard[]
   creditCardStatements CreditCardStatement[]
+  accountTypes         AccountType[]
 }
 
 model Account {
@@ -79,6 +80,22 @@ model Category {
   recurringRules RecurringRule[]
 
   @@unique([userId, name, type])
+  @@index([userId])
+}
+
+model AccountType {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug      String
+  name      String
+  color     String   @default("#78716c")
+  icon      String   @default("wallet")
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, slug])
   @@index([userId])
 }
 

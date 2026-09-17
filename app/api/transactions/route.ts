@@ -5,6 +5,7 @@ import { amountToCents, toTransactionDto, transactionSchema } from '@/lib/transa
 import { parseLocalDate } from '@/lib/format'
 import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
 import { notifyTransaction } from '@/lib/notifications'
+import { cleanupCardRecurringTransactions } from '@/lib/recurring'
 
 const transactionInclude = {
   account: { select: { name: true, color: true } },
@@ -20,6 +21,10 @@ export async function GET(request: NextRequest) {
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
   }
+
+  // Remove pré-gerações antigas de recorrências de cartão antes de listar,
+  // garantindo que elas nunca apareçam mesmo se o layout não tiver rodado.
+  await cleanupCardRecurringTransactions(session.user.id)
 
   const { searchParams } = request.nextUrl
   const accountId = searchParams.get('accountId')

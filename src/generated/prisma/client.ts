@@ -57,6 +57,11 @@ export type Account = Prisma.AccountModel
  */
 export type Category = Prisma.CategoryModel
 /**
+ * Model AccountType
+ * 
+ */
+export type AccountType = Prisma.AccountTypeModel
+/**
  * Model Budget
  * 
  */

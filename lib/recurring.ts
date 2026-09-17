@@ -37,84 +37,269 @@ export function daysUntil(target: Date, from: Date): number {
   return Math.round((b - a) / 86_400_000)
 }
 
+// Marcador usado em installmentGroupId para identificar transações de
+// recorrência de cartão materializadas (mensalmente ou ao pagar a fatura) que
+// não devem ser apagadas pela limpeza de pré-geração antiga.
+export const CARD_PAID_SENTINEL = 'card-recurring-paid'
+
+// Retorna o próximo mês depois do chave fornecida, ou o próprio mês se for
+// anterior. Formato "yyyy-MM".
+export function nextMonthAfter(key: string, from: string): string | null {
+  const [y, m] = key.split('-').map(Number)
+  if (!y || !m) return null
+  const total = y * 12 + (m - 1) + 1
+  const ny = Math.floor(total / 12)
+  const nm = (total % 12) + 1
+  const candidate = `${ny}-${String(nm).padStart(2, '0')}`
+  return candidate > from ? candidate : from
+}
+
+function lastDayOfMonth(year: number, monthIndex: number): number {
+  return new Date(year, monthIndex + 1, 0).getDate()
+}
+
+function monthStart(year: number, monthIndex: number, dayOfMonth: number): Date {
+  return new Date(year, monthIndex, Math.min(dayOfMonth, lastDayOfMonth(year, monthIndex)))
+}
+
+// Recorrências de cartão são materializadas mensalmente no dia de cobrança
+// (ver materializeRecurring). Esta função remove qualquer transação de cartão
+// no mês corrente/futuro que ainda esteja como pré-geração antiga ou inválida,
+// preservando as materializadas (marcador installmentGroupId). Usa `date` (não
+// occurrenceMonth) para ser robusto a inconsistências e a transações criadas
+// por import/caminhos manuais. Chamado no layout e antes de listar transações.
+export async function cleanupCardRecurringTransactions(userId: string): Promise<void> {
+  const now = new Date()
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  await prisma.transaction.deleteMany({
+    where: {
+      userId,
+      creditCardId: { not: null },
+      recurringId: { not: null },
+      // Em Prisma/Postgres, `{ not: X }` NÃO casa colunas NULL. Pré-gerações
+      // antigas têm installmentGroupId = NULL, então precisamos incluir nulos
+      // explicitamente via OR, preservando apenas as criadas no pagamento
+      // (installmentGroupId = CARD_PAID_SENTINEL).
+      OR: [
+        { installmentGroupId: { not: CARD_PAID_SENTINEL } },
+        { installmentGroupId: null },
+      ],
+      date: { gte: startOfMonth },
+    },
+  })
+}
+
 export async function materializeRecurring(userId: string): Promise<void> {
   const rules = await prisma.recurringRule.findMany({
     where: { userId, active: true },
   })
-  if (rules.length === 0) return
 
   const now = new Date()
-  const key = monthKey(now)
+  const currentMonth = monthKey(now)
+
+  // Ver comentário em cleanupCardRecurringTransactions. Roda mesmo sem regras
+  // de conta ativas, por isso fica ANTES do early-return abaixo.
+  await cleanupCardRecurringTransactions(userId)
+
+  // Limpeza única: resetar lastMaterializedMonth travado no futuro e apagar
+  // transações futuras pré-geradas pela versão antiga (5 anos).
+  const stuckRules = rules.filter(
+    (r) => r.lastMaterializedMonth && r.lastMaterializedMonth > currentMonth
+  )
+  if (stuckRules.length > 0) {
+    await prisma.$transaction([
+      prisma.recurringRule.updateMany({
+        where: { id: { in: stuckRules.map((r) => r.id) } },
+        data: { lastMaterializedMonth: null },
+      }),
+      prisma.transaction.deleteMany({
+        where: {
+          userId,
+          creditCardId: null,
+          recurringId: { not: null },
+          occurrenceMonth: { gt: currentMonth },
+        },
+      }),
+    ])
+    // Atualiza em memória para o loop abaixo
+    for (const rule of rules) {
+      if (stuckRules.some((r) => r.id === rule.id)) {
+        rule.lastMaterializedMonth = null
+      }
+    }
+  }
+
+  if (rules.length === 0) return
+
+  const cardIds = [...new Set(rules.filter((r) => r.creditCardId).map((r) => r.creditCardId!))]
+  const cards = cardIds.length
+    ? await prisma.creditCard.findMany({
+        where: { userId, id: { in: cardIds } },
+        select: { id: true, closingDay: true },
+      })
+    : []
+  const cardClosing = new Map(cards.map((c) => [c.id, c.closingDay]))
 
   for (const rule of rules) {
-    if (rule.lastMaterializedMonth === key) continue
+    if (rule.creditCardId) {
+      if (rule.kind === 'TRANSFER') continue
 
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
-    const date = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      Math.min(rule.dayOfMonth, lastDay)
-    )
+      const [cy, cm] = currentMonth.split('-').map(Number)
+      const closing = cardClosing.get(rule.creditCardId)
 
-    if (rule.kind === 'TRANSFER' && rule.toAccountId) {
-      const groupId = randomUUID()
-      await prisma.$transaction([
-        prisma.transaction.create({
+      // NOTA: não usamos lastMaterializedMonth como gate aqui. Versões antigas
+      // marcavam o mês corrente antes do dia de cobrança chegar (quando só o
+      // backfill do mês anterior era criado), o que fazia a materialização do
+      // mês corrente ser pulada para sempre. A idempotência é garantida pela
+      // existência da ocorrência (findFirst por occurrenceMonth + data/valor),
+      // então rodamos sempre e deixamos o flag apenas como informação.
+      // Meses a materializar. A ocorrência do mês corrente só entra no dia de
+      // cobrança (dayOfMonth). Quando a cobrança cai DEPOIS do fechamento do
+      // cartão, o lançamento do mês anterior pertence à fatura vigente e deve
+      // ser reposto se faltar (ex.: usuário ficou um mês sem abrir o app).
+      const months: Array<[number, number]> = []
+      if (closing && rule.dayOfMonth >= closing) {
+        const pm = cm === 1 ? 12 : cm - 1
+        const py = cm === 1 ? cy - 1 : cy
+        months.push([pm, py])
+      }
+      const effCurrent = Math.min(rule.dayOfMonth, lastDayOfMonth(cy, cm - 1))
+      if (now.getDate() >= effCurrent) {
+        months.push([cm, cy])
+      }
+
+      for (const [mm, yy] of months) {
+        const mk = `${yy}-${String(mm).padStart(2, '0')}`
+        const expectedDate = monthStart(yy, mm - 1, rule.dayOfMonth)
+        const existing = await prisma.transaction.findFirst({
+          where: {
+            recurringId: rule.id,
+            occurrenceMonth: mk,
+          },
+          select: { id: true, date: true, amount: true, creditCardId: true, accountId: true },
+        })
+        // Apenas regera se a ocorrência estiver ausente, com data/valor
+        // divergentes, ou no canal errado (ex.: regra trocada de conta para
+        // cartão deixou ocorrência na conta antiga — reverteria o débito).
+        if (
+          !existing ||
+          existing.date.getTime() !== expectedDate.getTime() ||
+          existing.amount !== rule.amountCents ||
+          existing.creditCardId !== rule.creditCardId ||
+          existing.accountId !== null
+        ) {
+          await prisma.transaction.deleteMany({
+            where: { recurringId: rule.id, date: { gte: new Date(yy, mm - 1, 1) } },
+          })
+          await prisma.transaction.create({
+            data: {
+              transactionType: rule.type,
+              description: rule.description,
+              amount: rule.amountCents,
+              date: expectedDate,
+              userId,
+              accountId: null,
+              creditCardId: rule.creditCardId,
+              categoryId: rule.categoryId,
+              recurringId: rule.id,
+              occurrenceMonth: mk,
+              installmentGroupId: CARD_PAID_SENTINEL,
+            },
+          })
+        }
+      }
+
+      // Só marca materializado quando a ocorrência do mês corrente realmente
+      // entrou; se o dia de cobrança ainda não chegou, mantém no mês anterior
+      // para tentar de novo na próxima abertura do app.
+      const hasCurrent = months.some(([mm]) => mm === cm)
+      if (hasCurrent) {
+        await prisma.recurringRule.update({
+          where: { id: rule.id },
+          data: { lastMaterializedMonth: currentMonth },
+        })
+      }
+      continue
+    }
+
+    if (rule.lastMaterializedMonth && rule.lastMaterializedMonth >= currentMonth) continue
+
+    const start = rule.lastMaterializedMonth
+      ? nextMonthAfter(rule.lastMaterializedMonth, currentMonth)
+      : currentMonth
+    if (!start || start > currentMonth) continue
+
+    const [sy, sm] = start.split('-').map(Number)
+    const [hy, hm] = currentMonth.split('-').map(Number)
+    const idx0 = sy * 12 + (sm - 1)
+    const idxN = hy * 12 + (hm - 1)
+
+    // Torna idempotente: remove as ocorrências já existentes no intervalo
+    // antes de regerar, evitando duplicatas.
+    await prisma.transaction.deleteMany({
+      where: { recurringId: rule.id, occurrenceMonth: { gte: start } },
+    })
+
+    for (let i = idx0; i <= idxN; i++) {
+      const year = Math.floor(i / 12)
+      const monthIndex = i % 12
+      const date = monthStart(year, monthIndex, rule.dayOfMonth)
+      const mk = monthKey(date)
+
+      if (rule.kind === 'TRANSFER' && rule.toAccountId) {
+        const groupId = randomUUID()
+        await prisma.$transaction([
+          prisma.transaction.create({
+            data: {
+              transactionType: 'EXPENSE',
+              description: rule.description,
+              amount: rule.amountCents,
+              date,
+              userId,
+              accountId: rule.accountId,
+              categoryId: null,
+              recurringId: rule.id,
+              occurrenceMonth: mk,
+              transferGroupId: groupId,
+            },
+          }),
+          prisma.transaction.create({
+            data: {
+              transactionType: 'INCOME',
+              description: rule.description,
+              amount: rule.amountCents,
+              date,
+              userId,
+              accountId: rule.toAccountId,
+              categoryId: null,
+              recurringId: rule.id,
+              occurrenceMonth: mk,
+              transferGroupId: groupId,
+            },
+          }),
+        ])
+      } else {
+        await prisma.transaction.create({
           data: {
-            transactionType: 'EXPENSE',
+            transactionType: rule.type,
             description: rule.description,
             amount: rule.amountCents,
             date,
             userId,
             accountId: rule.accountId,
-            categoryId: null,
+            creditCardId: rule.creditCardId ?? null,
+            categoryId: rule.categoryId,
             recurringId: rule.id,
-            occurrenceMonth: key,
-            transferGroupId: groupId,
+            occurrenceMonth: mk,
           },
-        }),
-        prisma.transaction.create({
-          data: {
-            transactionType: 'INCOME',
-            description: rule.description,
-            amount: rule.amountCents,
-            date,
-            userId,
-            accountId: rule.toAccountId,
-            categoryId: null,
-            recurringId: rule.id,
-            occurrenceMonth: key,
-            transferGroupId: groupId,
-          },
-        }),
-        prisma.recurringRule.update({
-          where: { id: rule.id },
-          data: { lastMaterializedMonth: key },
-        }),
-      ])
-      continue
+        })
+      }
     }
 
-    await prisma.$transaction([
-      prisma.transaction.create({
-        data: {
-          transactionType: rule.type,
-          description: rule.description,
-          amount: rule.amountCents,
-          date,
-          userId,
-          accountId: rule.accountId,
-          creditCardId: rule.creditCardId ?? null,
-          categoryId: rule.categoryId,
-          recurringId: rule.id,
-          occurrenceMonth: key,
-        },
-      }),
-      prisma.recurringRule.update({
-        where: { id: rule.id },
-        data: { lastMaterializedMonth: key },
-      }),
-    ])
+    await prisma.recurringRule.update({
+      where: { id: rule.id },
+      data: { lastMaterializedMonth: currentMonth },
+    })
   }
 }
 

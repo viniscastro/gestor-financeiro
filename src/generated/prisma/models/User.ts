@@ -320,6 +320,7 @@ export type UserWhereInput = {
   pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
   creditCards?: Prisma.CreditCardListRelationFilter
   creditCardStatements?: Prisma.CreditCardStatementListRelationFilter
+  accountTypes?: Prisma.AccountTypeListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -354,6 +355,7 @@ export type UserOrderByWithRelationInput = {
   pushSubscriptions?: Prisma.PushSubscriptionOrderByRelationAggregateInput
   creditCards?: Prisma.CreditCardOrderByRelationAggregateInput
   creditCardStatements?: Prisma.CreditCardStatementOrderByRelationAggregateInput
+  accountTypes?: Prisma.AccountTypeOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -391,6 +393,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
   creditCards?: Prisma.CreditCardListRelationFilter
   creditCardStatements?: Prisma.CreditCardStatementListRelationFilter
+  accountTypes?: Prisma.AccountTypeListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -479,6 +482,7 @@ export type UserCreateInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -513,6 +517,7 @@ export type UserUncheckedCreateInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardUncheckedCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -547,6 +552,7 @@ export type UserUpdateInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -581,6 +587,7 @@ export type UserUncheckedUpdateInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUncheckedUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -780,6 +787,20 @@ export type UserUpdateOneRequiredWithoutCategoriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCategoriesInput, Prisma.UserUpdateWithoutCategoriesInput>, Prisma.UserUncheckedUpdateWithoutCategoriesInput>
 }
 
+export type UserCreateNestedOneWithoutAccountTypesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccountTypesInput, Prisma.UserUncheckedCreateWithoutAccountTypesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccountTypesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutAccountTypesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccountTypesInput, Prisma.UserUncheckedCreateWithoutAccountTypesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccountTypesInput
+  upsert?: Prisma.UserUpsertWithoutAccountTypesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAccountTypesInput, Prisma.UserUpdateWithoutAccountTypesInput>, Prisma.UserUncheckedUpdateWithoutAccountTypesInput>
+}
+
 export type UserCreateNestedOneWithoutBudgetsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutBudgetsInput, Prisma.UserUncheckedCreateWithoutBudgetsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutBudgetsInput
@@ -923,6 +944,7 @@ export type UserCreateWithoutAccountsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -956,6 +978,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardUncheckedCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1005,6 +1028,7 @@ export type UserUpdateWithoutAccountsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1038,6 +1062,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUncheckedUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCategoriesInput = {
@@ -1071,6 +1096,7 @@ export type UserCreateWithoutCategoriesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCategoriesInput = {
@@ -1104,6 +1130,7 @@ export type UserUncheckedCreateWithoutCategoriesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardUncheckedCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCategoriesInput = {
@@ -1153,6 +1180,7 @@ export type UserUpdateWithoutCategoriesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCategoriesInput = {
@@ -1179,6 +1207,159 @@ export type UserUncheckedUpdateWithoutCategoriesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
+  recurringRules?: Prisma.RecurringRuleUncheckedUpdateManyWithoutUserNestedInput
+  goals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  creditCards?: Prisma.CreditCardUncheckedUpdateManyWithoutUserNestedInput
+  creditCardStatements?: Prisma.CreditCardStatementUncheckedUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutAccountTypesInput = {
+  id?: string
+  name: string
+  email: string
+  password: string
+  role?: string
+  image?: string | null
+  theme?: string
+  dashboardCards?: string | null
+  monthlyReport?: boolean
+  emailVerified?: Date | string | null
+  verificationCode?: string | null
+  verificationExpires?: Date | string | null
+  verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetCreateNestedManyWithoutUserInput
+  recurringRules?: Prisma.RecurringRuleCreateNestedManyWithoutUserInput
+  goals?: Prisma.SavingsGoalCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  creditCards?: Prisma.CreditCardCreateNestedManyWithoutUserInput
+  creditCardStatements?: Prisma.CreditCardStatementCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAccountTypesInput = {
+  id?: string
+  name: string
+  email: string
+  password: string
+  role?: string
+  image?: string | null
+  theme?: string
+  dashboardCards?: string | null
+  monthlyReport?: boolean
+  emailVerified?: Date | string | null
+  verificationCode?: string | null
+  verificationExpires?: Date | string | null
+  verificationSentAt?: Date | string | null
+  resetCode?: string | null
+  resetExpires?: Date | string | null
+  resetSentAt?: Date | string | null
+  deleteCode?: string | null
+  deleteCodeExpires?: Date | string | null
+  deleteCodeSentAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutUserInput
+  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutUserInput
+  recurringRules?: Prisma.RecurringRuleUncheckedCreateNestedManyWithoutUserInput
+  goals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  creditCards?: Prisma.CreditCardUncheckedCreateNestedManyWithoutUserInput
+  creditCardStatements?: Prisma.CreditCardStatementUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAccountTypesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccountTypesInput, Prisma.UserUncheckedCreateWithoutAccountTypesInput>
+}
+
+export type UserUpsertWithoutAccountTypesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAccountTypesInput, Prisma.UserUncheckedUpdateWithoutAccountTypesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccountTypesInput, Prisma.UserUncheckedCreateWithoutAccountTypesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAccountTypesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAccountTypesInput, Prisma.UserUncheckedUpdateWithoutAccountTypesInput>
+}
+
+export type UserUpdateWithoutAccountTypesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  theme?: Prisma.StringFieldUpdateOperationsInput | string
+  dashboardCards?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monthlyReport?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutUserNestedInput
+  budgets?: Prisma.BudgetUpdateManyWithoutUserNestedInput
+  recurringRules?: Prisma.RecurringRuleUpdateManyWithoutUserNestedInput
+  goals?: Prisma.SavingsGoalUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  creditCards?: Prisma.CreditCardUpdateManyWithoutUserNestedInput
+  creditCardStatements?: Prisma.CreditCardStatementUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAccountTypesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  theme?: Prisma.StringFieldUpdateOperationsInput | string
+  dashboardCards?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monthlyReport?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  verificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deleteCodeExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deleteCodeSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutUserNestedInput
   budgets?: Prisma.BudgetUncheckedUpdateManyWithoutUserNestedInput
   recurringRules?: Prisma.RecurringRuleUncheckedUpdateManyWithoutUserNestedInput
   goals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutUserNestedInput
@@ -1219,6 +1400,7 @@ export type UserCreateWithoutBudgetsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBudgetsInput = {
@@ -1252,6 +1434,7 @@ export type UserUncheckedCreateWithoutBudgetsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardUncheckedCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBudgetsInput = {
@@ -1301,6 +1484,7 @@ export type UserUpdateWithoutBudgetsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBudgetsInput = {
@@ -1334,6 +1518,7 @@ export type UserUncheckedUpdateWithoutBudgetsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUncheckedUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRecurringRulesInput = {
@@ -1367,6 +1552,7 @@ export type UserCreateWithoutRecurringRulesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRecurringRulesInput = {
@@ -1400,6 +1586,7 @@ export type UserUncheckedCreateWithoutRecurringRulesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardUncheckedCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRecurringRulesInput = {
@@ -1449,6 +1636,7 @@ export type UserUpdateWithoutRecurringRulesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRecurringRulesInput = {
@@ -1482,6 +1670,7 @@ export type UserUncheckedUpdateWithoutRecurringRulesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUncheckedUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTransactionsInput = {
@@ -1515,6 +1704,7 @@ export type UserCreateWithoutTransactionsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTransactionsInput = {
@@ -1548,6 +1738,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardUncheckedCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -1597,6 +1788,7 @@ export type UserUpdateWithoutTransactionsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTransactionsInput = {
@@ -1630,6 +1822,7 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUncheckedUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutGoalsInput = {
@@ -1663,6 +1856,7 @@ export type UserCreateWithoutGoalsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGoalsInput = {
@@ -1696,6 +1890,7 @@ export type UserUncheckedCreateWithoutGoalsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardUncheckedCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGoalsInput = {
@@ -1745,6 +1940,7 @@ export type UserUpdateWithoutGoalsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGoalsInput = {
@@ -1778,6 +1974,7 @@ export type UserUncheckedUpdateWithoutGoalsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUncheckedUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -1811,6 +2008,7 @@ export type UserCreateWithoutNotificationsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -1844,6 +2042,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardUncheckedCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -1893,6 +2092,7 @@ export type UserUpdateWithoutNotificationsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -1926,6 +2126,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUncheckedUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPushSubscriptionsInput = {
@@ -1959,6 +2160,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
@@ -1992,6 +2194,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardUncheckedCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPushSubscriptionsInput = {
@@ -2041,6 +2244,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
@@ -2074,6 +2278,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUncheckedUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCreditCardsInput = {
@@ -2107,6 +2312,7 @@ export type UserCreateWithoutCreditCardsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCreditCardsInput = {
@@ -2140,6 +2346,7 @@ export type UserUncheckedCreateWithoutCreditCardsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCreditCardsInput = {
@@ -2189,6 +2396,7 @@ export type UserUpdateWithoutCreditCardsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreditCardsInput = {
@@ -2222,6 +2430,7 @@ export type UserUncheckedUpdateWithoutCreditCardsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   creditCardStatements?: Prisma.CreditCardStatementUncheckedUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCreditCardStatementsInput = {
@@ -2255,6 +2464,7 @@ export type UserCreateWithoutCreditCardStatementsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCreditCardStatementsInput = {
@@ -2288,6 +2498,7 @@ export type UserUncheckedCreateWithoutCreditCardStatementsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   creditCards?: Prisma.CreditCardUncheckedCreateNestedManyWithoutUserInput
+  accountTypes?: Prisma.AccountTypeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCreditCardStatementsInput = {
@@ -2337,6 +2548,7 @@ export type UserUpdateWithoutCreditCardStatementsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreditCardStatementsInput = {
@@ -2370,6 +2582,7 @@ export type UserUncheckedUpdateWithoutCreditCardStatementsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   creditCards?: Prisma.CreditCardUncheckedUpdateManyWithoutUserNestedInput
+  accountTypes?: Prisma.AccountTypeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -2388,6 +2601,7 @@ export type UserCountOutputType = {
   pushSubscriptions: number
   creditCards: number
   creditCardStatements: number
+  accountTypes: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2401,6 +2615,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   pushSubscriptions?: boolean | UserCountOutputTypeCountPushSubscriptionsArgs
   creditCards?: boolean | UserCountOutputTypeCountCreditCardsArgs
   creditCardStatements?: boolean | UserCountOutputTypeCountCreditCardStatementsArgs
+  accountTypes?: boolean | UserCountOutputTypeCountAccountTypesArgs
 }
 
 /**
@@ -2483,6 +2698,13 @@ export type UserCountOutputTypeCountCreditCardStatementsArgs<ExtArgs extends run
   where?: Prisma.CreditCardStatementWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAccountTypesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AccountTypeWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2516,6 +2738,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
   creditCards?: boolean | Prisma.User$creditCardsArgs<ExtArgs>
   creditCardStatements?: boolean | Prisma.User$creditCardStatementsArgs<ExtArgs>
+  accountTypes?: boolean | Prisma.User$accountTypesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2603,6 +2826,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
   creditCards?: boolean | Prisma.User$creditCardsArgs<ExtArgs>
   creditCardStatements?: boolean | Prisma.User$creditCardStatementsArgs<ExtArgs>
+  accountTypes?: boolean | Prisma.User$accountTypesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2621,6 +2845,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     pushSubscriptions: Prisma.$PushSubscriptionPayload<ExtArgs>[]
     creditCards: Prisma.$CreditCardPayload<ExtArgs>[]
     creditCardStatements: Prisma.$CreditCardStatementPayload<ExtArgs>[]
+    accountTypes: Prisma.$AccountTypePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3048,6 +3273,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   pushSubscriptions<T extends Prisma.User$pushSubscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pushSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   creditCards<T extends Prisma.User$creditCardsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$creditCardsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CreditCardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   creditCardStatements<T extends Prisma.User$creditCardStatementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$creditCardStatementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CreditCardStatementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  accountTypes<T extends Prisma.User$accountTypesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountTypesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountTypePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3728,6 +3954,30 @@ export type User$creditCardStatementsArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.CreditCardStatementScalarFieldEnum | Prisma.CreditCardStatementScalarFieldEnum[]
+}
+
+/**
+ * User.accountTypes
+ */
+export type User$accountTypesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccountType
+   */
+  select?: Prisma.AccountTypeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AccountType
+   */
+  omit?: Prisma.AccountTypeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccountTypeInclude<ExtArgs> | null
+  where?: Prisma.AccountTypeWhereInput
+  orderBy?: Prisma.AccountTypeOrderByWithRelationInput | Prisma.AccountTypeOrderByWithRelationInput[]
+  cursor?: Prisma.AccountTypeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AccountTypeScalarFieldEnum | Prisma.AccountTypeScalarFieldEnum[]
 }
 
 /**

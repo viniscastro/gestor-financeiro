@@ -12,6 +12,8 @@ import {
   Upload,
   ChevronDown,
 } from 'lucide-react'
+import jsPDF from 'jspdf'
+import autoTable, { type CellInput } from 'jspdf-autotable'
 import Modal from '@/components/modal'
 import ConfirmDialog from '@/components/confirm-dialog'
 import ColorPicker from '@/components/color-picker'
@@ -20,7 +22,7 @@ import DatePicker from '@/components/date-picker'
 import Select from '@/components/select'
 import { toast } from 'sonner'
 import { CATEGORY_COLORS } from '@/lib/categories'
-import { formatBRL } from '@/lib/format'
+import { descriptionWithInstallment, formatBRL, todayLocalISO } from '@/lib/format'
 import { flattenCategories } from '@/lib/category'
 import type { AccountDto, CategoryDto, CreditCardDto, CreditCardStatementDto, TransactionDto } from '@/lib/types'
 import { parseCardCsv, parseCardOfx } from '@/lib/card-import'
@@ -75,7 +77,7 @@ export default function CardsManager() {
   const [expanded, setExpanded] = useState<string | null>(null)
   const [cardTx, setCardTx] = useState<Record<string, TransactionDto[]>>({})
   const [selectedMonth, setSelectedMonth] = useState<Record<string, string>>({})
-  const [hoverMonth, setHoverMonth] = useState<Record<string, string>>({})
+  
 
   const dragItem = useRef<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
@@ -86,7 +88,7 @@ export default function CardsManager() {
   const [addCardId, setAddCardId] = useState('')
   const [addDesc, setAddDesc] = useState('')
   const [addAmount, setAddAmount] = useState('')
-  const [addDate, setAddDate] = useState<string>(new Date().toISOString().slice(0, 10))
+  const [addDate, setAddDate] = useState<string>(todayLocalISO())
   const [addCategory, setAddCategory] = useState('')
   const [addSaving, setAddSaving] = useState(false)
   const [addInstallments, setAddInstallments] = useState('')
@@ -506,51 +508,38 @@ export default function CardsManager() {
     const items = tx.filter((t) => t.transactionType === 'EXPENSE')
     const discounts = tx.filter((t) => t.transactionType === 'INCOME')
     const total = items.reduce((s, t) => s + t.amount, 0) - discounts.reduce((s, t) => s + t.amount, 0)
-    const rows = tx
-      .map((t) => {
-        const label = t.transactionType === 'INCOME' ? ' (estorno)' : ''
-        return `<tr><td>${formatDDMMYYYY(t.date.slice(0, 10))}</td><td>${t.description.replace(/[<>&]/g, '')}${label}</td><td>${formatBRL(t.amount)}</td></tr>`
-      })
-      .join('')
+    const rows: CellInput[][] = tx.map((t) => {
+      const label = t.transactionType === 'INCOME' ? ' (estorno)' : ''
+      const description = descriptionWithInstallment(
+        t.description,
+        t.installmentCurrent,
+        t.installmentTotal
+      )
+      return [
+        formatDDMMYYYY(t.date.slice(0, 10)),
+        String(description + label),
+        formatBRL(t.amount),
+      ]
+    })
 
-    const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Fatura ${card.name} - ${monthLabel(monthKey)}</title><style>
-      *{box-sizing:border-box;margin:0;padding:0}
-      body{font-family:Arial,Helvetica,sans-serif;color:#111;padding:40px;font-size:14px}
-      h1{font-size:20px;margin-bottom:4px}
-      .sub{color:#555;margin-bottom:24px}
-      table{width:100%;border-collapse:collapse;margin-top:8px}
-      th,td{text-align:left;padding:8px 6px;border-bottom:1px solid #ddd}
-      th{font-size:12px;text-transform:uppercase;color:#888;border-bottom:2px solid #ddd}
-      .total{font-weight:bold;font-size:16px;margin-top:16px}
-    </style></head><body>
-      <h1>${card.name}</h1>
-      <div class="sub">Fatura ${monthLabel(monthKey)}</div>
-      <table><thead><tr><th>Data</th><th>Produto</th><th>Valor</th></tr></thead><tbody>${rows}</tbody></table>
-      <div class="total">Total: ${formatBRL(total)}</div>
-    </body></html>`
-
-    const frame = window.document.createElement('iframe')
-    frame.style.position = 'fixed'
-    frame.style.right = '0'
-    frame.style.bottom = '0'
-    frame.style.width = '0'
-    frame.style.height = '0'
-    frame.style.border = '0'
-    window.document.body.appendChild(frame)
-    const doc = frame.contentWindow?.document
-    if (!doc) {
-      window.document.body.removeChild(frame)
-      return
-    }
-    doc.open()
-    doc.write(html)
-    doc.close()
-    const pop = frame.contentWindow
-    if (pop) {
-      pop.focus()
-      pop.onafterprint = () => window.document.body.removeChild(frame)
-      pop.print()
-    }
+    const doc = new jsPDF()
+    doc.setFontSize(20)
+    doc.text(card.name, 14, 20)
+    doc.setFontSize(11)
+    doc.setTextColor(100)
+    doc.text(`Fatura ${monthLabel(monthKey)}`, 14, 28)
+    doc.setTextColor(0)
+    autoTable(doc, {
+      startY: 36,
+      head: [['Data', 'Produto', 'Valor']],
+      body: rows,
+      theme: 'striped',
+    })
+    const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY ?? 36
+    doc.setFontSize(16)
+    doc.setFont('helvetica', 'bold')
+    doc.text(`Total: ${formatBRL(total)}`, 196, finalY + 12, { align: 'right' })
+    doc.save(`${card.name}.pdf`)
   }
 
   if (loading) {
@@ -694,25 +683,21 @@ export default function CardsManager() {
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                       <div className="flex flex-wrap gap-1.5">
                         {cardStatements.slice(0, 6).map((s) => {
-                          const isHover = hoverMonth[card.id] === s.monthKey
                           const isSel = month === s.monthKey
                           return (
                             <button
                               key={s.id}
                               type="button"
                               onClick={() => changeMonth(card.id, s.monthKey)}
-                              onMouseEnter={() => setHoverMonth((p) => ({ ...p, [card.id]: s.monthKey }))}
-                              onMouseLeave={() => setHoverMonth((p) => ({ ...p, [card.id]: '' }))}
-                              style={isSel || isHover ? { backgroundColor: card.color } : undefined}
+                              aria-pressed={isSel}
+                              style={isSel ? { backgroundColor: card.color } : undefined}
                               className={`flex flex-col items-start rounded-lg border px-3 py-1.5 text-left transition ${
                                 isSel
                                   ? 'border-transparent shadow-md'
-                                  : isHover
-                                    ? 'border-transparent shadow-md'
-                                    : 'border-zinc-200 hover:border-transparent dark:border-zinc-700'
+                                  : 'border-zinc-200 hover:border-transparent hover:shadow-md dark:border-zinc-700'
                               }`}
                             >
-                              <span className={`flex items-center gap-1.5 text-xs font-semibold ${isSel || isHover ? 'text-white' : 'text-zinc-700 dark:text-zinc-300'}`}>
+                              <span className={`flex items-center gap-1.5 text-xs font-semibold ${isSel ? 'text-white' : 'text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white'}`}>
                                 {monthLabel(s.monthKey)}
                                 {s.status === 'PAID' && (
                                   <span className="rounded bg-black/25 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
@@ -720,7 +705,7 @@ export default function CardsManager() {
                                   </span>
                                 )}
                               </span>
-                              <span className={`text-[11px] font-medium ${isSel || isHover ? 'text-white/85' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                              <span className={`text-[11px] font-medium ${isSel ? 'text-white/85' : 'text-zinc-500 dark:text-zinc-400'}`}>
                                 {formatBRL(s.totalAmount)}
                               </span>
                             </button>
@@ -734,7 +719,7 @@ export default function CardsManager() {
                             setAddCardId(card.id)
                             setAddDesc('')
                             setAddAmount('')
-                            setAddDate(new Date().toISOString().slice(0, 10))
+                            setAddDate(todayLocalISO())
                             setAddCategory('')
                             setAddInstallments('')
                             setAddOpen(true)

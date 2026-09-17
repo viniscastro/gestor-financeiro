@@ -58,9 +58,14 @@ export function invoiceWindow(card: { closingDay: number; dueDay: number }, due:
   const dueDate = new Date(y, m, Math.min(card.dueDay, lastDayDue))
 
   const prevLastDay = new Date(y, m, 0).getDate()
+  // Start INCLUSIVO: dia do fechamento do mês anterior. Uma compra feita no dia
+  // do fechamento ("virada do cartão") pertence à fatura do mês seguinte.
   const start = new Date(y, m - 1, Math.min(card.closingDay, prevLastDay))
   const lastDayStart = new Date(y, m + 1, 0).getDate()
-  const end = new Date(y, m, Math.min(card.closingDay, lastDayStart), 23, 59, 59, 999)
+  // End EXCLUSIVO: próprio dia do fechamento desta fatura. Compras no dia do
+  // fechamento entram na fatura seguinte (borda tratada pelo start inclusivo).
+  // As queries devem usar `date >= start && date < end`.
+  const end = new Date(y, m, Math.min(card.closingDay, lastDayStart))
 
   return { monthKey: `${y}-${String(m + 1).padStart(2, '0')}`, dueDate, start, end }
 }
@@ -91,7 +96,7 @@ export async function computeInvoiceTotal(
         userId,
         creditCardId: cardId,
         transactionType: 'EXPENSE',
-        date: { gte: window.start, lte: window.end },
+        date: { gte: window.start, lt: window.end },
       },
       _sum: { amount: true },
     }),
@@ -100,7 +105,7 @@ export async function computeInvoiceTotal(
         userId,
         creditCardId: cardId,
         transactionType: 'INCOME',
-        date: { gte: window.start, lte: window.end },
+        date: { gte: window.start, lt: window.end },
       },
       _sum: { amount: true },
     }),

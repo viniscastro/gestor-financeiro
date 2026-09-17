@@ -482,7 +482,11 @@ export default function RecurringManager() {
                   <div className="ml-8 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-zinc-500">
                     <span>Dia {rule.dayOfMonth}</span>
                     <span>·</span>
-                    <span>{rule.accountName}</span>
+                    <span>
+                      {rule.type === 'EXPENSE' && rule.creditCardId
+                        ? `Cartão · ${rule.creditCardName || ''}`
+                        : `Conta · ${rule.accountName}`}
+                    </span>
                     {rule.categoryName && (
                       <>
                         <span>·</span>

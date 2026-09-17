@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { generateMonthlyReportPdf, buildReportEmailHtml } from '@/lib/pdf-server'
+import { descriptionWithInstallment } from '@/lib/format'
 import { sendEmail } from '@/lib/email'
 
 export async function POST() {
@@ -93,7 +94,7 @@ async function sendMonthlyReport(userId: string) {
     return {
       date: t.date.toLocaleDateString('pt-BR'),
       type: typeName,
-      description: t.description,
+      description: descriptionWithInstallment(t.description, t.installmentCurrent, t.installmentTotal),
       amount: t.amount,
       accountName: t.account?.name ?? '—',
       categoryName: t.category?.name ?? (isTransfer ? 'Transferencia' : 'Sem categoria'),

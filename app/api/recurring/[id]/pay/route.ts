@@ -34,7 +34,15 @@ export async function POST(_request: NextRequest, ctx: Params) {
   }
 
   const key = monthKey(new Date())
-  if (rule.lastMaterializedMonth === key) {
+  const existing = await prisma.transaction.findFirst({
+    where: {
+      recurringId: id,
+      userId: session.user.id,
+      occurrenceMonth: key,
+    },
+    select: { id: true },
+  })
+  if (existing) {
     return NextResponse.json({ error: 'Já paga neste mês' }, { status: 400 })
   }
 

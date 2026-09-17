@@ -8,7 +8,7 @@ import TransactionForm from '@/components/transaction-form'
 import TransactionList from '@/components/transaction-list'
 import ConfirmDialog from '@/components/confirm-dialog'
 import ImportModal from '@/components/import-modal'
-import { formatBRL, formatDate, parseLocalDate } from '@/lib/format'
+import { descriptionWithInstallment, formatBRL, formatDate, parseLocalDate } from '@/lib/format'
 import { exportTransactionsToExcel } from '@/lib/excel'
 import { exportMonthlyReportPdf } from '@/lib/pdf'
 import { flattenCategories } from '@/lib/category'
@@ -263,7 +263,7 @@ export default function TransactionsPage() {
         : t.transactionType === 'INCOME'
           ? 'Entrada'
           : 'Saida',
-      description: t.description,
+      description: descriptionWithInstallment(t.description, t.installmentCurrent, t.installmentTotal),
       amount: t.amount,
       accountName: t.accountName,
       categoryName: t.categoryName ?? '',

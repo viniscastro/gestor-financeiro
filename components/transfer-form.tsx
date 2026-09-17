@@ -6,6 +6,7 @@ import CurrencyInput from '@/components/currency-input'
 import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
 import Modal from '@/components/modal'
+import { todayLocalISO } from '@/lib/format'
 import type { AccountDto } from '@/lib/types'
 
 type Props = {
@@ -19,7 +20,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
   const [fromAccountId, setFromAccountId] = useState('')
   const [toAccountId, setToAccountId] = useState('')
   const [amount, setAmount] = useState('')
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [date, setDate] = useState(todayLocalISO())
   const [description, setDescription] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)

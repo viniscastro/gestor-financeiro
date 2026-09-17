@@ -2,19 +2,20 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { ArrowRightLeft, GripVertical, LoaderCircle, Pencil, Plus, Trash2, Wallet } from 'lucide-react'
-import { ACCOUNT_TYPES, ACCOUNT_TYPE_LABEL, CATEGORY_COLORS } from '@/lib/categories'
+import { CATEGORY_COLORS } from '@/lib/categories'
 import ConfirmDialog from '@/components/confirm-dialog'
 import TransferForm from '@/components/transfer-form'
 import ColorPicker from '@/components/color-picker'
 import Modal from '@/components/modal'
 import { formatBRL } from '@/lib/format'
-import type { AccountDto } from '@/lib/types'
+import type { AccountDto, AccountTypeDto } from '@/lib/types'
 import { toast } from 'sonner'
 import CurrencyInput from '@/components/currency-input'
 import Select from '@/components/select'
 
 export default function AccountsManager() {
   const [accounts, setAccounts] = useState<AccountDto[]>([])
+  const [accountTypes, setAccountTypes] = useState<AccountTypeDto[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
@@ -65,11 +66,16 @@ export default function AccountsManager() {
     let cancelled = false
     async function fetchAccounts() {
       try {
-        const res = await fetch('/api/accounts', { cache: 'no-store' })
-        if (!res.ok) throw new Error('Erro ao carregar')
+        const [res, typesRes] = await Promise.all([
+          fetch('/api/accounts', { cache: 'no-store' }),
+          fetch('/api/account-types', { cache: 'no-store' }),
+        ])
+        if (!res.ok || !typesRes.ok) throw new Error('Erro ao carregar')
         const data = (await res.json()) as AccountDto[]
+        const typeData = (await typesRes.json()) as AccountTypeDto[]
         if (!cancelled) {
           setAccounts(data)
+          setAccountTypes(typeData)
           setError('')
         }
       } catch {
@@ -254,6 +260,9 @@ export default function AccountsManager() {
   const inputClass =
     'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
 
+  const accountTypeLabel = (slug: string) =>
+    accountTypes.find((t) => t.slug === slug)?.name ?? slug
+
   const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0)
 
   return (
@@ -349,7 +358,7 @@ export default function AccountsManager() {
                     <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                       {account.name}
                     </p>
-                    <p className="text-xs text-zinc-500">{ACCOUNT_TYPE_LABEL[account.type] ?? account.type}</p>
+                    <p className="text-xs text-zinc-500">{accountTypeLabel(account.type)}</p>
                   </div>
                 </div>
                 <div className="flex gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
@@ -417,7 +426,7 @@ export default function AccountsManager() {
                 <Select
                   value={type}
                   onChange={setType}
-                  options={ACCOUNT_TYPES.map((t) => ({ value: t.id, label: t.label }))}
+                  options={accountTypes.map((t) => ({ value: t.slug, label: t.name }))}
                   placeholder="Selecione..."
                   id="type"
                 />

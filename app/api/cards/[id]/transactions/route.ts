@@ -5,6 +5,7 @@ import { invoiceWindow } from '@/lib/cards'
 import { amountToCents, toTransactionDto } from '@/lib/transactions'
 import { parseLocalDate } from '@/lib/format'
 import { notifyCardDiscount } from '@/lib/notifications'
+import { cleanupCardRecurringTransactions } from '@/lib/recurring'
 import { z } from 'zod'
 
 type Params = { params: Promise<{ id: string }> }
@@ -27,6 +28,10 @@ export async function GET(request: NextRequest, ctx: Params) {
   const { id } = await ctx.params
   const month = request.nextUrl.searchParams.get('month')
 
+  // Remove pré-gerações antigas de recorrências de cartão antes de listar a
+  // fatura, para que jamais apareçam em um mês futuro.
+  await cleanupCardRecurringTransactions(session.user.id)
+
   const card = await prisma.creditCard.findFirst({
     where: { id, userId: session.user.id },
   })
@@ -35,21 +40,21 @@ export async function GET(request: NextRequest, ctx: Params) {
   }
 
   let gte: Date
-  let lte: Date
+  let lt: Date
 
   if (month) {
     const [y, m] = month.split('-').map(Number)
     const window = invoiceWindow(card, new Date(y, m - 1, Math.min(card.dueDay, 28)))
     gte = window.start
-    lte = window.end
+    lt = window.end
   } else {
     const window = invoiceWindow(card, new Date())
     gte = window.start
-    lte = window.end
+    lt = window.end
   }
 
   const transactions = await prisma.transaction.findMany({
-    where: { userId: session.user.id, creditCardId: card.id, date: { gte, lte } },
+    where: { userId: session.user.id, creditCardId: card.id, date: { gte, lt } },
     include: { account: { select: { name: true, color: true } }, category: { select: { id: true, name: true, color: true } } },
     orderBy: { date: 'desc' },
   })

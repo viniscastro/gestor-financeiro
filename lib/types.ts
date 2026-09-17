@@ -34,6 +34,15 @@ export type AccountDto = {
   position: number
 }
 
+export type AccountTypeDto = {
+  id: string
+  slug: string
+  name: string
+  color: string
+  icon: string
+  position: number
+}
+
 export type CategoryDto = {
   id: string
   name: string

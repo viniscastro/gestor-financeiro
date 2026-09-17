@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useId, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { DayPicker } from 'react-day-picker'
 import { ptBR } from 'date-fns/locale'
@@ -36,50 +36,61 @@ function parseDateInput(text: string): string | null {
 
 export default function DatePicker({ value, onChange, required, className }: Props) {
   const [open, setOpen] = useState(false)
-  const [inputValue, setInputValue] = useState('')
-  const ref = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const autoId = useId()
   const [editing, setEditing] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const selected = value ? parse(value, 'yyyy-MM-dd', new Date()) : undefined
 
+  // Sempre que muda o valor de fora, sincroniza a exibição (a menos que o
+  // usuário esteja digitando).
   useEffect(() => {
-    if (!editing && selected) {
-      setInputValue(format(selected, 'dd/MM/yyyy'))
-    } else if (!editing && !selected) {
-      setInputValue('')
-    }
+    if (editing) return
+    if (selected) setDisplay(format(selected, 'dd/MM/yyyy'))
+    else setDisplay('')
   }, [selected, editing])
 
-  function commitInput() {
-    setEditing(false)
-    if (!inputValue.trim()) {
-      if (!required) onChange('')
-      else if (selected) setInputValue(format(selected, 'dd/MM/yyyy'))
+  const [display, setDisplay] = useState('')
+
+  function commitTypedInput() {
+    if (!display.trim()) {
+      setEditing(false)
+      if (!required && !selected) onChange('')
+      setDisplay(selected ? format(selected, 'dd/MM/yyyy') : '')
       return
     }
-    const iso = parseDateInput(inputValue)
+    const iso = parseDateInput(display)
     if (iso) {
       onChange(iso)
-    } else if (selected) {
-      setInputValue(format(selected, 'dd/MM/yyyy'))
+      setEditing(false)
+      setDisplay(format(iso, 'dd/MM/yyyy'))
     } else {
-      setInputValue('')
+      setEditing(false)
+      setDisplay(selected ? format(selected, 'dd/MM/yyyy') : '')
     }
   }
 
+  // Selecionar um dia no calendário: fecha o popup e aplica a data NA HORA
+  // no campo, sem depender de onBlur/reativação.
   function handleSelect(day: Date | undefined) {
-    if (day) {
-      onChange(format(day, 'yyyy-MM-dd'))
-      setOpen(false)
-      inputRef.current?.focus()
-    }
+    if (!day) return
+    onChange(format(day, 'yyyy-MM-dd'))
+    setDisplay(format(day, 'dd/MM/yyyy'))
+    setEditing(false)
+    setOpen(false)
   }
 
+  // Fecha o popup apenas quando o clique acontece fora do campo e do popup.
+  // Evento `click` (não `mousedown`) para não fechar antes da seleção no
+  // calendário disparar.
   useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    if (!open) return
+    function handleOutside(e: MouseEvent) {
+      const t = e.target as Node
+      const insideInput = ref.current?.contains(t)
+      const insideDialog = dialogRef.current?.contains(t)
+      if (!insideInput && !insideDialog) setOpen(false)
     }
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape' && open) {
@@ -87,19 +98,18 @@ export default function DatePicker({ value, onChange, required, className }: Pro
         inputRef.current?.focus()
       }
     }
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside)
-      document.addEventListener('keydown', handleKeyDown)
-    }
+    document.addEventListener('click', handleOutside)
+    document.addEventListener('keydown', handleKeyDown)
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('click', handleOutside)
       document.removeEventListener('keydown', handleKeyDown)
     }
   }, [open])
 
   const [pos, setPos] = useState<{ top: number; left: number; width: number } | null>(null)
 
-  const updatePos = useCallback(() => {
+  useEffect(() => {
+    if (!open) return
     if (!inputRef.current) return
     const r = inputRef.current.getBoundingClientRect()
     const width = Math.min(320, window.innerWidth - 16)
@@ -110,24 +120,7 @@ export default function DatePicker({ value, onChange, required, className }: Pro
         ? r.bottom + 6
         : Math.max(8, r.top - 6 - calHeight)
     setPos({ top, left, width })
-  }, [])
-
-  const openCalendar = useCallback(() => {
-    updatePos()
-    commitInput()
-    setOpen(true)
-  }, [updatePos, commitInput])
-
-  useEffect(() => {
-    if (!open) return
-    const listeners: Parameters<typeof window.addEventListener>[] = []
-    window.addEventListener('scroll', updatePos, true)
-    window.addEventListener('resize', updatePos)
-    return () => {
-      window.removeEventListener('scroll', updatePos, true)
-      window.removeEventListener('resize', updatePos)
-    }
-  }, [open, updatePos])
+  }, [open])
 
   return (
     <div ref={ref} className={`relative ${className ?? ''}`}>
@@ -137,20 +130,20 @@ export default function DatePicker({ value, onChange, required, className }: Pro
           type="text"
           inputMode="numeric"
           placeholder="dd/mm/aaaa"
-          value={editing ? inputValue : (selected ? format(selected, 'dd/MM/yyyy') : '')}
+          value={editing ? display : selected ? format(selected, 'dd/MM/yyyy') : ''}
           onChange={(e) => {
             setEditing(true)
-            setInputValue(formatDateInput(e.target.value))
+            setDisplay(formatDateInput(e.target.value))
           }}
           onFocus={() => {
             setEditing(true)
-            setInputValue(selected ? format(selected, 'dd/MM/yyyy') : '')
+            setDisplay(selected ? format(selected, 'dd/MM/yyyy') : '')
           }}
-          onBlur={commitInput}
+          onBlur={commitTypedInput}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault()
-              commitInput()
+              commitTypedInput()
             }
           }}
           required={required}
@@ -160,7 +153,11 @@ export default function DatePicker({ value, onChange, required, className }: Pro
         <button
           type="button"
           aria-label="Abrir calendário"
-          onClick={openCalendar}
+          onClick={() => {
+            setEditing(false)
+            setOpen((o) => !o)
+          }}
+          onMouseDown={(e) => e.preventDefault()}
           className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
         >
           <CalendarIcon className="h-4 w-4" />
@@ -170,47 +167,49 @@ export default function DatePicker({ value, onChange, required, className }: Pro
       {open &&
         createPortal(
           <div
+            ref={dialogRef}
             role="dialog"
             aria-label="Selecionar data"
             style={pos ? { top: pos.top, left: pos.left, width: pos.width } : undefined}
-            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.preventDefault()}
             className="fixed z-[60] max-h-[70vh] overflow-y-auto rounded-xl border border-zinc-200 bg-white p-3 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800"
           >
-          <DayPicker
-            mode="single"
-            selected={selected}
-            onSelect={handleSelect}
-            locale={ptBR}
-            defaultMonth={selected}
-            showOutsideDays
-            fixedWeeks
-            classNames={{
-              root: 'p-0',
-              months: 'flex flex-col',
-              month: 'w-full',
-              month_caption: 'flex h-10 items-center justify-between px-1 mb-2',
-              caption_label: 'text-sm font-semibold capitalize text-zinc-900 dark:text-zinc-100',
-              nav: 'flex items-center gap-1',
-              button_previous:
-                'inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700',
-              button_next:
-                'inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700',
-              chevron: 'h-4 w-4',
-              month_grid: 'w-full',
-              weekdays: 'grid grid-cols-7 gap-1 mb-1',
-              weekday:
-                'flex h-8 items-center justify-center text-[11px] font-medium text-zinc-400 dark:text-zinc-500',
-              week: 'grid w-full grid-cols-7 gap-1',
-              day: 'w-full',
-              day_button:
-                'relative flex aspect-square w-full items-center justify-center rounded-lg text-sm text-zinc-900 transition hover:bg-emerald-100 dark:text-zinc-100 dark:hover:bg-emerald-900/30',
-              selected:
-                'bg-emerald-600 text-white hover:bg-emerald-600 dark:bg-emerald-500 dark:text-white dark:hover:bg-emerald-500',
-              today: 'font-bold text-emerald-600 dark:text-emerald-400',
-              outside: 'text-zinc-300 dark:text-zinc-600',
-              disabled: 'text-zinc-300 dark:text-zinc-600',
-            }}
-          />
+            <DayPicker
+              mode="single"
+              key={selected ? format(selected, 'yyyy-MM-dd') : 'no-date'}
+              selected={selected}
+              onSelect={handleSelect}
+              locale={ptBR}
+              defaultMonth={selected}
+              showOutsideDays
+              fixedWeeks
+              classNames={{
+                root: 'p-0',
+                months: 'flex flex-col',
+                month: 'w-full',
+                month_caption: 'flex h-10 items-center justify-between px-1 mb-2',
+                caption_label: 'text-sm font-semibold capitalize text-zinc-900 dark:text-zinc-100',
+                nav: 'flex items-center gap-1',
+                button_previous:
+                  'inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700',
+                button_next:
+                  'inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700',
+                chevron: 'h-4 w-4',
+                month_grid: 'w-full',
+                weekdays: 'grid grid-cols-7 gap-1 mb-1',
+                weekday:
+                  'flex h-8 items-center justify-center text-[11px] font-medium text-zinc-400 dark:text-zinc-500',
+                week: 'grid w-full grid-cols-7 gap-1',
+                day: 'w-full',
+                day_button:
+                  'relative flex aspect-square w-full cursor-pointer items-center justify-center rounded-lg text-sm text-zinc-900 transition hover:bg-emerald-100 dark:text-zinc-100 dark:hover:bg-emerald-900/30',
+                selected:
+                  'bg-emerald-600 text-white hover:bg-emerald-600 dark:bg-emerald-500 dark:text-white dark:hover:bg-emerald-500',
+                today: 'font-bold text-emerald-600 dark:text-emerald-400',
+                outside: 'text-zinc-300 dark:text-zinc-600',
+                disabled: 'text-zinc-300 dark:text-zinc-600',
+              }}
+            />
           </div>,
           document.body
         )}

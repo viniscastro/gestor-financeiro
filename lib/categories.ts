@@ -21,6 +21,16 @@ export const ACCOUNT_TYPE_LABEL: Record<string, string> = Object.fromEntries(
   ACCOUNT_TYPES.map((a) => [a.id, a.label])
 )
 
+// Tipos padrão semeados para cada usuário (slug == valor usado hoje em
+// Account.type, mantendo contas existentes compatíveis).
+export const DEFAULT_ACCOUNT_TYPES = [
+  { slug: 'CARTEIRA', name: 'Carteira', color: '#10b981', icon: 'wallet' },
+  { slug: 'CONTA_CORRENTE', name: 'Conta corrente', color: '#6366f1', icon: 'building-2' },
+  { slug: 'POUPANCA', name: 'Poupança', color: '#22c55e', icon: 'piggy-bank' },
+  { slug: 'DINHEIRO', name: 'Dinheiro', color: '#f97316', icon: 'banknote' },
+  { slug: 'INVESTIMENTO', name: 'Investimento', color: '#8b5cf6', icon: 'trending-up' },
+] as const
+
 export type DefaultCategory = {
   slug: string
   name: string
@@ -86,4 +96,19 @@ export const CATEGORY_ICONS = [
   'shirt',
   'plane',
   'book-open',
+] as const
+
+export const ACCOUNT_TYPE_ICONS = [
+  'wallet',
+  'building-2',
+  'piggy-bank',
+  'banknote',
+  'trending-up',
+  'coins',
+  'credit-card',
+  'briefcase',
+  'laptop',
+  'plane',
+  'shopping-cart',
+  'tag',
 ] as const

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import {
   ArrowLeftRight,
+  Building2,
   Calculator,
   CreditCard,
   LayoutGrid,
@@ -39,6 +40,7 @@ const NAV_ITEMS = [
   { href: '/transactions', label: 'Transações', icon: ArrowLeftRight },
   { href: '/accounts', label: 'Contas', icon: Wallet },
   { href: '/categories', label: 'Categorias', icon: LayoutGrid },
+  { href: '/account-types', label: 'Tipos', icon: Building2 },
   { href: '/budgets', label: 'Orçamentos', icon: Calculator },
   { href: '/goals', label: 'Metas', icon: Target },
   { href: '/recurring', label: 'Recorrentes', icon: Repeat },

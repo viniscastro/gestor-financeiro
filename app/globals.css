@@ -46,18 +46,59 @@ body {
 button,
 a,
 [role="button"],
+[role="option"],
+[role="tab"],
+[role="menuitem"],
+[role="switch"],
+[role="checkbox"],
+[role="radio"],
+[role="link"],
+[role="combobox"],
+[role="spinbutton"],
 label,
 summary,
 select,
 input[type="checkbox"],
-input[type="radio"] {
+input[type="radio"],
+input[type="color"],
+input[type="range"],
+input[type="date"],
+input[type="time"],
+input[type="file"] {
   cursor: pointer;
 }
 
 button:disabled,
 [role="button"]:disabled,
+[role="option"]:disabled,
+[role="option"][data-disabled="true"],
+[role="tab"]:disabled,
+[role="menuitem"]:disabled,
+[role="switch"]:disabled,
 select:disabled,
 input:disabled {
+  cursor: not-allowed;
+}
+
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+textarea {
+  cursor: text;
+}
+
+input[type="text"]:disabled,
+input[type="search"]:disabled,
+input[type="email"]:disabled,
+input[type="password"]:disabled,
+input[type="number"]:disabled,
+input[type="tel"]:disabled,
+input[type="url"]:disabled,
+textarea:disabled {
   cursor: not-allowed;
 }
 

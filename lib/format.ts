@@ -3,11 +3,30 @@ export function parseLocalDate(iso: string): Date {
   return new Date(y, (m || 1) - 1, d || 1)
 }
 
+export function todayLocalISO(): string {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
+    now.getDate()
+  ).padStart(2, '0')}`
+}
+
 export function formatBRL(cents: number): string {
   return (cents / 100).toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   })
+}
+
+const INSTALLMENT_SUFFIX_RE = /\s*\(([1-9]\d?)\/([1-9]\d?)\)\s*$/
+
+export function descriptionWithInstallment(
+  description: string,
+  current: number | null | undefined,
+  total: number | null | undefined
+): string {
+  const base = description.replace(INSTALLMENT_SUFFIX_RE, '').trim()
+  if (!current || !total) return base
+  return `${base} (${current}/${total})`
 }
 
 export function formatDate(date: Date): string {

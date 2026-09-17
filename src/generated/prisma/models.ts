@@ -11,6 +11,7 @@
 export type * from './models/User'
 export type * from './models/Account'
 export type * from './models/Category'
+export type * from './models/AccountType'
 export type * from './models/Budget'
 export type * from './models/RecurringRule'
 export type * from './models/Transaction'

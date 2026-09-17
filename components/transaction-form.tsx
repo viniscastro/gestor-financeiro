@@ -6,7 +6,7 @@ import CurrencyInput from '@/components/currency-input'
 import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
 import Modal from '@/components/modal'
-import { formatBRL } from '@/lib/format'
+import { formatBRL, todayLocalISO } from '@/lib/format'
 import { flattenCategories } from '@/lib/category'
 import type { TransactionType } from '@/lib/categories'
 import type { AccountDto, CategoryDto, CreditCardDto, TransactionDto } from '@/lib/types'
@@ -81,7 +81,7 @@ function TransactionFormBody({
   const [date, setDate] = useState(
     transaction
       ? transaction.date.slice(0, 10)
-      : new Date().toISOString().slice(0, 10)
+      : todayLocalISO()
   )
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)

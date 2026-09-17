@@ -236,7 +236,10 @@ export default function NotificationBell() {
         message={`Tem certeza que deseja excluir a notificação "${confirmDelete?.title}"? Esta ação não pode ser desfeita.`}
         confirmLabel="Excluir"
         confirmVariant="danger"
-        onConfirm={() => confirmDelete && deleteNotification(confirmDelete.id)}
+        onConfirm={() => {
+          if (confirmDelete) deleteNotification(confirmDelete.id)
+          setConfirmDelete(null)
+        }}
         onCancel={() => setConfirmDelete(null)}
       />
 

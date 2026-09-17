@@ -141,6 +141,39 @@ export async function PATCH(request: NextRequest, ctx: Params) {
       data,
       include: ruleInclude,
     })
+
+    const now = new Date()
+    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+
+    // Ao desativar ou editar valores da recorrência, remove as ocorrências
+    // futuras pré-geradas e reseta a materialização para que sejam regeradas
+    // com os novos dados. Meses passados são preservados.
+    const financialChanged =
+      input.description !== undefined ||
+      input.amount !== undefined ||
+      input.dayOfMonth !== undefined ||
+      input.type !== undefined ||
+      input.accountId !== undefined ||
+      input.creditCardId !== undefined ||
+      input.categoryId !== undefined ||
+      input.toAccountId !== undefined
+
+    if (input.active === false || financialChanged) {
+      await prisma.transaction.deleteMany({
+        where: {
+          recurringId: id,
+          userId: session.user.id,
+          occurrenceMonth: { gt: currentMonth },
+        },
+      })
+      if (financialChanged) {
+        await prisma.recurringRule.update({
+          where: { id, userId: session.user.id },
+          data: { lastMaterializedMonth: currentMonth },
+        })
+      }
+    }
+
     return NextResponse.json(toRecurringRuleDto(rule))
   } catch {
     return NextResponse.json({ error: 'Conta recorrente não encontrada' }, { status: 404 })

@@ -1,7 +1,9 @@
 import {
   Baby,
+  Banknote,
   BookOpen,
   Briefcase,
+  Building2,
   Bus,
   Car,
   Coins,
@@ -15,6 +17,7 @@ import {
   Laptop,
   PawPrint,
   Phone,
+  PiggyBank,
   Plane,
   Receipt,
   Shirt,
@@ -50,6 +53,9 @@ const ICON_MAP = {
   shirt: Shirt,
   plane: Plane,
   'book-open': BookOpen,
+  'building-2': Building2,
+  'piggy-bank': PiggyBank,
+  banknote: Banknote,
 } as const
 
 export default function CategoryIcon({

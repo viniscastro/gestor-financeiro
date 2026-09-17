@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { listStatements } from '@/lib/cards'
+import { cleanupCardRecurringTransactions } from '@/lib/recurring'
 
 export async function GET() {
   const session = await auth()
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
   }
+
+  // Remove pré-gerações antigas para não inflar faturas futuras.
+  await cleanupCardRecurringTransactions(session.user.id)
 
   const statements = await listStatements(session.user.id, new Date(), 6)
   return NextResponse.json(statements)
