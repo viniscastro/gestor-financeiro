@@ -309,10 +309,17 @@ export default function CardsManager() {
   }
 
   async function toggleExpand(cardId: string) {
-    setExpanded((prev) => (prev === cardId ? null : cardId))
-    if (!(cardId in cardTx)) {
-      await loadMonth(cardId, '')
+    const willOpen = expanded !== cardId
+    setExpanded(willOpen ? cardId : null)
+    if (willOpen && !(cardId in cardTx)) {
+      const defaultMonth = selectedMonth[cardId] ?? cardDefaultMonth(cardId)
+      if (defaultMonth) setSelectedMonth((prev) => ({ ...prev, [cardId]: defaultMonth }))
+      await loadMonth(cardId, defaultMonth)
     }
+  }
+
+  function cardDefaultMonth(cardId: string): string {
+    return statements.find((s) => s.cardId === cardId)?.monthKey ?? ''
   }
 
   async function loadMonth(cardId: string, month: string) {
@@ -327,10 +334,8 @@ export default function CardsManager() {
   }
 
   function changeMonth(cardId: string, month: string) {
-    const selected = selectedMonth[cardId]
-    const next = selected === month ? '' : month
-    setSelectedMonth((prev) => ({ ...prev, [cardId]: next }))
-    loadMonth(cardId, next)
+    setSelectedMonth((prev) => ({ ...prev, [cardId]: month }))
+    loadMonth(cardId, month)
   }
 
   function canPayStatement(s: CreditCardStatementDto): boolean {
@@ -397,7 +402,7 @@ export default function CardsManager() {
       toast.success('Compra adicionada')
       setAddOpen(false)
       reload()
-      await loadMonth(addCardId, selectedMonth[addCardId] ?? '')
+      await loadMonth(addCardId, selectedMonth[addCardId] ?? cardDefaultMonth(addCardId))
     } finally {
       setAddSaving(false)
     }
@@ -458,7 +463,7 @@ export default function CardsManager() {
       setParsedPreview(null)
       setPreviewSelected(new Set())
       reload()
-      await loadMonth(importCardId, selectedMonth[importCardId] ?? '')
+      await loadMonth(importCardId, selectedMonth[importCardId] ?? cardDefaultMonth(importCardId))
     } finally {
       setImportSaving(false)
     }
@@ -497,7 +502,7 @@ export default function CardsManager() {
       toast.success('Compra atualizada')
       setEditTx(null)
       const cardId = editTx.creditCardId
-      if (cardId) await loadMonth(cardId, selectedMonth[cardId] ?? '')
+      if (cardId) await loadMonth(cardId, selectedMonth[cardId] ?? cardDefaultMonth(cardId))
       reload()
     } finally {
       setEditSaving(false)
@@ -582,8 +587,9 @@ export default function CardsManager() {
             const tx = cardTx[card.id] ?? []
             const month = selectedMonth[card.id] ?? ''
             const cardStatements = statements.filter((s) => s.cardId === card.id)
-            const spent = month
-              ? cardStatements.find((s) => s.monthKey === month)?.totalAmount ?? 0
+            const activeMonth = month || cardStatements[0]?.monthKey || ''
+            const spent = activeMonth
+              ? cardStatements.find((s) => s.monthKey === activeMonth)?.totalAmount ?? 0
               : cardStatements.reduce((sum, s) => sum + s.totalAmount, 0)
             const spentPct = card.creditLimit > 0 ? Math.min(100, Math.round((spent / card.creditLimit) * 100)) : 0
             return (
@@ -663,7 +669,7 @@ export default function CardsManager() {
                 <div className="border-t border-zinc-100 px-4 py-3 dark:border-zinc-700/50">
                   <div className="mb-1.5 flex items-center justify-between text-xs">
                     <span className="font-medium text-zinc-600 dark:text-zinc-300">
-                      {month ? `Gasto em ${monthLabel(month)}:` : 'Gasto total (todas as faturas):'} {formatBRL(spent)}
+                      {activeMonth ? `Gasto em ${monthLabel(activeMonth)}:` : 'Gasto total (todas as faturas):'} {formatBRL(spent)}
                     </span>
                     <span className="text-zinc-500 dark:text-zinc-400">{spentPct}% do limite</span>
                   </div>
@@ -683,7 +689,7 @@ export default function CardsManager() {
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                       <div className="flex flex-wrap gap-1.5">
                         {cardStatements.slice(0, 6).map((s) => {
-                          const isSel = month === s.monthKey
+                          const isSel = activeMonth === s.monthKey
                           return (
                             <button
                               key={s.id}
@@ -731,7 +737,7 @@ export default function CardsManager() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => printStatementPdf(card, month || cardStatements[0]?.monthKey || '', tx)}
+                          onClick={() => printStatementPdf(card, activeMonth, tx)}
                           disabled={tx.length === 0}
                           className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
                           title="Exportar esta fatura em PDF"
@@ -755,7 +761,7 @@ export default function CardsManager() {
                     </div>
 
                     {(() => {
-                      const ms = cardStatements.find((s) => s.monthKey === month)
+                      const ms = cardStatements.find((s) => s.monthKey === activeMonth)
                       if (!ms) return null
                       const paid = ms.status === 'PAID'
                       const canPay = canPayStatement(ms)
@@ -778,7 +784,7 @@ export default function CardsManager() {
                             title={
                               canPay && !paid
                                 ? 'Marcar fatura como paga'
-                                : 'Disponível para faturas abertas, com valor e vencendo em até 7 dias'
+                                : 'Disponível para faturas abertas, com valor, de 7 dias antes até o dia do vencimento'
                             }
                           >
                             <Check className="h-3.5 w-3.5" />

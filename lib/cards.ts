@@ -78,7 +78,10 @@ export function nextInvoiceWindow(card: { closingDay: number; dueDay: number }, 
     const dueCandidateY = y + Math.floor((m + i) / 12)
     const lastDay = new Date(dueCandidateY, dueCandidateMo + 1, 0).getDate()
     const dueCandidate = new Date(dueCandidateY, dueCandidateMo, Math.min(card.dueDay, lastDay))
-    if (dueCandidate >= from) {
+    // Compara com o início do dia: a fatura cujo vencimento é hoje continua
+    // sendo a "fatura vigente" durante todo o dia do vencimento (último dia
+    // para marcá-la como paga).
+    if (dueCandidate >= startOfDay(from)) {
       return invoiceWindow(card, dueCandidate)
     }
   }
@@ -147,7 +150,7 @@ export async function listStatements(userId: string, from: Date, months = 6) {
       const due = new Date(current.dueDate)
       due.setMonth(due.getMonth() + i)
       const window = invoiceWindow(card, due)
-      if (window.dueDate < from && i === 0) continue
+      if (window.dueDate < startOfDay(from) && i === 0) continue
       const stmt = await getOrCreateStatement(userId, card.id, window)
       const total = await computeInvoiceTotal(userId, card.id, window)
       statements.push({

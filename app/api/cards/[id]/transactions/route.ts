@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { invoiceWindow } from '@/lib/cards'
+import { invoiceWindow, nextInvoiceWindow } from '@/lib/cards'
 import { amountToCents, toTransactionDto } from '@/lib/transactions'
 import { parseLocalDate } from '@/lib/format'
 import { notifyCardDiscount } from '@/lib/notifications'
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest, ctx: Params) {
     gte = window.start
     lt = window.end
   } else {
-    const window = invoiceWindow(card, new Date())
+    const window = nextInvoiceWindow(card, new Date())
     gte = window.start
     lt = window.end
   }
