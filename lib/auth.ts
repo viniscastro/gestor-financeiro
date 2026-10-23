@@ -5,12 +5,16 @@ import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 
 const credentialsSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().email(),
   password: z.string().min(1),
 })
 
 class EmailNotVerified extends CredentialsSignin {
   code = 'email_not_verified'
+}
+
+class DatabaseUnavailable extends CredentialsSignin {
+  code = 'db_unavailable'
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -35,9 +39,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!parsed.success) return null
 
         const { email, password } = parsed.data
-        const user = await prisma.user.findUnique({
-          where: { email: email.toLowerCase() },
-        })
+
+        let user
+        try {
+          user = await prisma.user.findUnique({
+            where: { email: email.toLowerCase() },
+          })
+        } catch (err) {
+          console.error('[auth] Falha ao consultar o banco:', err)
+          throw new DatabaseUnavailable()
+        }
+
         if (!user) return null
 
         if (!user.emailVerified) {

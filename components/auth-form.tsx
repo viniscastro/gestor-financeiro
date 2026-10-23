@@ -54,8 +54,15 @@ export default function AuthForm({ initialMode }: Props = {}) {
         password,
       })
 
-      if (result?.error === 'email_not_verified') {
+      const code = result?.code ?? result?.error
+
+      if (code === 'email_not_verified') {
         router.push(`/verify-email?email=${encodeURIComponent(email)}`)
+        return
+      }
+
+      if (code === 'db_unavailable') {
+        setError('Não foi possível conectar ao servidor. Tente novamente em instantes.')
         return
       }
 

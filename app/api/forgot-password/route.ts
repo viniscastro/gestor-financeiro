@@ -61,8 +61,13 @@ export async function POST(request: NextRequest) {
 
     try {
       await sendPasswordResetCode(normalizedEmail, code)
-    } catch {
-      console.error(`[forgot-password] Falha ao enviar e-mail para ${normalizedEmail}. Código: ${code}`)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      console.error(`[forgot-password] Falha ao enviar e-mail para ${normalizedEmail}: ${message}`)
+      return NextResponse.json(
+        { error: 'Não foi possível enviar o e-mail agora. Tente novamente em instantes.' },
+        { status: 502 }
+      )
     }
 
     return NextResponse.json({ ok: true })
