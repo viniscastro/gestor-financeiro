@@ -13,13 +13,30 @@ class EmailNotVerified extends CredentialsSignin {
   code = 'email_not_verified'
 }
 
+const useSecureCookies = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1'
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
+  useSecureCookies,
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60,
     updateAge: 24 * 60 * 60,
   },
+  cookies: useSecureCookies
+    ? {
+        sessionToken: {
+          name: '__Secure-authjs.session-token',
+          options: {
+            httpOnly: true,
+            sameSite: 'lax',
+            path: '/',
+            secure: true,
+            maxAge: 30 * 24 * 60 * 60,
+          },
+        },
+      }
+    : undefined,
   pages: {
     signIn: '/login',
   },
