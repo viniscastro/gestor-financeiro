@@ -187,10 +187,5 @@ a:focus-visible,
 .badge-feature-icon,
 .badge-bug-icon,
 .badge-system-icon {
-  color: #4f46e5;
-}
-.dark .badge-feature-icon,
-.dark .badge-bug-icon,
-.dark .badge-system-icon {
-  color: #a5b4fc;
+  color: #fff;
 }

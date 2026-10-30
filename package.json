@@ -9,8 +9,7 @@
     "start": "prisma migrate deploy && next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "backup": "node scripts/backup.mjs"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",

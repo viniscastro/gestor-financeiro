@@ -1,30 +1,31 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
-import { createBackup, listBackups } from '@/lib/backup'
+import { prisma } from '@/lib/prisma'
+import { exportDatabase } from '@/lib/backup'
 
-const ADMIN_EMAILS = ['vinislad17@gmail.com']
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
   const session = await auth()
-  if (!session?.user?.id || !ADMIN_EMAILS.includes(session.user.email ?? '')) {
+  if (!session?.user?.id) {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 403 })
   }
 
-  const backups = await listBackups()
-  return NextResponse.json(backups)
-}
-
-export async function POST() {
-  const session = await auth()
-  if (!session?.user?.id || !ADMIN_EMAILS.includes(session.user.email ?? '')) {
+  // O papel vem do banco: o token pode ser anterior à remoção do acesso de admin.
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true },
+  })
+  if (user?.role !== 'ADMIN') {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 403 })
   }
 
-  try {
-    const filepath = await createBackup()
-    return NextResponse.json({ ok: true, file: filepath })
-  } catch (error) {
-    console.error('[Backup Error]', error)
-    return NextResponse.json({ error: 'Erro ao criar backup' }, { status: 500 })
-  }
+  const date = new Date().toISOString().slice(0, 10)
+  return new Response(exportDatabase(), {
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Disposition': `attachment; filename="gestor-financeiro-backup-${date}.json"`,
+      'Cache-Control': 'no-store',
+    },
+  })
 }

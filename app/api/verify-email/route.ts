@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
-import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
+import { RATE_LIMITS } from '@/lib/with-rate-limit'
+import { consumeRateLimit, withPersistentRateLimit } from '@/lib/persistent-rate-limit'
 
 const verifySchema = z.object({
   email: z.string().trim().email('E-mail inválido'),
@@ -10,7 +11,7 @@ const verifySchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
-  const rateLimited = withRateLimit(request, RATE_LIMITS.auth, 'verify-email')
+  const rateLimited = await withPersistentRateLimit(request, RATE_LIMITS.auth, 'verify-email')
   if (rateLimited) return rateLimited
 
   let body: unknown
@@ -30,6 +31,14 @@ export async function POST(request: NextRequest) {
 
   const { email, code } = parsed.data
   const normalizedEmail = email.toLowerCase()
+
+  const allowed = await consumeRateLimit(`verify-email:${normalizedEmail}`, RATE_LIMITS.auth)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Muitas tentativas. Solicite um novo código em alguns minutos.' },
+      { status: 429 }
+    )
+  }
 
   const user = await prisma.user.findUnique({
     where: { email: normalizedEmail },

@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
-import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
-import { rateLimit } from '@/lib/rate-limit'
+import { RATE_LIMITS } from '@/lib/with-rate-limit'
+import { consumeRateLimit, withPersistentRateLimit } from '@/lib/persistent-rate-limit'
 
 const resetSchema = z.object({
   email: z.string().trim().email('E-mail inválido'),
@@ -12,7 +12,7 @@ const resetSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
-  const rateLimited = withRateLimit(request, RATE_LIMITS.auth, 'reset-password')
+  const rateLimited = await withPersistentRateLimit(request, RATE_LIMITS.auth, 'reset-password')
   if (rateLimited) return rateLimited
 
   let body: unknown
@@ -33,8 +33,8 @@ export async function POST(request: NextRequest) {
   const { email, code, newPassword } = parsed.data
   const normalizedEmail = email.toLowerCase()
 
-  const emailLimit = rateLimit(`reset-code:${normalizedEmail}`, RATE_LIMITS.auth)
-  if (!emailLimit.ok) {
+  const allowed = await consumeRateLimit(`reset-code:${normalizedEmail}`, RATE_LIMITS.auth)
+  if (!allowed) {
     return NextResponse.json(
       { error: 'Muitas tentativas. Solicite um novo código em alguns minutos.' },
       { status: 429 }

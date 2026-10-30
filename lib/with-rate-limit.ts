@@ -4,17 +4,20 @@ import { rateLimit, type RateLimitConfig, RATE_LIMITS } from '@/lib/rate-limit'
 export { RATE_LIMITS }
 export type { RateLimitConfig }
 
+export function clientIp(request: NextRequest): string {
+  return (
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    request.headers.get('x-real-ip') ??
+    'anonymous'
+  )
+}
+
 export function withRateLimit(
   request: NextRequest,
   config: RateLimitConfig,
   keyPrefix?: string
 ): NextResponse | null {
-  const ip =
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    request.headers.get('x-real-ip') ??
-    'anonymous'
-
-  const key = `${keyPrefix ?? 'api'}:${ip}`
+  const key = `${keyPrefix ?? 'api'}:${clientIp(request)}`
   const result = rateLimit(key, config)
 
   if (!result.ok) {

@@ -7,6 +7,14 @@ datasource db {
   provider = "postgresql"
 }
 
+model RateLimit {
+  key     String   @id
+  count   Int
+  resetAt DateTime
+
+  @@index([resetAt])
+}
+
 model User {
   id                   String          @id @default(cuid())
   name                 String

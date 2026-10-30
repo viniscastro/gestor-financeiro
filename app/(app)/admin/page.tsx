@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth'
 import AdminNotify from '@/components/admin-notify'
 import AdminUsers from '@/components/admin-users'
 import { prisma } from '@/lib/prisma'
-import { Users, BarChart3, Send } from '@/components/icons'
+import { Users, BarChart3, Send, Download } from '@/components/icons'
 
 export const metadata: Metadata = {
   title: 'Admin | Gestor Financeiro',
@@ -99,6 +99,25 @@ export default async function AdminPage() {
           Notificações
         </h2>
         <AdminNotify />
+      </section>
+
+      <section>
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-50">
+          <Download className="h-5 w-5" />
+          Backup
+        </h2>
+        <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            Baixe um arquivo JSON com todos os dados do sistema. Ele inclui e-mails e hashes de senha: guarde-o em local seguro.
+          </p>
+          <a
+            href="/api/backup"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500"
+          >
+            <Download aria-hidden="true" className="h-4 w-4" />
+            Baixar backup
+          </a>
+        </div>
       </section>
     </div>
   )

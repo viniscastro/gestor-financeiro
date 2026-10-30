@@ -42,4 +42,7 @@ export const RATE_LIMITS = {
   auth: { windowMs: 15 * 60 * 1000, max: 10 },
   api: { windowMs: 60 * 1000, max: 120 },
   upload: { windowMs: 60 * 1000, max: 10 },
+  // Por conta, somando todos os IPs: atrapalha tentativas distribuídas sem
+  // bloquear quem erra a senha algumas vezes.
+  account: { windowMs: 15 * 60 * 1000, max: 20 },
 } as const

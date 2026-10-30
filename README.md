@@ -53,11 +53,11 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 
 ## 🛡️ Segurança & Operação
 
-- ⏱️ **Rate limiting** — limite de requisições por IP em todas as API routes (auth: 10/15min, API: 120/min)
+- ⏱️ **Rate limiting** — limite por IP nas API routes (auth: 10/15min, API: 120/min); login e códigos de verificação usam contador no banco, compartilhado entre instâncias
 - 🧹 **Sanitização de inputs** — proteção contra XSS via DOMPurify em todos os campos de texto
 - 🐛 **Monitoramento de erros** — Sentry captura erros em produção com stack trace e contexto (configuração via `SENTRY_DSN`)
 - 🧪 **Testes automatizados** — 24 testes com Vitest cobrindo rate limiter, sanitização, formatação e lógica de recorrência
-- 💾 **Backup automático** — backup com `pg_dump` + compressão gzip, retenção de 7 backups, acessível no painel **Admin** (listar/criar via API)
+- 💾 **Backup** — exportação de todos os dados em JSON, para download no painel **Admin** (via API)
 
 ## 🚀 Stack
 
@@ -370,8 +370,7 @@ model PushSubscription {
 | GET    | `/api/admin/users`               | Lista usuários (admin)                              | 🔒 Admin |
 | GET    | `/api/stats/category-comparison` | Compara gastos por categoria entre datas (admin)    | 🔒 Auth |
 | GET    | `/api/reports/monthly`           | Relatório mensal em PDF (email automático e "Enviar agora") | 🔒 Auth |
-| GET    | `/api/backup`                    | Lista backups (admin)                               | 🔒 Admin |
-| POST   | `/api/backup`                    | Cria um backup manual do banco (admin)              | 🔒 Admin |
+| GET    | `/api/backup`                    | Baixa uma exportação JSON do banco (admin)          | 🔒 Admin |
 | POST   | `/api/goals/[id]/topup`          | Faz um aporte manual a uma meta                     | 🔒 Auth |
 | POST   | `/api/recurring/[id]/pay`        | Marca uma recorrência como paga                     | 🔒 Auth |
 | POST   | `/api/transactions/import`       | Importa transações genéricas (CSV/OFX)              | 🔒 Auth |
