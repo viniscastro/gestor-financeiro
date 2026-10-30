@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRightLeft, Pencil, Repeat, Trash2 } from 'lucide-react'
+import { ArrowRightLeft, Pencil, Repeat, Trash2 } from '@/components/icons'
 import { formatBRL, formatDate, parseLocalDate } from '@/lib/format'
 import type { TransactionDto } from '@/lib/types'
 
@@ -15,11 +15,11 @@ type Props = {
 export default function TransactionList({ transactions, selectedIds, onToggleSelect, onEdit, onDelete }: Props) {
   if (transactions.length === 0) {
     return (
-      <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
-        <p className="text-sm text-zinc-500 dark:text-zinc-300">
+      <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-800">
+        <p className="text-sm text-slate-500 dark:text-slate-300">
           Nenhuma transação encontrada.
         </p>
-        <p className="mt-1 text-xs text-zinc-500">
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
           Clique em “Nova transação” para adicionar uma entrada ou saída.
         </p>
       </div>
@@ -34,14 +34,14 @@ export default function TransactionList({ transactions, selectedIds, onToggleSel
         return (
           <li
             key={t.id}
-            className="group flex items-start gap-3 rounded-xl border border-zinc-200 bg-white px-3 py-3 transition hover:border-zinc-300 sm:items-center sm:gap-4 sm:px-4             dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-700"
+            className="group flex items-start gap-3 rounded-xl border border-slate-200 bg-white px-3 py-3 transition hover:border-slate-300 sm:items-center sm:gap-4 sm:px-4             dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-700"
           >
             <input
               type="checkbox"
               checked={selectedIds.has(t.id)}
               onChange={() => onToggleSelect(t.id)}
               aria-label={`Selecionar ${t.description}`}
-              className="mt-1 h-4 w-4 shrink-0 rounded border-zinc-300 accent-emerald-600 sm:mt-0"
+              className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 accent-brand-600 sm:mt-0"
             />
             <div
               className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold sm:h-10 sm:w-10 ${
@@ -57,7 +57,7 @@ export default function TransactionList({ transactions, selectedIds, onToggleSel
 
             <div className="min-w-0 flex-1">
               <div className="flex items-start justify-between gap-2">
-                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 sm:truncate">
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-100 sm:truncate">
                   {t.description}
                 </p>
                 <div className="flex shrink-0 items-center gap-1">
@@ -77,7 +77,7 @@ export default function TransactionList({ transactions, selectedIds, onToggleSel
                       <button
                         type="button"
                         onClick={() => onEdit(t)}
-                        className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+                        className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                         aria-label="Editar"
                       >
                         <Pencil aria-hidden="true" className="h-4 w-4" />
@@ -86,7 +86,7 @@ export default function TransactionList({ transactions, selectedIds, onToggleSel
                     <button
                       type="button"
                       onClick={() => onDelete(t.id)}
-                      className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
+                      className="rounded-lg p-2 text-slate-500 hover:bg-rose-500 hover:text-white dark:text-slate-300 dark:hover:text-white"
                       aria-label="Excluir"
                     >
                       <Trash2 aria-hidden="true" className="h-4 w-4" />
@@ -94,7 +94,7 @@ export default function TransactionList({ transactions, selectedIds, onToggleSel
                   </div>
                 </div>
               </div>
-              <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-zinc-500">
+              <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400">
                 <span className="inline-flex items-center gap-1">
                   <span
                     className="h-2 w-2 shrink-0 rounded-full"

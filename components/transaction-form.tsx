@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Info, LoaderCircle, Repeat, TrendingDown, TrendingUp, X } from 'lucide-react'
+import { Info, LoaderCircle, Repeat, TrendingDown, TrendingUp, X } from '@/components/icons'
 import CurrencyInput from '@/components/currency-input'
 import DatePicker from '@/components/date-picker'
 import Select, { type SelectOption } from '@/components/select'
@@ -138,7 +138,7 @@ function TransactionFormBody({
   }
 
   const inputClass =
-    'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
+    'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500'
 
   const categoryOptions: SelectOption[] = flattenCategories(availableCategories)
   const accountOptions: SelectOption[] = accounts.map((a) => ({ value: a.id, label: a.name }))
@@ -154,7 +154,7 @@ function TransactionFormBody({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+          className="rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
           aria-label="Fechar"
         >
           <X className="h-5 w-5" />
@@ -162,7 +162,7 @@ function TransactionFormBody({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-          <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+          <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
             <button
               type="button"
               role="tab"
@@ -170,8 +170,8 @@ function TransactionFormBody({
               onClick={() => switchType('INCOME')}
               className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                 type === 'INCOME'
-                  ? 'bg-emerald-600 text-white shadow'
-                  : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
+                  ? 'bg-brand-600 text-white shadow'
+                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200'
               }`}
             >
               <TrendingUp className="h-4 w-4" />
@@ -185,7 +185,7 @@ function TransactionFormBody({
               className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                 type === 'EXPENSE'
                   ? 'bg-rose-500 text-white shadow'
-                  : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
+                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200'
               }`}
             >
               <TrendingDown className="h-4 w-4" />
@@ -194,7 +194,7 @@ function TransactionFormBody({
           </div>
 
           <div>
-            <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Descrição <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
             </label>
             <input
@@ -210,7 +210,7 @@ function TransactionFormBody({
           </div>
 
           <div>
-            <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Categoria <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
             </label>
             <Select
@@ -225,7 +225,7 @@ function TransactionFormBody({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-            <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Valor (R$) <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
               </label>
               <CurrencyInput
@@ -238,7 +238,7 @@ function TransactionFormBody({
               />
             </div>
             <div>
-              <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Data <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
               </label>
               <DatePicker
@@ -250,12 +250,12 @@ function TransactionFormBody({
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Pagamento <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
             </label>
 
             {type === 'EXPENSE' && creditCards.length > 0 && (
-              <div role="tablist" className="mb-2 grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+              <div role="tablist" className="mb-2 grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
                 <button
                   type="button"
                   role="tab"
@@ -266,8 +266,8 @@ function TransactionFormBody({
                   }}
                   className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
                     paySource === 'ACCOUNT'
-                      ? 'bg-emerald-600 text-white shadow'
-                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                      ? 'bg-brand-600 text-white shadow'
+                      : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
                   }`}
                 >
                   Conta
@@ -282,8 +282,8 @@ function TransactionFormBody({
                   }}
                   className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
                     paySource === 'CARD'
-                      ? 'bg-emerald-600 text-white shadow'
-                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                      ? 'bg-brand-600 text-white shadow'
+                      : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
                   }`}
                 >
                   Cartão
@@ -314,7 +314,7 @@ function TransactionFormBody({
 
           {type === 'EXPENSE' && !transaction && (
             <div>
-              <label htmlFor="installments" className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label htmlFor="installments" className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">
                 <Repeat className="h-3.5 w-3.5" />
                 Parcelas <span className="text-rose-500">*</span>
               </label>
@@ -338,7 +338,7 @@ function TransactionFormBody({
                 className={inputClass}
               />
               {typeof installments === 'number' && installments > 1 && amount && (
-                <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                   {installments}x de {formatBRL(Math.round((Math.round(Number(amount) * 100)) / installments))}
                 </p>
               )}
@@ -358,7 +358,7 @@ function TransactionFormBody({
           )}
 
           {error && (
-            <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+            <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
               {error}
             </p>
           )}
@@ -366,7 +366,7 @@ function TransactionFormBody({
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading && <LoaderCircle className="h-4 w-4 animate-spin" />}
             {transaction ? 'Salvar alterações' : 'Adicionar transação'}

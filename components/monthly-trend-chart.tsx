@@ -36,8 +36,8 @@ function ChartTooltip({
 }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
-      <p className="mb-1 font-medium text-zinc-700 dark:text-zinc-300">{label}</p>
+    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-slate-700 dark:bg-slate-800">
+      <p className="mb-1 font-medium text-slate-700 dark:text-slate-300">{label}</p>
       {payload.map((entry: TooltipEntry) => (
         <p key={String(entry.dataKey)} style={{ color: entry.color }}>
           {entry.name}: {formatBRL(Number(entry.value))}
@@ -54,12 +54,12 @@ export default function MonthlyTrendChart({ data }: { data: MonthlyPoint[] }) {
 
   if (!hasData) {
     return (
-      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
-        <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-zinc-50">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
+        <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-50">
           Tendência mensal
         </h2>
-        <p className="mb-4 text-xs text-zinc-500">Entradas vs. saídas</p>
-        <p className="py-12 text-center text-sm text-zinc-500">
+        <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">Entradas vs. saídas</p>
+        <p className="py-12 text-center text-sm text-slate-500 dark:text-slate-400">
           Adicione transações para ver a tendência.
         </p>
       </div>
@@ -67,11 +67,11 @@ export default function MonthlyTrendChart({ data }: { data: MonthlyPoint[] }) {
   }
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
-      <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-zinc-50">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
+      <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-50">
         Tendência mensal
       </h2>
-      <p className="mb-4 text-xs text-zinc-500">Entradas vs. saídas — últimos 6 meses</p>
+      <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">Entradas vs. saídas — últimos 6 meses</p>
       <div
         className="h-56 sm:h-64"
         role="img"
@@ -87,6 +87,7 @@ export default function MonthlyTrendChart({ data }: { data: MonthlyPoint[] }) {
               tickLine={false}
             />
             <YAxis
+              width={72}
               stroke="var(--chart-axis)"
               fontSize={12}
               tickLine={false}

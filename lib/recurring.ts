@@ -15,10 +15,10 @@ export function startOfDay(date: Date): Date {
 }
 
 export function nextOccurrence(dayOfMonth: number, from: Date): Date {
-  const date = new Date(from.getFullYear(), from.getMonth(), dayOfMonth)
+  const date = monthStart(from.getFullYear(), from.getMonth(), dayOfMonth)
   if (date <= startOfDay(from)) {
     const nextMonth = new Date(from.getFullYear(), from.getMonth() + 1, 1)
-    return new Date(nextMonth.getFullYear(), nextMonth.getMonth(), dayOfMonth)
+    return monthStart(nextMonth.getFullYear(), nextMonth.getMonth(), dayOfMonth)
   }
   return date
 }
@@ -411,7 +411,7 @@ export async function notifyUpcomingBills(userId: string): Promise<void> {
   const html = `
     <div style="font-family:Arial,Helvetica,sans-serif;background:#f4f4f5;padding:32px 16px">
       <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden">
-        <div style="background:#10b981;padding:20px 24px">
+        <div style="background:#4f46e5;padding:20px 24px">
           <p style="margin:0;color:#ffffff;font-size:18px;font-weight:700">🐷 Gestor Financeiro</p>
         </div>
         <div style="padding:28px 24px">
@@ -441,7 +441,6 @@ export async function notifyUpcomingBills(userId: string): Promise<void> {
 export async function checkBudgetAlerts(userId: string): Promise<void> {
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  const mk = monthKey(now)
 
   const budgets = await prisma.budget.findMany({
     where: { userId },

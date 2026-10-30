@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { withRateLimit, RATE_LIMITS } from '@/lib/with-rate-limit'
+import { rateLimit } from '@/lib/rate-limit'
 
 const resetSchema = z.object({
   email: z.string().trim().email('E-mail inválido'),
@@ -31,6 +32,14 @@ export async function POST(request: NextRequest) {
 
   const { email, code, newPassword } = parsed.data
   const normalizedEmail = email.toLowerCase()
+
+  const emailLimit = rateLimit(`reset-code:${normalizedEmail}`, RATE_LIMITS.auth)
+  if (!emailLimit.ok) {
+    return NextResponse.json(
+      { error: 'Muitas tentativas. Solicite um novo código em alguns minutos.' },
+      { status: 429 }
+    )
+  }
 
   const user = await prisma.user.findUnique({
     where: { email: normalizedEmail },

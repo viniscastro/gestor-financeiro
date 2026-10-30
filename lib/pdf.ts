@@ -29,7 +29,6 @@ export function exportMonthlyReportPdf(
   }>
 ) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-  const pageW = doc.internal.pageSize.getWidth()
 
   const exits = rows.filter((r) => r.type === 'Saida')
 

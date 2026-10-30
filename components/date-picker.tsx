@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 import { DayPicker } from 'react-day-picker'
 import { ptBR } from 'date-fns/locale'
 import { format, parse } from 'date-fns'
-import { CalendarIcon } from 'lucide-react'
+import { CalendarIcon } from '@/components/icons'
 
 type Props = {
   value: string
@@ -43,32 +43,17 @@ export default function DatePicker({ value, onChange, required, className }: Pro
 
   const selected = value ? parse(value, 'yyyy-MM-dd', new Date()) : undefined
 
-  // Sempre que muda o valor de fora, sincroniza a exibição (a menos que o
-  // usuário esteja digitando).
-  useEffect(() => {
-    if (editing) return
-    if (selected) setDisplay(format(selected, 'dd/MM/yyyy'))
-    else setDisplay('')
-  }, [selected, editing])
-
+  // Texto em digitação; fora da edição o campo mostra sempre o valor recebido.
   const [display, setDisplay] = useState('')
 
   function commitTypedInput() {
+    setEditing(false)
     if (!display.trim()) {
-      setEditing(false)
-      if (!required && !selected) onChange('')
-      setDisplay(selected ? format(selected, 'dd/MM/yyyy') : '')
+      if (!required && selected) onChange('')
       return
     }
     const iso = parseDateInput(display)
-    if (iso) {
-      onChange(iso)
-      setEditing(false)
-      setDisplay(format(iso, 'dd/MM/yyyy'))
-    } else {
-      setEditing(false)
-      setDisplay(selected ? format(selected, 'dd/MM/yyyy') : '')
-    }
+    if (iso) onChange(iso)
   }
 
   // Selecionar um dia no calendário: fecha o popup e aplica a data NA HORA
@@ -76,7 +61,6 @@ export default function DatePicker({ value, onChange, required, className }: Pro
   function handleSelect(day: Date | undefined) {
     if (!day) return
     onChange(format(day, 'yyyy-MM-dd'))
-    setDisplay(format(day, 'dd/MM/yyyy'))
     setEditing(false)
     setOpen(false)
   }
@@ -148,7 +132,7 @@ export default function DatePicker({ value, onChange, required, className }: Pro
           }}
           required={required}
           maxLength={10}
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 pr-10 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+          className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 pr-10 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
         />
         <button
           type="button"
@@ -158,7 +142,7 @@ export default function DatePicker({ value, onChange, required, className }: Pro
             setOpen((o) => !o)
           }}
           onMouseDown={(e) => e.preventDefault()}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"
         >
           <CalendarIcon className="h-4 w-4" />
         </button>
@@ -172,7 +156,7 @@ export default function DatePicker({ value, onChange, required, className }: Pro
             aria-label="Selecionar data"
             style={pos ? { top: pos.top, left: pos.left, width: pos.width } : undefined}
             onMouseDown={(e) => e.preventDefault()}
-            className="fixed z-[60] max-h-[70vh] overflow-y-auto rounded-xl border border-zinc-200 bg-white p-3 shadow-2xl dark:border-zinc-700 dark:bg-zinc-800"
+            className="fixed z-[60] max-h-[70vh] overflow-y-auto rounded-xl border border-slate-200 bg-white p-3 shadow-2xl dark:border-slate-700 dark:bg-slate-800"
           >
             <DayPicker
               mode="single"
@@ -188,26 +172,26 @@ export default function DatePicker({ value, onChange, required, className }: Pro
                 months: 'flex flex-col',
                 month: 'w-full',
                 month_caption: 'flex h-10 items-center justify-between px-1 mb-2',
-                caption_label: 'text-sm font-semibold capitalize text-zinc-900 dark:text-zinc-100',
+                caption_label: 'text-sm font-semibold capitalize text-slate-900 dark:text-slate-100',
                 nav: 'flex items-center gap-1',
                 button_previous:
-                  'inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700',
+                  'inline-flex items-center justify-center rounded-md p-1 text-slate-500 transition hover:bg-slate-100 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-slate-700',
                 button_next:
-                  'inline-flex items-center justify-center rounded-md p-1 text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-700',
+                  'inline-flex items-center justify-center rounded-md p-1 text-slate-500 transition hover:bg-slate-100 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-slate-700',
                 chevron: 'h-4 w-4',
                 month_grid: 'w-full',
                 weekdays: 'grid grid-cols-7 gap-1 mb-1',
                 weekday:
-                  'flex h-8 items-center justify-center text-[11px] font-medium text-zinc-400 dark:text-zinc-500',
+                  'flex h-8 items-center justify-center text-[11px] font-medium text-slate-400 dark:text-slate-500',
                 week: 'grid w-full grid-cols-7 gap-1',
                 day: 'w-full',
                 day_button:
-                  'relative flex aspect-square w-full cursor-pointer items-center justify-center rounded-lg text-sm text-zinc-900 transition hover:bg-emerald-100 dark:text-zinc-100 dark:hover:bg-emerald-900/30',
+                  'relative flex aspect-square w-full cursor-pointer items-center justify-center rounded-lg text-sm text-slate-900 transition hover:bg-brand-100 dark:text-slate-100 dark:hover:bg-brand-900/30',
                 selected:
-                  'bg-emerald-600 text-white hover:bg-emerald-600 dark:bg-emerald-500 dark:text-white dark:hover:bg-emerald-500',
-                today: 'font-bold text-emerald-600 dark:text-emerald-400',
-                outside: 'text-zinc-300 dark:text-zinc-600',
-                disabled: 'text-zinc-300 dark:text-zinc-600',
+                  'bg-brand-600 text-white hover:bg-brand-600 dark:bg-brand-500 dark:text-white dark:hover:bg-brand-500',
+                today: 'font-bold text-brand-600 dark:text-brand-400',
+                outside: 'text-slate-300 dark:text-slate-600',
+                disabled: 'text-slate-300 dark:text-slate-600',
               }}
             />
           </div>,

@@ -26,7 +26,7 @@ import {
   TrendingUp,
   Utensils,
   Wallet,
-} from 'lucide-react'
+} from '@/components/icons'
 
 const ICON_MAP = {
   tag: Tag,

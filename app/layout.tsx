@@ -36,8 +36,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0f1e" },
   ],
   colorScheme: "light dark",
 };
@@ -56,7 +56,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Toaster
           position="bottom-right"
           toastOptions={{
-            className: 'dark:bg-zinc-800 dark:text-zinc-100',
+            className: 'dark:bg-slate-800 dark:text-slate-100',
           }}
           richColors
           closeButton

@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import {
   ArrowLeftRight,
   Target,
-} from 'lucide-react'
+} from '@/components/icons'
 import Link from 'next/link'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -247,8 +247,8 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 sm:text-2xl">Dashboard</h1>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 sm:text-sm">
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-50 sm:text-2xl">Dashboard</h1>
+        <p className="text-xs text-slate-500 dark:text-slate-400 sm:text-sm">
           {session.user.name ? `Olá, ${session.user.name.split(' ')[0]}!` : 'Olá!'} Veja seu
           resumo financeiro.
         </p>
@@ -271,7 +271,7 @@ export default async function DashboardPage() {
               <Link
                 key={account.id}
                 href="/accounts"
-                className="rounded-2xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-700"
+                className="rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-700"
               >
                 <div className="flex items-center gap-2">
                   <span
@@ -279,14 +279,14 @@ export default async function DashboardPage() {
                     style={{ backgroundColor: account.color }}
                     aria-hidden="true"
                   />
-                  <p className="truncate text-xs font-medium uppercase tracking-wide text-zinc-500">
+                  <p className="truncate text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     {account.name}
                   </p>
                 </div>
                 <p
                   className={`mt-1.5 text-lg font-bold ${
                     balance >= 0
-                      ? 'text-zinc-900 dark:text-zinc-50'
+                      ? 'text-slate-900 dark:text-slate-50'
                       : 'text-rose-600 dark:text-rose-400'
                   }`}
                 >
@@ -321,8 +321,8 @@ export default async function DashboardPage() {
       )}
 
       {topCats.length > 0 && (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
-          <h2 className="mb-3 text-base font-semibold text-zinc-900 dark:text-zinc-50">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
+          <h2 className="mb-3 text-base font-semibold text-slate-900 dark:text-slate-50">
             Top categorias (mês)
           </h2>
           <ul className="space-y-2.5">
@@ -333,11 +333,11 @@ export default async function DashboardPage() {
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
                       <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: c.color }} />
-                      <span className="font-medium text-zinc-900 dark:text-zinc-100">{c.name}</span>
+                      <span className="font-medium text-slate-900 dark:text-slate-100">{c.name}</span>
                     </div>
-                    <span className="text-zinc-500">{formatBRL(c.spent)} ({pct}%)</span>
+                    <span className="text-slate-500 dark:text-slate-400">{formatBRL(c.spent)} ({pct}%)</span>
                   </div>
-                  <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                  <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div
                       className="h-full rounded-full"
                       style={{ width: `${pct}%`, backgroundColor: c.color }}
@@ -371,14 +371,14 @@ export default async function DashboardPage() {
         />
       ) : null}
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
+          <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50">
             Transações recentes
           </h2>
           <Link
             href="/transactions"
-            className="flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+            className="flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
           >
             <ArrowLeftRight aria-hidden="true" className="h-4 w-4" />
             Ver todas
@@ -386,11 +386,11 @@ export default async function DashboardPage() {
         </div>
 
         {recent.length === 0 ? (
-          <p className="py-8 text-center text-sm text-zinc-500">
+          <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
             Nenhuma transação ainda. Adicione a primeira em “Transações”.
           </p>
         ) : (
-          <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
+          <ul className="divide-y divide-slate-200 dark:divide-slate-800">
             {recent.map((t) => {
               const isIncome = t.transactionType === 'INCOME'
               const isTransfer = Boolean(t.transferGroupId && !t.category)
@@ -408,10 +408,10 @@ export default async function DashboardPage() {
                     {isTransfer ? '⇄' : isIncome ? '+' : '–'}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                    <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
                       {t.description}
                     </p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       {t.category?.name ?? (isTransfer ? 'Transferência' : 'Sem categoria')} ·{' '}
                       {t.account?.name} · {formatDate(t.date)}
                     </p>

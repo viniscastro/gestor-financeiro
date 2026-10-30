@@ -1,6 +1,6 @@
 'use client'
 
-import { Download } from 'lucide-react'
+import { Download } from '@/components/icons'
 import {
   Bar,
   BarChart,
@@ -55,8 +55,8 @@ function ChartTooltip({
 }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
-      <p className="mb-1 font-medium text-zinc-700 dark:text-zinc-300">{label}</p>
+    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-slate-700 dark:bg-slate-800">
+      <p className="mb-1 font-medium text-slate-700 dark:text-slate-300">{label}</p>
       {payload.map((entry: TooltipEntry) => (
         <p key={String(entry.dataKey)} style={{ color: entry.color }}>
           {entry.name}: {formatBRL(Number(entry.value))}
@@ -76,9 +76,9 @@ function PieTooltip({
   if (!active || !payload?.length) return null
   const entry = payload[0]
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
+    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-xl dark:border-slate-700 dark:bg-slate-800">
       <p style={{ color: entry.payload?.color }}>{entry.name}</p>
-      <p className="text-zinc-700 dark:text-zinc-300">{formatBRL(Number(entry.value))}</p>
+      <p className="text-slate-700 dark:text-slate-300">{formatBRL(Number(entry.value))}</p>
     </div>
   )
 }
@@ -100,7 +100,7 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
           type="button"
           onClick={exportExcel}
           disabled={!hasMonthly && !hasCategories}
-          className="flex items-center gap-2 rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+          className="flex items-center gap-2 rounded-lg bg-slate-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-700 dark:hover:bg-slate-600"
         >
           <Download aria-hidden="true" className="h-4 w-4" />
           Exportar Excel
@@ -108,11 +108,11 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
-      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
-        <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-zinc-50">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
+        <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-50">
           Entradas vs. Saídas
         </h2>
-        <p className="mb-4 text-xs text-zinc-500">Últimos 6 meses</p>
+        <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">Últimos 6 meses</p>
         {hasMonthly ? (
           <div
             className="h-72"
@@ -129,6 +129,7 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
                   tickLine={false}
                 />
                 <YAxis
+                  width={72}
                   stroke="var(--chart-axis)"
                   fontSize={12}
                   tickLine={false}
@@ -146,17 +147,17 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
             </ResponsiveContainer>
           </div>
         ) : (
-          <p className="py-16 text-center text-sm text-zinc-500">
+          <p className="py-16 text-center text-sm text-slate-500 dark:text-slate-400">
             Adicione transações para ver o gráfico mensal.
           </p>
         )}
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
-        <h2 className="mb-1 text-base font-semibold text-zinc-900 dark:text-zinc-50">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
+        <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-slate-50">
           Gastos por categoria
         </h2>
-        <p className="mb-4 text-xs text-zinc-500">
+        <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
           {totalExpense > 0
             ? `Total de saídas: ${formatBRL(totalExpense)}`
             : 'Distribuição das suas saídas'}
@@ -197,11 +198,11 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
                       className="h-3 w-3 shrink-0 rounded-full"
                       style={{ backgroundColor: c.color }}
                     />
-                    <span className="flex-1 truncate text-zinc-700 dark:text-zinc-300">
+                    <span className="flex-1 truncate text-slate-700 dark:text-slate-300">
                       {c.label}
                     </span>
-                    <span className="text-zinc-500">{pct.toFixed(0)}%</span>
-                    <span className="w-28 text-right font-medium text-zinc-900 dark:text-zinc-100">
+                    <span className="text-slate-500 dark:text-slate-400">{pct.toFixed(0)}%</span>
+                    <span className="w-28 text-right font-medium text-slate-900 dark:text-slate-100">
                       {formatBRL(c.amount)}
                     </span>
                   </li>
@@ -210,7 +211,7 @@ export default function StatisticsCharts({ monthly, byCategory, totalExpense }: 
             </ul>
           </>
         ) : (
-          <p className="py-16 text-center text-sm text-zinc-500">
+          <p className="py-16 text-center text-sm text-slate-500 dark:text-slate-400">
             Adicione saídas para ver os gastos por categoria.
           </p>
         )}

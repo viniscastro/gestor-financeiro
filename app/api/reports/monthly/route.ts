@@ -1,9 +1,8 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { generateMonthlyReportPdf, buildReportEmailHtml } from '@/lib/pdf-server'
 import { descriptionWithInstallment } from '@/lib/format'
-import { sendEmail } from '@/lib/email'
 
 export async function POST() {
   const session = await auth()
@@ -20,14 +19,16 @@ export async function POST() {
   }
 }
 
-export async function GET() {
-  const authHeader = process.env.CRON_SECRET
-  const url = new URL(process.env.VERCEL_URL ?? 'http://localhost')
-  const providedSecret = url.searchParams.get('secret')
-
-  if (authHeader && providedSecret !== authHeader) {
+// Chamado pelo cron da Vercel, que envia "Authorization: Bearer <CRON_SECRET>".
+export async function GET(request: NextRequest) {
+  const secret = process.env.CRON_SECRET
+  if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  // O cron roda no dia 1: o relatório é o do mês que acabou de fechar.
+  const now = new Date()
+  const previousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
 
   const users = await prisma.user.findMany({
     where: { monthlyReport: true },
@@ -39,7 +40,7 @@ export async function GET() {
 
   for (const user of users) {
     try {
-      await sendMonthlyReport(user.id)
+      await sendMonthlyReport(user.id, previousMonth)
       sent++
     } catch {
       failed++
@@ -49,16 +50,15 @@ export async function GET() {
   return NextResponse.json({ ok: true, sent, failed })
 }
 
-async function sendMonthlyReport(userId: string) {
+async function sendMonthlyReport(userId: string, reference: Date = new Date()) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { name: true, email: true, monthlyReport: true },
   })
   if (!user || !user.monthlyReport) return
 
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = now.getMonth()
+  const year = reference.getFullYear()
+  const month = reference.getMonth()
   const startOfMonth = new Date(year, month, 1)
   const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999)
 

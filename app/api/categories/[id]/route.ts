@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { findParentProblem } from '@/lib/category-parent'
 import { categorySchema, toCategoryDto } from '@/lib/category'
 
 type Params = { params: Promise<{ id: string }> }
@@ -29,6 +30,13 @@ export async function PATCH(request: NextRequest, ctx: Params) {
   }
 
   const { name, type, color, icon, parentId } = parsed.data
+
+  if (parentId) {
+    const problem = await findParentProblem({ userId: session.user.id, parentId, type, categoryId: id })
+    if (problem) {
+      return NextResponse.json({ error: problem.error }, { status: problem.status })
+    }
+  }
 
   try {
     const category = await prisma.category.update({

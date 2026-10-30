@@ -1,7 +1,7 @@
 'use client'
 
-import { useRef, useCallback, useState } from 'react'
-import { Minus, Plus } from 'lucide-react'
+import { useRef, useCallback } from 'react'
+import { Minus, Plus } from '@/components/icons'
 
 function formatCents(cents: number): string {
   return (cents / 100).toLocaleString('pt-BR', {
@@ -35,7 +35,6 @@ export default function CurrencyInput({
   autoFocus,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const [focused, setFocused] = useState(false)
 
   const cents = Math.round(Number(value || 0) * 100)
 
@@ -70,8 +69,6 @@ export default function CurrencyInput({
     [cents, commit]
   )
 
-  const handleFocus = useCallback(() => setFocused(true), [])
-  const handleBlur = useCallback(() => setFocused(false), [])
 
   const step = useCallback(
     (delta: number) => {
@@ -84,7 +81,7 @@ export default function CurrencyInput({
   const display = cents > 0 ? formatCents(cents) : ''
 
   const btnClass =
-    'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-zinc-300 bg-white text-zinc-600 transition hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700'
+    'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600 transition hover:bg-slate-100 active:bg-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
 
   return (
     <div className="flex items-center gap-1.5">
@@ -105,8 +102,6 @@ export default function CurrencyInput({
         value={display}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
         required={required}
         autoFocus={autoFocus}
         role="spinbutton"

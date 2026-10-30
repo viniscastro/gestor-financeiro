@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Bell, Check, CheckCheck, CircleAlert, Download, Info, Sparkles, Trash2 } from 'lucide-react'
-import { formatBRL, formatDate } from '@/lib/format'
+import { Bell, Check, CheckCheck, CircleAlert, Download, Info, Sparkles, Trash2 } from '@/components/icons'
+import { formatDate } from '@/lib/format'
 import ConfirmDialog from '@/components/confirm-dialog'
 
 type Notification = {
@@ -15,10 +15,10 @@ type Notification = {
 }
 
 const TYPE_CONFIG: Record<string, { icon: typeof Bell; color: string; bg: string; label: string }> = {
-  FEATURE: { icon: Sparkles, color: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/40', label: 'Nova funcionalidade' },
-  BUG: { icon: CircleAlert, color: 'text-red-700 dark:text-red-300', bg: 'bg-red-100 dark:bg-red-900/40', label: 'Bug corrigido' },
+  FEATURE: { icon: Sparkles, color: 'text-brand-700 dark:text-brand-300', bg: 'bg-brand-100 dark:bg-brand-900/40', label: 'Nova funcionalidade' },
+  BUG: { icon: CircleAlert, color: 'text-rose-700 dark:text-rose-300', bg: 'bg-rose-100 dark:bg-rose-900/40', label: 'Bug corrigido' },
   INCOME: { icon: Download, color: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/40', label: 'Entrada' },
-  EXPENSE: { icon: CircleAlert, color: 'text-red-700 dark:text-red-300', bg: 'bg-red-100 dark:bg-red-900/40', label: 'Saída' },
+  EXPENSE: { icon: CircleAlert, color: 'text-rose-700 dark:text-rose-300', bg: 'bg-rose-100 dark:bg-rose-900/40', label: 'Saída' },
   BILL: { icon: Info, color: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/40', label: 'Conta a vencer' },
   BUDGET: { icon: CircleAlert, color: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/40', label: 'Alerta de orçamento' },
   MONTHLY_SUMMARY: { icon: Sparkles, color: 'text-blue-700 dark:text-blue-300', bg: 'bg-blue-100 dark:bg-blue-900/40', label: 'Resumo mensal' },
@@ -39,7 +39,6 @@ function timeAgo(date: string) {
 export default function NotificationBell() {
   const [open, setOpen] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
-  const [loading, setLoading] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const [confirmDelete, setConfirmDelete] = useState<Notification | null>(null)
   const [confirmClearAll, setConfirmClearAll] = useState(false)
@@ -57,6 +56,7 @@ export default function NotificationBell() {
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- busca inicial; o estado muda só após a resposta da rede
     fetchNotifications()
     const interval = setInterval(fetchNotifications, 30000)
     return () => clearInterval(interval)
@@ -116,22 +116,22 @@ export default function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+        className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
         aria-label={unread > 0 ? `${unread} notificações não lidas` : 'Notificações'}
         aria-expanded={open}
       >
         <Bell aria-hidden="true" className="h-5 w-5" />
         {unread > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
+          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-bold text-white">
             {unread > 99 ? '99+' : unread}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="fixed right-4 top-16 z-50 w-[calc(100vw-2rem)] max-w-sm overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800 sm:absolute sm:right-0 sm:top-full sm:mt-2 sm:w-96 sm:max-w-none">
-          <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3 dark:border-zinc-700">
-            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+        <div className="fixed right-4 top-16 z-50 w-[calc(100vw-2rem)] max-w-sm overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800 sm:absolute sm:right-0 sm:top-full sm:mt-2 sm:w-96 sm:max-w-none">
+          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-700">
+            <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
               Notificações
             </h2>
             <div className="flex gap-1">
@@ -139,7 +139,7 @@ export default function NotificationBell() {
                 <button
                   type="button"
                   onClick={markAllAsRead}
-                  className="rounded-lg p-1.5 text-zinc-400 transition hover:bg-zinc-100 hover:text-emerald-500 dark:hover:bg-zinc-700"
+                  className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-brand-500 dark:hover:bg-slate-700"
                   title="Marcar todas como lidas"
                   aria-label="Marcar todas como lidas"
                 >
@@ -150,7 +150,7 @@ export default function NotificationBell() {
                 <button
                   type="button"
                   onClick={() => setConfirmClearAll(true)}
-                  className="rounded-lg p-1.5 text-zinc-400 transition hover:bg-zinc-100 hover:text-red-500 dark:hover:bg-zinc-700"
+                  className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-rose-500 dark:hover:bg-slate-700"
                   title="Limpar todas"
                   aria-label="Limpar todas"
                 >
@@ -162,7 +162,7 @@ export default function NotificationBell() {
 
           <div className="max-h-[60vh] overflow-y-auto sm:max-h-96">
             {notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
+              <div className="flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400">
                 <Bell aria-hidden="true" className="mb-2 h-8 w-8" />
                 <p className="text-sm">Nenhuma notificação</p>
               </div>
@@ -173,12 +173,12 @@ export default function NotificationBell() {
                 return (
                   <div
                     key={n.id}
-                    className={`group relative flex gap-3 border-b border-zinc-50 px-3 py-3 transition hover:bg-zinc-50 dark:border-zinc-700/50 dark:hover:bg-zinc-700/50 sm:px-4 ${
-                      !n.read ? 'bg-emerald-50/50 dark:bg-emerald-900/10' : ''
+                    className={`group relative flex gap-3 border-b border-slate-50 px-3 py-3 transition hover:bg-slate-50 dark:border-slate-700/50 dark:hover:bg-slate-700/50 sm:px-4 ${
+                      !n.read ? 'bg-brand-50/50 dark:bg-brand-900/10' : ''
                     }`}
                   >
                     {!n.read && (
-                      <div className="absolute left-1.5 top-4 h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      <div className="absolute left-1.5 top-4 h-1.5 w-1.5 rounded-full bg-brand-500" />
                     )}
                     <div className={`mt-0.5 shrink-0 ${config.color}`}>
                       <Icon aria-hidden="true" className="h-4 w-4" />
@@ -187,14 +187,14 @@ export default function NotificationBell() {
                       <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${config.bg} ${config.color}`}>
                         {config.label}
                       </span>
-                      <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                      <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
                         {n.title}
                       </p>
-                      <p className="mt-0.5 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                      <p className="mt-0.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                         {n.message}
                       </p>
                       <p
-                        className="mt-1 text-[10px] text-zinc-500"
+                        className="mt-1 text-[10px] text-slate-500 dark:text-slate-400"
                         title={formatDate(new Date(n.createdAt))}
                       >
                         {timeAgo(n.createdAt)}
@@ -205,7 +205,7 @@ export default function NotificationBell() {
                         <button
                           type="button"
                           onClick={() => markAsRead([n.id])}
-                          className="rounded p-1.5 text-zinc-400 transition hover:bg-zinc-200 hover:text-emerald-500 dark:hover:bg-zinc-600"
+                          className="rounded p-1.5 text-slate-400 transition hover:bg-slate-200 hover:text-brand-500 dark:hover:bg-slate-600"
                           title="Marcar como lida"
                           aria-label="Marcar como lida"
                         >
@@ -215,7 +215,7 @@ export default function NotificationBell() {
                       <button
                         type="button"
                         onClick={() => setConfirmDelete(n)}
-                        className="rounded p-1.5 text-zinc-400 transition hover:bg-zinc-200 hover:text-red-500 dark:hover:bg-zinc-600"
+                        className="rounded p-1.5 text-slate-400 transition hover:bg-slate-200 hover:text-rose-500 dark:hover:bg-slate-600"
                         title="Excluir"
                         aria-label="Excluir notificação"
                       >

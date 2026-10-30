@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { Pipette } from 'lucide-react'
+import { Pipette } from '@/components/icons'
 import { CATEGORY_COLORS } from '@/lib/categories'
 
 type Props = {
@@ -22,7 +22,7 @@ export default function ColorPicker({ value, onChange, className }: Props) {
             type="button"
             onClick={() => onChange(c)}
             className={`h-8 w-8 shrink-0 rounded-full transition ${
-              value === c ? 'ring-2 ring-offset-2 ring-zinc-400 dark:ring-offset-zinc-900' : ''
+              value === c ? 'ring-2 ring-offset-2 ring-slate-400 dark:ring-offset-slate-900' : ''
             }`}
             style={{ backgroundColor: c }}
             aria-label={`Cor ${c}`}
@@ -33,8 +33,8 @@ export default function ColorPicker({ value, onChange, className }: Props) {
           onClick={() => inputRef.current?.click()}
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-dashed transition ${
             !CATEGORY_COLORS.includes(value as typeof CATEGORY_COLORS[number])
-              ? 'border-zinc-400 dark:border-zinc-500'
-              : 'border-zinc-300 dark:border-zinc-600'
+              ? 'border-slate-400 dark:border-slate-500'
+              : 'border-slate-300 dark:border-slate-600'
           }`}
           style={
             !CATEGORY_COLORS.includes(value as typeof CATEGORY_COLORS[number])
@@ -45,7 +45,7 @@ export default function ColorPicker({ value, onChange, className }: Props) {
           aria-label="Cor personalizada"
         >
           {!CATEGORY_COLORS.includes(value as typeof CATEGORY_COLORS[number]) ? null : (
-            <Pipette className="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" />
+            <Pipette className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
           )}
         </button>
         <input

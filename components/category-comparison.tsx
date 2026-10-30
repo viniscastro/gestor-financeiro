@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowDown, ArrowUp, LoaderCircle, ArrowRightLeft } from 'lucide-react'
+import { ArrowDown, ArrowUp, LoaderCircle, ArrowRightLeft } from '@/components/icons'
 import { formatBRL } from '@/lib/format'
 
 type ComparisonItem = {
@@ -16,11 +16,7 @@ type ComparisonItem = {
 }
 
 const inputClass =
-  'rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100'
-
-function toMonthInput(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-}
+  'rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100'
 
 function getDefaultRanges() {
   const now = new Date()
@@ -64,20 +60,20 @@ export default function CategoryComparison() {
   }
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
       <div className="mb-4 flex items-center gap-2">
-        <ArrowRightLeft aria-hidden="true" className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
+        <ArrowRightLeft aria-hidden="true" className="h-5 w-5 text-brand-600 dark:text-brand-400" />
+        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50">
           Comparativo de categorias
         </h2>
       </div>
-      <p className="mb-4 text-xs text-zinc-500">
+      <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
         Compare os gastos entre dois períodos diferentes
       </p>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <fieldset className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-700">
-          <legend className="px-1 text-xs font-medium text-zinc-500 dark:text-zinc-400">Período 1</legend>
+        <fieldset className="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+          <legend className="px-1 text-xs font-medium text-slate-500 dark:text-slate-400">Período 1</legend>
           <div className="flex gap-2">
             <input
               type="date"
@@ -93,8 +89,8 @@ export default function CategoryComparison() {
             />
           </div>
         </fieldset>
-        <fieldset className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-700">
-          <legend className="px-1 text-xs font-medium text-zinc-500 dark:text-zinc-400">Período 2</legend>
+        <fieldset className="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+          <legend className="px-1 text-xs font-medium text-slate-500 dark:text-slate-400">Período 2</legend>
           <div className="flex gap-2">
             <input
               type="date"
@@ -116,41 +112,40 @@ export default function CategoryComparison() {
         type="button"
         onClick={fetchData}
         disabled={loading}
-        className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading && <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />}
         Comparar
       </button>
 
       {error && (
-        <p role="alert" className="mt-3 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+        <p role="alert" className="mt-3 rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
           {error}
         </p>
       )}
 
       {data && data.comparison.length === 0 && (
-        <p className="mt-4 py-8 text-center text-sm text-zinc-500">
+        <p className="mt-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
           Nenhum gasto encontrado nos períodos selecionados.
         </p>
       )}
 
       {data && data.comparison.length > 0 && (
         <div className="mt-4">
-          <div className="mb-3 flex items-center justify-between text-xs text-zinc-500">
-            <span>Total Período 1: <span className="font-medium text-zinc-700 dark:text-zinc-300">{formatBRL(data.total1)}</span></span>
-            <span>Total Período 2: <span className="font-medium text-zinc-700 dark:text-zinc-300">{formatBRL(data.total2)}</span></span>
+          <div className="mb-3 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+            <span>Total Período 1: <span className="font-medium text-slate-700 dark:text-slate-300">{formatBRL(data.total1)}</span></span>
+            <span>Total Período 2: <span className="font-medium text-slate-700 dark:text-slate-300">{formatBRL(data.total2)}</span></span>
           </div>
 
           <ul className="space-y-2">
             {data.comparison.map((item) => {
               const increased = item.diff > 0
-              const decreased = item.diff < 0
               const same = item.diff === 0
               const maxAmount = Math.max(item.amount1, item.amount2, 1)
               return (
                 <li
                   key={item.categoryId}
-                  className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-700"
+                  className="rounded-lg border border-slate-200 p-3 dark:border-slate-700"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -158,7 +153,7 @@ export default function CategoryComparison() {
                         className="h-3 w-3 shrink-0 rounded-full"
                         style={{ backgroundColor: item.color }}
                       />
-                      <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                      <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
                         {item.name}
                       </span>
                     </div>
@@ -178,25 +173,25 @@ export default function CategoryComparison() {
 
                   <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="text-zinc-500">{formatBRL(item.amount1)}</span>
-                      <span className="text-zinc-400">{item.pct1.toFixed(0)}%</span>
+                      <span className="text-slate-500 dark:text-slate-400">{formatBRL(item.amount1)}</span>
+                      <span className="text-slate-400">{item.pct1.toFixed(0)}%</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-zinc-500">{formatBRL(item.amount2)}</span>
-                      <span className="text-zinc-400">{item.pct2.toFixed(0)}%</span>
+                      <span className="text-slate-500 dark:text-slate-400">{formatBRL(item.amount2)}</span>
+                      <span className="text-slate-400">{item.pct2.toFixed(0)}%</span>
                     </div>
                   </div>
 
                   <div className="mt-1.5 grid grid-cols-2 gap-x-4">
-                    <div className="h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-900">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-900">
                       <div
-                        className="h-full rounded-full bg-zinc-400 dark:bg-zinc-500"
+                        className="h-full rounded-full bg-slate-400 dark:bg-slate-500"
                         style={{ width: `${(item.amount1 / maxAmount) * 100}%` }}
                       />
                     </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-900">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-900">
                       <div
-                        className="h-full rounded-full bg-emerald-500"
+                        className="h-full rounded-full bg-brand-500"
                         style={{ width: `${(item.amount2 / maxAmount) * 100}%` }}
                       />
                     </div>
@@ -206,12 +201,12 @@ export default function CategoryComparison() {
             })}
           </ul>
 
-          <div className="mt-3 flex items-center justify-center gap-4 text-xs text-zinc-400">
+          <div className="mt-3 flex items-center justify-center gap-4 text-xs text-slate-400">
             <span className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-zinc-400 dark:bg-zinc-500" /> Período 1
+              <span className="inline-block h-2 w-2 rounded-full bg-slate-400 dark:bg-slate-500" /> Período 1
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" /> Período 2
+              <span className="inline-block h-2 w-2 rounded-full bg-brand-500" /> Período 2
             </span>
           </div>
         </div>

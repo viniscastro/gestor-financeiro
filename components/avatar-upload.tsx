@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Camera, LoaderCircle, Trash2 } from 'lucide-react'
+import { Camera, LoaderCircle, Trash2 } from '@/components/icons'
 import Avatar from '@/components/avatar'
 
 const MAX_DIMENSION = 512
@@ -99,7 +99,7 @@ export default function AvatarUpload({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={saving}
-            className={`${baseButton} rounded-lg bg-zinc-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600`}
+            className={`${baseButton} rounded-lg bg-slate-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-700 dark:hover:bg-slate-600`}
           >
             <Camera className="h-4 w-4" />
             Trocar foto
@@ -109,18 +109,18 @@ export default function AvatarUpload({
               type="button"
               onClick={() => saveImage(null)}
               disabled={saving}
-              className={`${baseButton} border border-zinc-300 bg-white text-rose-600 hover:bg-red-500 hover:text-white dark:border-zinc-700 dark:bg-zinc-900 dark:text-rose-400 dark:hover:bg-red-500 dark:hover:text-white`}
+              className={`${baseButton} border border-slate-300 bg-white text-rose-600 hover:bg-rose-500 hover:text-white dark:border-slate-700 dark:bg-slate-900 dark:text-rose-400 dark:hover:bg-rose-500 dark:hover:text-white`}
             >
               <Trash2 className="h-4 w-4" />
               Remover
             </button>
           )}
         </div>
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           JPG, PNG ou WebP de até 2 MB.
         </p>
         {error && (
-          <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+          <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
             {error}
           </p>
         )}

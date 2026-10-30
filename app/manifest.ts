@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Controle suas entradas e saídas em um só lugar',
     start_url: '/',
     display: 'standalone',
-    background_color: '#ffffff',
-    theme_color: '#10b981',
+    background_color: '#f8fafc',
+    theme_color: '#4f46e5',
     lang: 'pt-BR',
     icons: [
       {

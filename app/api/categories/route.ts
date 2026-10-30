@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { findParentProblem } from '@/lib/category-parent'
 import { categorySchema, toCategoryDto } from '@/lib/category'
 
 export async function GET() {
@@ -49,15 +50,9 @@ export async function POST(request: NextRequest) {
   const { name, type, color, icon, parentId } = parsed.data
 
   if (parentId) {
-    const parent = await prisma.category.findFirst({
-      where: { id: parentId, userId: session.user.id },
-      select: { id: true, type: true },
-    })
-    if (!parent) {
-      return NextResponse.json({ error: 'Categoria pai não encontrada' }, { status: 404 })
-    }
-    if (parent.type !== type) {
-      return NextResponse.json({ error: 'Subcategoria deve ser do mesmo tipo da pai' }, { status: 400 })
+    const problem = await findParentProblem({ userId: session.user.id, parentId, type })
+    if (problem) {
+      return NextResponse.json({ error: problem.error }, { status: problem.status })
     }
   }
 

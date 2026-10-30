@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { LoaderCircle, MailCheck, PiggyBank } from 'lucide-react'
+import { LoaderCircle, MailCheck, PiggyBank } from '@/components/icons'
 
 export default function VerifyEmailForm({
   initialEmail,
@@ -79,45 +79,45 @@ export default function VerifyEmailForm({
   }
 
   const inputClass =
-    'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
+    'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500'
 
   return (
     <div className="w-full max-w-md">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900">
-          <PiggyBank className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-100 dark:bg-brand-900">
+          <PiggyBank className="h-7 w-7 text-brand-600 dark:text-brand-400" />
         </div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
           Confirme seu e-mail
         </h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-300">
           Enviamos um código de 6 dígitos para validar sua conta
         </p>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl backdrop-blur dark:border-white/10 dark:bg-zinc-900 dark:shadow-2xl">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl backdrop-blur dark:border-white/10 dark:bg-slate-900 dark:shadow-2xl">
         {sent ? (
           <div className="py-4 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900">
               <MailCheck className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-50">
               E-mail confirmado!
             </h2>
-            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-300">
               {isLoggedIn ? 'Redirecionando...' : 'Sua conta foi verificada. Agora é só entrar.'}
             </p>
             {isLoggedIn ? (
               <button
                 onClick={() => router.push('/dashboard')}
-                className="mt-5 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
+                className="mt-5 inline-block rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500"
               >
                 Ir para o painel
               </button>
             ) : (
               <Link
                 href="/login"
-                className="mt-5 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
+                className="mt-5 inline-block rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500"
               >
                 Fazer login
               </Link>
@@ -126,7 +126,7 @@ export default function VerifyEmailForm({
         ) : (
           <>
             <div className="mb-4">
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 E-mail <span className="text-rose-500">*</span>
               </label>
               <input
@@ -142,7 +142,7 @@ export default function VerifyEmailForm({
 
             <form onSubmit={handleVerify} className="space-y-4">
               <div>
-                <label htmlFor="code" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                <label htmlFor="code" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Código de confirmação <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -160,7 +160,7 @@ export default function VerifyEmailForm({
               </div>
 
               {error && (
-                <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+                <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                   {error}
                 </p>
               )}
@@ -168,7 +168,7 @@ export default function VerifyEmailForm({
               <button
                 type="submit"
                 disabled={loading || code.length !== 6}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading && <LoaderCircle className="h-4 w-4 animate-spin" />}
                 Confirmar código
@@ -180,7 +180,7 @@ export default function VerifyEmailForm({
                 type="button"
                 onClick={handleResend}
                 disabled={resending || resendIn > 0}
-                className="text-sm font-medium text-emerald-600 transition hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-emerald-400 dark:hover:text-emerald-300"
+                className="text-sm font-medium text-brand-600 transition hover:text-brand-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-brand-400 dark:hover:text-brand-300"
               >
                 {resending ? 'Enviando...' : resendIn > 0 ? `Reenviar em ${resendIn}s` : 'Reenviar código'}
               </button>

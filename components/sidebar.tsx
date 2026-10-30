@@ -22,7 +22,7 @@ import {
   Target,
   Wallet,
   X,
-} from 'lucide-react'
+} from '@/components/icons'
 import Avatar from '@/components/avatar'
 import HeaderActions from '@/components/header-actions'
 
@@ -87,16 +87,16 @@ export default function Sidebar({ user }: { user: SessionUser }) {
   const nav = (
     <>
       <div className="mb-8 flex items-center gap-3 px-2">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600">
           <PiggyBank aria-hidden="true" className="h-5 w-5 text-white" />
         </div>
-        <span className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+        <span className="text-lg font-bold text-slate-900 dark:text-slate-50">
           Gestor Financeiro
         </span>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="ml-auto rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white lg:hidden"
+          className="ml-auto rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white lg:hidden"
           aria-label="Fechar menu"
         >
           <X aria-hidden="true" className="h-5 w-5" />
@@ -114,32 +114,32 @@ export default function Sidebar({ user }: { user: SessionUser }) {
               aria-current={active ? 'page' : undefined}
               className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                 active
-                  ? 'bg-emerald-500 text-white'
-                  : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
+                  ? 'bg-brand-50 font-semibold text-brand-700 dark:bg-brand-500/15 dark:text-brand-200'
+                  : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100'
               }`}
             >
-              <item.icon aria-hidden="true" className="h-5 w-5" />
+              <item.icon aria-hidden="true" weight={active ? 'fill' : 'regular'} className="h-5 w-5" />
               {item.label}
             </Link>
           )
         })}
       </nav>
 
-<div className="mt-6 border-t border-zinc-200 pt-4 dark:border-zinc-700">
-        <Link href="/account" className="mb-3 flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-zinc-100 dark:hover:bg-zinc-800">
+<div className="mt-6 border-t border-slate-200 pt-4 dark:border-slate-700">
+        <Link href="/account" className="mb-3 flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-slate-100 dark:hover:bg-slate-800">
           <Avatar name={user.name} image={user.image} />
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-200">
+            <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-200">
               {user.name ?? 'Usuário'}
             </p>
-            <p className="truncate text-xs text-zinc-500">{user.email}</p>
+            <p className="truncate text-xs text-slate-500 dark:text-slate-400">{user.email}</p>
           </div>
         </Link>
         <button
           type="button"
           onClick={handleSignOut}
           disabled={signingOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-500 transition hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white disabled:opacity-60"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-rose-500 hover:text-white dark:text-slate-300 dark:hover:text-white disabled:opacity-60"
         >
           {signingOut ? (
             <LoaderCircle aria-hidden="true" className="h-5 w-5 animate-spin" />
@@ -162,7 +162,7 @@ export default function Sidebar({ user }: { user: SessionUser }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed left-4 top-4 z-40 rounded-lg border border-zinc-200 bg-white p-2 text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white lg:hidden"
+        className="fixed left-4 top-4 z-40 rounded-lg border border-slate-200 bg-white p-2 text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white lg:hidden"
         aria-label="Abrir menu"
         aria-expanded={open}
         aria-controls="mobile-nav"
@@ -171,14 +171,14 @@ export default function Sidebar({ user }: { user: SessionUser }) {
       </button>
       )}
 
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-y-auto border-r border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-[#0e0e12] lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-y-auto border-r border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-background lg:flex">
         {nav}
       </aside>
 
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
-          <aside id="mobile-nav" className="absolute inset-y-0 left-0 flex w-64 flex-col overflow-y-auto border-r border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-[#0e0e12]">
+          <aside id="mobile-nav" className="absolute inset-y-0 left-0 flex w-64 flex-col overflow-y-auto border-r border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-background">
             {nav}
           </aside>
         </div>

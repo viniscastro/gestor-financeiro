@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback, useSyncExternalStore } from 'react'
-import { Check, Eye, EyeOff, RotateCcw, X } from 'lucide-react'
+import { Check, Eye, EyeOff, RotateCcw, X } from '@/components/icons'
 import Modal from '@/components/modal'
 
 const STORAGE_KEY = 'gf-dashboard-cards'
@@ -46,6 +46,13 @@ function saveVisible(ids: DashboardCardId[]) {
 let currentVisible: DashboardCardId[] = CARD_IDS.map((c) => c.id)
 let initialized = false
 
+const emptySubscribe = () => () => {}
+
+function setVisibleCards(ids: DashboardCardId[]) {
+  currentVisible = ids
+  saveVisible(ids)
+}
+
 function subscribe(callback: () => void) {
   const handler = () => callback()
   window.addEventListener(EVENT, handler)
@@ -62,18 +69,17 @@ function getServerSnapshot() {
 
 export function useDashboardCards(initialCards?: DashboardCardId[] | null) {
   const visible = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
-  const [mounted, setMounted] = useState(false)
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
 
   useEffect(() => {
-    if (!initialized) {
-      currentVisible = loadVisible(initialCards)
-      initialized = true
-    }
-    setMounted(true)
-  }, [])
+    if (initialized) return
+    currentVisible = loadVisible(initialCards)
+    initialized = true
+    window.dispatchEvent(new Event(EVENT))
+  }, [initialCards])
 
   const isVisible = useCallback(
-    (id: DashboardCardId) => !mounted || currentVisible.includes(id),
+    (id: DashboardCardId) => !mounted || visible.includes(id),
     [mounted, visible]
   )
 
@@ -96,14 +102,11 @@ export default function DashboardCardEditor() {
     const next = visible.includes(id)
       ? visible.filter((x) => x !== id)
       : [...visible, id]
-    currentVisible = next
-    saveVisible(next)
+    setVisibleCards(next)
   }
 
   function resetAll() {
-    const all = CARD_IDS.map((c) => c.id)
-    currentVisible = all
-    saveVisible(all)
+    setVisibleCards(CARD_IDS.map((c) => c.id))
   }
 
   const allVisible = visible.length === CARD_IDS.length
@@ -121,7 +124,7 @@ export default function DashboardCardEditor() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+            className="rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
             aria-label="Fechar"
           >
             <X className="h-5 w-5" />
@@ -137,8 +140,8 @@ export default function DashboardCardEditor() {
                 onClick={() => toggle(card.id)}
                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                   active
-                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-200'
+                    ? 'bg-brand-500/10 text-brand-600 dark:text-brand-400'
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-200'
                 }`}
               >
                 {active ? (
@@ -158,7 +161,7 @@ export default function DashboardCardEditor() {
             type="button"
             onClick={resetAll}
             disabled={allVisible}
-            className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 transition hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200 disabled:opacity-40"
+            className="flex items-center gap-1.5 text-xs font-medium text-slate-500 transition hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200 disabled:opacity-40"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             Mostrar todos
@@ -166,7 +169,7 @@ export default function DashboardCardEditor() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500"
+            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-500"
           >
             Concluído
           </button>

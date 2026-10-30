@@ -11,7 +11,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const session = await auth()
   if (!session?.user?.id) redirect('/login')
 
-  await materializeRecurring(session.user.id)
+  await materializeRecurring(session.user.id).catch((err) => {
+    console.error('[materializeRecurring]', err)
+  })
   await notifyUpcomingBills(session.user.id).catch((err) => {
     console.error('[notifyUpcomingBills]', err)
   })
@@ -33,17 +35,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-[#0e0e12]">
+    <div className="min-h-screen bg-slate-50 dark:bg-background">
       <ServerPreferencesScript theme={user.theme} dashboardCards={user.dashboardCards} />
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
       >
         Pular para o conteúdo principal
       </a>
       <Sidebar user={user} />
       <main id="main-content" className="min-h-screen lg:pl-64">
-        <div className="mx-auto max-w-5xl px-4 py-8 pt-20 sm:px-6 sm:py-20 lg:px-6 lg:pt-10">{children}</div>
+        <div className="mx-auto max-w-5xl px-4 py-8 pt-20 sm:px-6 sm:py-20 lg:px-6 lg:pt-16">{children}</div>
       </main>
     </div>
   )

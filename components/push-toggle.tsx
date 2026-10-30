@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { Bell, BellOff } from 'lucide-react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { Bell, BellOff } from '@/components/icons'
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -62,15 +62,20 @@ async function unsubscribePush(reg: ServiceWorkerRegistration) {
   }
 }
 
+const emptySubscribe = () => () => {}
+
+function isPushSupported() {
+  return 'serviceWorker' in navigator && 'PushManager' in window
+}
+
 export default function PushToggle({ onAction }: { onAction?: () => void }) {
-  const [supported, setSupported] = useState(false)
+  const supported = useSyncExternalStore(emptySubscribe, isPushSupported, () => false)
   const [permission, setPermission] = useState<NotificationPermission>('default')
   const [subscribed, setSubscribed] = useState(false)
   const regRef = useRef<ServiceWorkerRegistration | null>(null)
 
   useEffect(() => {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
-    setSupported(true)
+    if (!isPushSupported()) return
     registerSW().then((reg) => {
       if (!reg) return
       regRef.current = reg
@@ -114,7 +119,7 @@ export default function PushToggle({ onAction }: { onAction?: () => void }) {
     <button
       type="button"
       onClick={toggle}
-      className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+      className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
     >
       <Icon aria-hidden="true" className="h-4 w-4" />
       {label}

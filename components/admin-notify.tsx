@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Send, Sparkles, Bug, Info, CheckCircle } from 'lucide-react'
+import { Send, Sparkles, Bug, Info, CheckCircle } from '@/components/icons'
 
 type NotifyType = 'FEATURE' | 'BUG' | 'SYSTEM'
 
@@ -52,13 +52,11 @@ export default function AdminNotify() {
     }
   }
 
-  const selectedType = TYPE_OPTIONS.find((t) => t.value === type)!
-
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-5 rounded-xl bg-white p-6 shadow-sm dark:bg-zinc-800">
+      <form onSubmit={handleSubmit} className="space-y-5 rounded-xl bg-white p-6 shadow-sm dark:bg-slate-800">
         <div>
-          <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Tipo
           </label>
           <div className="flex flex-wrap gap-2">
@@ -72,7 +70,7 @@ export default function AdminNotify() {
                   onClick={() => setType(opt.value)}
                   className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition ${active ? opt.activeClass : opt.idleClass}`}
                 >
-                  <Icon aria-hidden="true" className={`h-4 w-4 ${active ? opt.iconActiveClass : 'text-zinc-400 dark:text-zinc-500'}`} />
+                  <Icon aria-hidden="true" className={`h-4 w-4 ${active ? opt.iconActiveClass : 'text-slate-400 dark:text-slate-500'}`} />
                   {opt.label}
                 </button>
               )
@@ -81,7 +79,7 @@ export default function AdminNotify() {
         </div>
 
         <div>
-          <label htmlFor="notify-title" className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <label htmlFor="notify-title" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Título
           </label>
           <input
@@ -90,12 +88,12 @@ export default function AdminNotify() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Ex: Novo relatório de estatísticas disponível"
-            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
           />
         </div>
 
         <div>
-          <label htmlFor="notify-message" className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <label htmlFor="notify-message" className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Mensagem
           </label>
           <textarea
@@ -104,18 +102,18 @@ export default function AdminNotify() {
             onChange={(e) => setMessage(e.target.value)}
             rows={3}
             placeholder="Descreva o que foi adicionado ou corrigido..."
-            className="w-full resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+            className="w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
           />
         </div>
 
         {error && (
-          <p role="alert" className="rounded-lg bg-red-600 px-3 py-2 text-sm text-white">
+          <p role="alert" className="rounded-lg bg-rose-600 px-3 py-2 text-sm text-white">
             {error}
           </p>
         )}
 
         {sent && (
-          <div role="status" className="flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm text-white">
+          <div role="status" className="flex items-center gap-2 rounded-lg bg-brand-600 px-3 py-2 text-sm text-white">
             <CheckCircle aria-hidden="true" className="h-4 w-4" />
             Notificação enviada com sucesso para todos os usuários!
           </div>
@@ -125,7 +123,7 @@ export default function AdminNotify() {
           <button
             type="submit"
             disabled={sending || !title.trim() || !message.trim()}
-            className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send aria-hidden="true" className="h-4 w-4" />
             {sending ? 'Enviando...' : 'Enviar Notificação'}

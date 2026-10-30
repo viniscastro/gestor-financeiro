@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { GripVertical, LoaderCircle, Pencil, Plus, Tag, Trash2 } from 'lucide-react'
+import { GripVertical, LoaderCircle, Pencil, Plus, Tag, Trash2 } from '@/components/icons'
 import type { AccountTypeDto } from '@/lib/types'
 import CategoryIcon from '@/components/category-icon'
 import ConfirmDialog from '@/components/confirm-dialog'
@@ -221,21 +221,21 @@ export default function AccountTypesManager() {
   }
 
   const inputClass =
-    'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
+    'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500'
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Tipos de conta</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-300">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">Tipos de conta</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-300">
             Gerencie os tipos usados pelas suas contas
           </p>
         </div>
         <button
           type="button"
           onClick={openCreate}
-          className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
+          className="flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500"
         >
           <Plus aria-hidden="true" className="h-4 w-4" />
           Novo tipo
@@ -243,25 +243,25 @@ export default function AccountTypesManager() {
       </div>
 
       {error && (
-        <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+        <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
           {error}
         </p>
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800">
-          <LoaderCircle aria-hidden="true" className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
+        <div className="flex items-center justify-center rounded-2xl border border-slate-200 bg-white p-16 dark:border-slate-700 dark:bg-slate-800">
+          <LoaderCircle aria-hidden="true" className="h-6 w-6 animate-spin text-brand-600 dark:text-brand-400" />
         </div>
       ) : types.length === 0 ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
-          <Tag aria-hidden="true" className="mx-auto h-10 w-10 text-zinc-400" />
-          <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
+        <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-800">
+          <Tag aria-hidden="true" className="mx-auto h-10 w-10 text-slate-400" />
+          <p className="mt-3 text-sm text-slate-500 dark:text-slate-300">
             Nenhum tipo de conta ainda.
           </p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
-          <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {types.map((type, index) => (
               <li
                 key={type.id}
@@ -271,14 +271,14 @@ export default function AccountTypesManager() {
                 onDragEnter={() => handleDragEnter(index)}
                 onDragEnd={handleDragEnd}
                 onDragOver={handleDragOver}
-                className={`group flex items-center gap-2 py-3 transition hover:bg-zinc-50 dark:hover:bg-zinc-800 ${
-                  dragOverIndex === index ? 'border-t-2 border-t-emerald-500' : ''
+                className={`group flex items-center gap-2 py-3 transition hover:bg-slate-50 dark:hover:bg-slate-800 ${
+                  dragOverIndex === index ? 'border-t-2 border-t-brand-500' : ''
                 }`}
                 style={{ paddingLeft: '16px', paddingRight: '16px' }}
               >
                 <div
                   data-touch-grip
-                  className="flex h-10 w-10 shrink-0 touch-none cursor-grab items-center justify-center text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                  className="flex h-10 w-10 shrink-0 touch-none cursor-grab items-center justify-center text-slate-300 transition hover:text-slate-500 dark:text-slate-600 dark:hover:text-slate-400"
                 >
                   <GripVertical aria-hidden="true" className="h-5 w-5" />
                 </div>
@@ -288,17 +288,17 @@ export default function AccountTypesManager() {
                 >
                   <CategoryIcon icon={type.icon} className="h-4 w-4 text-white" />
                 </div>
-                <span className="flex-1 truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                <span className="flex-1 truncate text-sm font-medium text-slate-900 dark:text-slate-100">
                   {type.name}
                 </span>
-                <span className="shrink-0 rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                <span className="shrink-0 rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:bg-slate-800 dark:text-slate-400">
                   {type.slug}
                 </span>
                 <div className="flex shrink-0 gap-1 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
                   <button
                     type="button"
                     onClick={() => openEdit(type)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+                    className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                     aria-label="Editar"
                   >
                     <Pencil aria-hidden="true" className="h-4 w-4" />
@@ -306,7 +306,7 @@ export default function AccountTypesManager() {
                   <button
                     type="button"
                     onClick={() => handleDelete(type)}
-                    className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:text-white"
+                    className="rounded-lg p-2 text-slate-500 hover:bg-rose-500 hover:text-white dark:text-slate-300 dark:hover:text-white"
                     aria-label="Excluir"
                   >
                     <Trash2 aria-hidden="true" className="h-4 w-4" />
@@ -326,7 +326,7 @@ export default function AccountTypesManager() {
         >
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="typeName" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label htmlFor="typeName" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Nome <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
               </label>
               <input
@@ -342,14 +342,14 @@ export default function AccountTypesManager() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Cor
               </label>
               <ColorPicker value={newColor} onChange={setNewColor} />
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Ícone
               </label>
               <div className="flex flex-wrap gap-1">
@@ -360,8 +360,8 @@ export default function AccountTypesManager() {
                     onClick={() => setNewIcon(ic)}
                     className={`flex h-9 w-9 items-center justify-center rounded-lg transition ${
                       newIcon === ic
-                        ? 'bg-emerald-500 text-white ring-2 ring-emerald-500'
-                        : 'text-zinc-500 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800'
+                        ? 'bg-brand-500 text-white ring-2 ring-brand-500'
+                        : 'text-slate-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
                     }`}
                     aria-label={`Ícone: ${ic.replace(/-/g, ' ')}`}
                   >
@@ -372,7 +372,7 @@ export default function AccountTypesManager() {
             </div>
 
             {formError && (
-              <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+              <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                 {formError}
               </p>
             )}
@@ -380,7 +380,7 @@ export default function AccountTypesManager() {
             <button
               type="submit"
               disabled={saving}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving && <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />}
               {editing ? 'Salvar alterações' : 'Criar tipo'}

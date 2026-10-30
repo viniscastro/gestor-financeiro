@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Eye, EyeOff, KeyRound, LoaderCircle, LockKeyhole, PiggyBank } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff, KeyRound, LoaderCircle, LockKeyhole, PiggyBank } from '@/components/icons'
 
 export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail: string }) {
   const email = initialEmail
@@ -24,7 +24,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
   }, [email, router])
 
   const inputClass =
-    'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
+    'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500'
 
   async function handleReset(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -69,34 +69,34 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
   return (
     <div className="w-full max-w-md">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900">
-          <PiggyBank className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-100 dark:bg-brand-900">
+          <PiggyBank className="h-7 w-7 text-brand-600 dark:text-brand-400" />
         </div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
           {done ? 'Senha redefinida!' : 'Redefinir senha'}
         </h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-300">
           {done
             ? 'Você será redirecionado para o login em instantes.'
             : `Defina uma nova senha para ${email}`}
         </p>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl backdrop-blur dark:border-white/10 dark:bg-zinc-900 dark:shadow-2xl">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl backdrop-blur dark:border-white/10 dark:bg-slate-900 dark:shadow-2xl">
         {done ? (
           <div className="py-4 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900">
               <KeyRound className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-50">
               Tudo pronto!
             </h2>
-            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-300">
               Agora é só entrar com a nova senha.
             </p>
             <Link
               href="/login"
-              className="mt-5 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
+              className="mt-5 inline-block rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500"
             >
               Fazer login
             </Link>
@@ -104,11 +104,11 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
         ) : (
           <form onSubmit={handleReset} className="space-y-4">
             <div>
-              <label htmlFor="newPassword" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label htmlFor="newPassword" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Nova senha <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
-                <LockKeyhole className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                <LockKeyhole className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   id="newPassword"
                   type={showNew ? 'text' : 'password'}
@@ -124,7 +124,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
                   type="button"
                   onClick={() => setShowNew((s) => !s)}
                   aria-label={showNew ? 'Ocultar nova senha' : 'Mostrar nova senha'}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-300"
                 >
                   {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -132,11 +132,11 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Confirmar nova senha <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
-                <LockKeyhole className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                <LockKeyhole className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   id="confirmPassword"
                   type={showConfirm ? 'text' : 'password'}
@@ -152,7 +152,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
                   type="button"
                   onClick={() => setShowConfirm((s) => !s)}
                   aria-label={showConfirm ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-300"
                 >
                   {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -160,7 +160,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
             </div>
 
             {error && (
-              <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+              <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                 {error}
               </p>
             )}
@@ -168,7 +168,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading && <LoaderCircle className="h-4 w-4 animate-spin" />}
               Redefinir senha
@@ -180,7 +180,7 @@ export default function ForgotPasswordResetForm({ initialEmail }: { initialEmail
       {!done && (
         <Link
           href="/forgot-password"
-          className="mt-5 flex items-center justify-center gap-1.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-300 dark:hover:text-zinc-100"
+          className="mt-5 flex items-center justify-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-800 dark:text-slate-300 dark:hover:text-slate-100"
         >
           <ArrowLeft className="h-4 w-4" />
           Voltar

@@ -25,7 +25,6 @@ export function generateMonthlyReportPdf(
   }>
 ): Buffer {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-  const pageW = doc.internal.pageSize.getWidth()
 
   const exits = rows.filter((r) => r.type === 'Saida')
 
@@ -83,7 +82,7 @@ export function buildReportEmailHtml(
   return `
     <div style="font-family:Arial,Helvetica,sans-serif;background:#f4f4f5;padding:32px 16px">
       <div style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden">
-        <div style="background:#10b981;padding:20px 24px">
+        <div style="background:#4f46e5;padding:20px 24px">
           <p style="margin:0;color:#ffffff;font-size:18px;font-weight:700">🐷 Gestor Financeiro</p>
         </div>
         <div style="padding:28px 24px">

@@ -46,6 +46,15 @@ export async function POST(request: NextRequest) {
 
   const autoAmount = autoContributeAmount != null ? amountToCents(autoContributeAmount) : null
 
+  if (autoContributeAccountId) {
+    const owned = await prisma.account.count({
+      where: { id: autoContributeAccountId, userId: session.user.id },
+    })
+    if (!owned) {
+      return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
+    }
+  }
+
   if (currentCents > 0 && accountId) {
     try {
       const result = await prisma.$transaction(async (tx) => {

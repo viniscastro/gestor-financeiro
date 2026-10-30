@@ -32,6 +32,15 @@ export async function PATCH(request: NextRequest, ctx: Params) {
 
   const input = parsed.data
 
+  if (input.autoContributeAccountId) {
+    const owned = await prisma.account.count({
+      where: { id: input.autoContributeAccountId, userId: session.user.id },
+    })
+    if (!owned) {
+      return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 })
+    }
+  }
+
   const data: Prisma.SavingsGoalUpdateInput = {}
   if (input.name !== undefined) data.name = input.name
   if (input.icon !== undefined) data.icon = input.icon ?? null

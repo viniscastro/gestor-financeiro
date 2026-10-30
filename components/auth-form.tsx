@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { Eye, EyeOff, LoaderCircle, PiggyBank } from 'lucide-react'
+import { Eye, EyeOff, LoaderCircle, PiggyBank } from '@/components/icons'
 
 type Mode = 'login' | 'register'
 
@@ -66,6 +66,11 @@ export default function AuthForm({ initialMode }: Props = {}) {
         return
       }
 
+      if (code === 'rate_limited') {
+        setError('Muitas tentativas. Aguarde alguns minutos e tente novamente.')
+        return
+      }
+
       if (result?.error) {
         setError('E-mail ou senha inválidos')
         return
@@ -73,33 +78,35 @@ export default function AuthForm({ initialMode }: Props = {}) {
 
       router.push('/dashboard')
       router.refresh()
+    } catch {
+      setError('Não foi possível conectar ao servidor. Tente novamente em instantes.')
     } finally {
       setLoading(false)
     }
   }
 
   const inputClass =
-    'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
+    'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500'
 
   return (
     <div className="w-full max-w-md">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-500">
           <PiggyBank className="h-7 w-7 text-white" />
         </div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
           Gestor Financeiro
         </h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-300">
           Controle suas entradas e saídas em um só lugar
         </p>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl backdrop-blur dark:border-white/10 dark:bg-zinc-900 dark:shadow-2xl">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl backdrop-blur dark:border-white/10 dark:bg-slate-900 dark:shadow-2xl">
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === 'register' && (
             <div>
-              <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Nome <span className="text-rose-500">*</span>
               </label>
               <input
@@ -116,7 +123,7 @@ export default function AuthForm({ initialMode }: Props = {}) {
           )}
 
           <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               E-mail <span className="text-rose-500">*</span>
             </label>
             <input
@@ -132,7 +139,7 @@ export default function AuthForm({ initialMode }: Props = {}) {
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Senha <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
@@ -151,7 +158,7 @@ export default function AuthForm({ initialMode }: Props = {}) {
                 type="button"
                 onClick={() => setShowPassword((s) => !s)}
                 aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-300"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -160,7 +167,7 @@ export default function AuthForm({ initialMode }: Props = {}) {
 
           {mode === 'register' && (
             <div>
-              <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Confirmar senha <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
@@ -179,7 +186,7 @@ export default function AuthForm({ initialMode }: Props = {}) {
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
                   aria-label={showPassword ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-300"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -188,7 +195,7 @@ export default function AuthForm({ initialMode }: Props = {}) {
           )}
 
           {error && (
-            <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+            <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
               {error}
             </p>
           )}
@@ -196,7 +203,7 @@ export default function AuthForm({ initialMode }: Props = {}) {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading && <LoaderCircle className="h-4 w-4 animate-spin" />}
             {mode === 'login' ? 'Entrar' : 'Criar conta'}
@@ -211,14 +218,14 @@ export default function AuthForm({ initialMode }: Props = {}) {
                   setError('')
                   setConfirmPassword('')
                 }}
-                className="flex w-full items-center justify-center rounded-lg border border-emerald-500 px-4 py-2.5 text-sm font-medium text-emerald-600 transition hover:bg-emerald-500 hover:text-white dark:text-emerald-400 dark:hover:text-white"
+                className="flex w-full items-center justify-center rounded-lg border border-brand-500 px-4 py-2.5 text-sm font-medium text-brand-600 transition hover:bg-brand-500 hover:text-white dark:text-brand-400 dark:hover:text-white"
               >
                 Criar conta
               </button>
               <div className="text-center">
                 <Link
                   href="/forgot-password"
-                  className="text-sm font-medium text-emerald-600 transition hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+                  className="text-sm font-medium text-brand-600 transition hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
                 >
                   Esqueceu a senha?
                 </Link>
@@ -235,11 +242,11 @@ export default function AuthForm({ initialMode }: Props = {}) {
                   setError('')
                   setConfirmPassword('')
                 }}
-                className="flex w-full items-center justify-center rounded-lg border border-emerald-500 px-4 py-2.5 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
+                className="flex w-full items-center justify-center rounded-lg border border-brand-500 px-4 py-2.5 text-sm font-semibold text-brand-600 transition hover:bg-brand-500/10 dark:text-brand-400 dark:hover:bg-brand-500/10"
               >
                 Já tenho conta
               </button>
-              <p className="text-center text-xs text-zinc-500">
+              <p className="text-center text-xs text-slate-500 dark:text-slate-400">
                 Ao criar a conta, enviaremos um código para confirmar seu e-mail.
               </p>
             </>

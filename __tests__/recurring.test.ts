@@ -54,6 +54,12 @@ describe('nextOccurrence', () => {
     expect(result.getMonth()).toBe(1)
     expect(result.getDate()).toBe(28)
   })
+
+  it('clamps when rolling over to a shorter month', () => {
+    const result = nextOccurrence(31, new Date(2026, 0, 31))
+    expect(result.getMonth()).toBe(1)
+    expect(result.getDate()).toBe(28)
+  })
 })
 
 describe('daysUntil', () => {

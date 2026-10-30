@@ -2,22 +2,21 @@
 
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { LoaderCircle, Upload, Trash2 } from 'lucide-react'
+import { LoaderCircle, Upload } from '@/components/icons'
 import Modal from '@/components/modal'
 import Select from '@/components/select'
 import { parseCsv, parseOfx, type ParsedTransaction } from '@/lib/import'
 import { formatBRL } from '@/lib/format'
-import type { AccountDto, CategoryDto } from '@/lib/types'
+import type { AccountDto } from '@/lib/types'
 
 type Props = {
   open: boolean
   onClose: () => void
   onSaved: () => void
   accounts: AccountDto[]
-  categories: CategoryDto[]
 }
 
-export default function ImportModal({ open, onClose, onSaved, accounts, categories }: Props) {
+export default function ImportModal({ open, onClose, onSaved, accounts }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [fileName, setFileName] = useState('')
   const [parsed, setParsed] = useState<ParsedTransaction[]>([])
@@ -114,17 +113,17 @@ export default function ImportModal({ open, onClose, onSaved, accounts, categori
   return (
     <Modal open={open} onClose={handleClose} title="Importar extrato" wide>
       <div className="space-y-5">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Importe transacoes de extratos bancarios em CSV ou OFX.
         </p>
 
         <div>
           <label
             htmlFor="import-file"
-            className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-zinc-300 p-6 text-center transition hover:border-emerald-400 dark:border-zinc-600 dark:hover:border-emerald-500"
+            className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-slate-300 p-6 text-center transition hover:border-brand-400 dark:border-slate-600 dark:hover:border-brand-500"
           >
-            <Upload aria-hidden="true" className="h-6 w-6 text-zinc-400" />
-            <span className="text-sm text-zinc-600 dark:text-zinc-300">
+            <Upload aria-hidden="true" className="h-6 w-6 text-slate-400" />
+            <span className="text-sm text-slate-600 dark:text-slate-300">
               {fileName || 'Clique para selecionar CSV ou OFX'}
             </span>
           </label>
@@ -139,7 +138,7 @@ export default function ImportModal({ open, onClose, onSaved, accounts, categori
         </div>
 
         {error && (
-          <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+          <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
             {error}
           </p>
         )}
@@ -147,24 +146,24 @@ export default function ImportModal({ open, onClose, onSaved, accounts, categori
         {parsed.length > 0 && (
           <>
             <div className="flex flex-wrap gap-3">
-              <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-                <p className="text-xs text-zinc-500">Transacoes</p>
-                <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{parsed.length}</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 dark:border-slate-700 dark:bg-slate-900">
+                <p className="text-xs text-slate-500 dark:text-slate-400">Transacoes</p>
+                <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{parsed.length}</p>
               </div>
-              <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-                <p className="text-xs text-zinc-500">Entradas</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 dark:border-slate-700 dark:bg-slate-900">
+                <p className="text-xs text-slate-500 dark:text-slate-400">Entradas</p>
                 <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{formatBRL(totalIncome)}</p>
               </div>
-              <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-                <p className="text-xs text-zinc-500">Saidas</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 dark:border-slate-700 dark:bg-slate-900">
+                <p className="text-xs text-slate-500 dark:text-slate-400">Saidas</p>
                 <p className="text-sm font-bold text-rose-600 dark:text-rose-400">{formatBRL(totalExpense)}</p>
               </div>
             </div>
 
-            <div className="max-h-60 overflow-y-auto rounded-xl border border-zinc-200 dark:border-zinc-700">
+            <div className="max-h-60 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-zinc-200 bg-zinc-50 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900">
+                  <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400 dark:border-slate-700 dark:bg-slate-900">
                     <th className="px-3 py-2">Data</th>
                     <th className="px-3 py-2">Descricao</th>
                     <th className="px-3 py-2 text-right">Valor</th>
@@ -172,11 +171,11 @@ export default function ImportModal({ open, onClose, onSaved, accounts, categori
                 </thead>
                 <tbody>
                   {parsed.slice(0, 50).map((t, i) => (
-                    <tr key={i} className="border-b border-zinc-100 last:border-0 dark:border-zinc-700/50">
-                      <td className="whitespace-nowrap px-3 py-1.5 text-zinc-600 dark:text-zinc-400">
+                    <tr key={i} className="border-b border-slate-100 last:border-0 dark:border-slate-700/50">
+                      <td className="whitespace-nowrap px-3 py-1.5 text-slate-600 dark:text-slate-400">
                         {new Date(t.date + 'T12:00:00').toLocaleDateString('pt-BR')}
                       </td>
-                      <td className="truncate px-3 py-1.5 text-zinc-900 dark:text-zinc-100">{t.description}</td>
+                      <td className="truncate px-3 py-1.5 text-slate-900 dark:text-slate-100">{t.description}</td>
                       <td className={`whitespace-nowrap px-3 py-1.5 text-right font-medium ${t.rawType === 'INCOME' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                         {t.rawType === 'INCOME' ? '+' : '-'}{formatBRL(t.amountCents)}
                       </td>
@@ -185,14 +184,14 @@ export default function ImportModal({ open, onClose, onSaved, accounts, categori
                 </tbody>
               </table>
               {parsed.length > 50 && (
-                <p className="px-3 py-2 text-xs text-zinc-500">
+                <p className="px-3 py-2 text-xs text-slate-500 dark:text-slate-400">
                   ...e mais {parsed.length - 50} transacoes
                 </p>
               )}
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Conta de destino
               </label>
               <Select
@@ -208,7 +207,7 @@ export default function ImportModal({ open, onClose, onSaved, accounts, categori
               <button
                 type="button"
                 onClick={handleClose}
-                className="rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
               >
                 Cancelar
               </button>
@@ -216,7 +215,7 @@ export default function ImportModal({ open, onClose, onSaved, accounts, categori
                 type="button"
                 onClick={handleImport}
                 disabled={importing || !accountId}
-                className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {importing ? (
                   <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />

@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertTriangle, LoaderCircle, ShieldCheck } from 'lucide-react'
+import { AlertTriangle, LoaderCircle, ShieldCheck } from '@/components/icons'
 import Modal from '@/components/modal'
 
 interface ConfirmDialogProps {
@@ -27,14 +27,14 @@ export default function ConfirmDialog({
   const confirmClass =
     confirmVariant === 'danger'
       ? 'bg-rose-600 hover:bg-rose-500'
-      : 'bg-emerald-600 hover:bg-emerald-500'
+      : 'bg-brand-600 hover:bg-brand-500'
 
   return (
     <Modal open={open} onClose={onCancel} title={title}>
       <div className="flex items-start gap-4">
         <div
           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-            confirmVariant === 'primary' ? 'bg-emerald-500' : 'bg-rose-500'
+            confirmVariant === 'primary' ? 'bg-brand-500' : 'bg-rose-500'
           }`}
         >
           {confirmVariant === 'primary' ? (
@@ -44,7 +44,7 @@ export default function ConfirmDialog({
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             {message}
           </p>
         </div>
@@ -54,7 +54,7 @@ export default function ConfirmDialog({
           type="button"
           onClick={onCancel}
           disabled={loading}
-          className="rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
+          className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
         >
           Cancelar
         </button>

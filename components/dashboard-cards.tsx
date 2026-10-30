@@ -10,7 +10,7 @@ import {
   AlarmClock,
   ArrowUpDown,
   Target,
-} from 'lucide-react'
+} from '@/components/icons'
 import { useDashboardCards, type DashboardCardId } from '@/components/dashboard-card-editor'
 
 const ICONS: Record<DashboardCardId, React.ElementType> = {
@@ -60,24 +60,22 @@ export default function DashboardCards({ cards, initialCards }: { cards: CardDat
 }
 
 function DesktopGrid({ cards }: { cards: CardData[] }) {
-  const count = cards.length
-
   function renderCard(card: CardData, spanClass: string) {
     const Icon = ICONS[card.id]
     return (
       <div
         key={card.id}
-        className={`${spanClass} rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800 sm:p-5`}
+        className={`${spanClass} rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800 sm:p-5`}
       >
         <div className="flex items-center justify-between">
-          <p className="text-[10px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-300 sm:text-xs">
+          <p className="text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-300 sm:text-xs">
             {card.label}
           </p>
           <div className={`flex h-8 w-8 items-center justify-center rounded-xl sm:h-9 sm:w-9 ${card.accent}`}>
             <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
         </div>
-        <p className="mt-2 text-lg font-bold text-zinc-900 dark:text-zinc-50 sm:text-2xl">
+        <p className="mt-2 text-lg font-bold text-slate-900 dark:text-slate-50 sm:text-2xl">
           {card.value}
         </p>
       </div>
@@ -85,7 +83,7 @@ function DesktopGrid({ cards }: { cards: CardData[] }) {
   }
 
   const rows: CardData[][] = []
-  let remaining = [...cards]
+  const remaining = [...cards]
   while (remaining.length > 0) {
     const take = remaining.length <= 2 ? remaining.length : Math.min(3, remaining.length)
     rows.push(remaining.splice(0, take))
@@ -186,17 +184,17 @@ function MobileCarousel({ cards }: { cards: CardData[] }) {
           return (
             <div
               key={card.id}
-              className="w-full shrink-0 snap-start rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-800"
+              className="w-full shrink-0 snap-start rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800"
             >
               <div className="flex items-center justify-between">
-                <p className="text-[10px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-300">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-300">
                   {card.label}
                 </p>
                 <div className={`flex h-8 w-8 items-center justify-center rounded-xl ${card.accent}`}>
                   <Icon className="h-4 w-4" />
                 </div>
               </div>
-              <p className="mt-2 text-lg font-bold text-zinc-900 dark:text-zinc-50">
+              <p className="mt-2 text-lg font-bold text-slate-900 dark:text-slate-50">
                 {card.value}
               </p>
             </div>
@@ -213,8 +211,8 @@ function MobileCarousel({ cards }: { cards: CardData[] }) {
               onClick={() => goTo(i)}
               className={`h-1.5 rounded-full transition-all ${
                 i === activeIndex
-                  ? 'w-5 bg-emerald-500'
-                  : 'w-1.5 bg-zinc-300 dark:bg-zinc-600'
+                  ? 'w-5 bg-brand-500'
+                  : 'w-1.5 bg-slate-300 dark:bg-slate-600'
               }`}
               aria-label={`Ir para ${card.label}`}
             />

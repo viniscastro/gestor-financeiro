@@ -10,11 +10,11 @@ import {
   Trash2,
   TrendingDown,
   TrendingUp,
-} from 'lucide-react'
+} from '@/components/icons'
 import { toast } from 'sonner'
 import ConfirmDialog from '@/components/confirm-dialog'
 import CurrencyInput from '@/components/currency-input'
-import Select, { type SelectOption } from '@/components/select'
+import Select from '@/components/select'
 import Modal from '@/components/modal'
 import type { TransactionType } from '@/lib/types'
 import { formatBRL, formatDateLong } from '@/lib/format'
@@ -346,23 +346,23 @@ export default function RecurringManager() {
   }
 
   const inputClass =
-    'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
+    'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500'
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
             Contas recorrentes
           </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-300">
+          <p className="text-sm text-slate-500 dark:text-slate-300">
             Transações automáticas todo mês + lembretes por e-mail
           </p>
         </div>
         <button
           type="button"
           onClick={openCreate}
-          className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
+          className="flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500"
         >
           <Plus aria-hidden="true" className="h-4 w-4" />
           Nova recorrência
@@ -370,26 +370,26 @@ export default function RecurringManager() {
       </div>
 
       {error && (
-        <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+        <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
           {error}
         </p>
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-white p-16 dark:border-zinc-700 dark:bg-zinc-800">
-          <LoaderCircle aria-hidden="true" className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-400" />
+        <div className="flex items-center justify-center rounded-2xl border border-slate-200 bg-white p-16 dark:border-slate-700 dark:bg-slate-800">
+          <LoaderCircle aria-hidden="true" className="h-6 w-6 animate-spin text-brand-600 dark:text-brand-400" />
         </div>
       ) : rules.length === 0 ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center dark:border-zinc-700 dark:bg-zinc-800">
-          <Repeat aria-hidden="true" className="mx-auto h-10 w-10 text-zinc-400" />
-          <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
+        <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-800">
+          <Repeat aria-hidden="true" className="mx-auto h-10 w-10 text-slate-400" />
+          <p className="mt-3 text-sm text-slate-500 dark:text-slate-300">
             Nenhuma recorrência criada. Adicione contas como aluguel, assinaturas,
             salário ou aportes mensais.
           </p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
-          <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {rules.map((rule, index) => {
               const isIncome = rule.type === 'INCOME'
               return (
@@ -403,12 +403,12 @@ export default function RecurringManager() {
                   onDragOver={handleDragOver}
                   className={`group px-4 py-3 transition ${
                     rule.active ? '' : 'opacity-60'
-                  } ${dragOverIndex === index ? 'border-t-2 border-t-emerald-500' : ''}`}
+                  } ${dragOverIndex === index ? 'border-t-2 border-t-brand-500' : ''}`}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       data-touch-grip
-                      className="flex h-10 w-10 touch-none cursor-grab items-center justify-center text-zinc-300 transition hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+                      className="flex h-10 w-10 touch-none cursor-grab items-center justify-center text-slate-300 transition hover:text-slate-500 dark:text-slate-600 dark:hover:text-slate-400"
                     >
                       <GripVertical aria-hidden="true" className="h-5 w-5" />
                     </div>
@@ -428,7 +428,7 @@ export default function RecurringManager() {
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                      <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
                         {rule.description}
                       </p>
                     </div>
@@ -450,7 +450,7 @@ export default function RecurringManager() {
                         aria-checked={rule.active}
                         onClick={() => toggleActive(rule)}
                         className={`relative h-7 w-12 rounded-full transition ${
-                          rule.active ? 'bg-emerald-500' : 'bg-zinc-300 dark:bg-zinc-700'
+                          rule.active ? 'bg-brand-500' : 'bg-slate-300 dark:bg-slate-700'
                         }`}
                         aria-label={`${rule.active ? 'Desativar' : 'Ativar'} recorrência`}
                       >
@@ -463,7 +463,7 @@ export default function RecurringManager() {
                       <button
                         type="button"
                         onClick={() => openEdit(rule)}
-                        className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+                        className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                         aria-label="Editar"
                       >
                         <Pencil aria-hidden="true" className="h-4 w-4" />
@@ -471,7 +471,7 @@ export default function RecurringManager() {
                       <button
                         type="button"
                         onClick={() => handleDelete(rule.id)}
-                        className="rounded-lg p-2 text-zinc-500 hover:bg-red-500 hover:text-white dark:text-zinc-300 dark:hover:bg-red-500 dark:hover:text-white"
+                        className="rounded-lg p-2 text-slate-500 hover:bg-rose-500 hover:text-white dark:text-slate-300 dark:hover:bg-rose-500 dark:hover:text-white"
                         aria-label="Excluir"
                       >
                         <Trash2 aria-hidden="true" className="h-4 w-4" />
@@ -479,7 +479,7 @@ export default function RecurringManager() {
                     </div>
                   </div>
 
-                  <div className="ml-8 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-zinc-500">
+                  <div className="ml-8 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400">
                     <span>Dia {rule.dayOfMonth}</span>
                     <span>·</span>
                     <span>
@@ -510,7 +510,7 @@ export default function RecurringManager() {
           title={editing ? 'Editar recorrência' : 'Nova recorrência'}
         >
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+              <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
                 <button
                   type="button"
                   role="tab"
@@ -518,8 +518,8 @@ export default function RecurringManager() {
                   onClick={() => switchType('INCOME')}
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     type === 'INCOME'
-                      ? 'bg-emerald-600 text-white shadow'
-                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
+                      ? 'bg-brand-600 text-white shadow'
+                      : 'text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200'
                   }`}
                 >
                   <TrendingUp aria-hidden="true" className="h-4 w-4" />
@@ -533,7 +533,7 @@ export default function RecurringManager() {
                   className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                     type === 'EXPENSE'
                       ? 'bg-rose-500 text-white shadow'
-                      : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
+                      : 'text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200'
                   }`}
                 >
                   <TrendingDown aria-hidden="true" className="h-4 w-4" />
@@ -542,7 +542,7 @@ export default function RecurringManager() {
               </div>
 
               <div>
-                <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Descrição <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                 </label>
                 <input
@@ -558,7 +558,7 @@ export default function RecurringManager() {
               </div>
 
               <div>
-                <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                <label htmlFor="category" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Categoria
                 </label>
                 <Select
@@ -578,7 +578,7 @@ export default function RecurringManager() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                     Valor (R$) <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                   </label>
                   <CurrencyInput
@@ -591,7 +591,7 @@ export default function RecurringManager() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="day" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  <label htmlFor="day" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                     Dia do mês <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                   </label>
                   <input
@@ -610,10 +610,10 @@ export default function RecurringManager() {
               {type === 'EXPENSE' && cards.length > 0 ? (
                 <>
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                       Pagamento
                     </label>
-                    <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+                    <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
                       <button
                         type="button"
                         role="tab"
@@ -621,8 +621,8 @@ export default function RecurringManager() {
                         onClick={() => setPaySource('ACCOUNT')}
                         className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                           paySource === 'ACCOUNT'
-                            ? 'bg-emerald-600 text-white shadow'
-                            : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
+                            ? 'bg-brand-600 text-white shadow'
+                            : 'text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200'
                         }`}
                       >
                         Conta
@@ -634,8 +634,8 @@ export default function RecurringManager() {
                         onClick={() => setPaySource('CARD')}
                         className={`flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
                           paySource === 'CARD'
-                            ? 'bg-emerald-600 text-white shadow'
-                            : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-200'
+                            ? 'bg-brand-600 text-white shadow'
+                            : 'text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200'
                         }`}
                       >
                         Cartão
@@ -645,7 +645,7 @@ export default function RecurringManager() {
 
                   {paySource === 'CARD' ? (
                     <div>
-                      <label htmlFor="rule-card" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                      <label htmlFor="rule-card" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                         Cartão <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                       </label>
                       <Select
@@ -659,7 +659,7 @@ export default function RecurringManager() {
                     </div>
                   ) : (
                     <div>
-                      <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                      <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                         Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                       </label>
                       <Select
@@ -675,7 +675,7 @@ export default function RecurringManager() {
                 </>
               ) : (
                 <div>
-                  <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  <label htmlFor="account" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                     Conta <span className="text-rose-500">*</span><span className="sr-only"> (obrigatório)</span>
                   </label>
                   <Select
@@ -690,7 +690,7 @@ export default function RecurringManager() {
               )}
 
               <div>
-                <label htmlFor="notify" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                <label htmlFor="notify" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   Lembrar por e-mail (dias antes)
                 </label>
                 <input
@@ -705,19 +705,19 @@ export default function RecurringManager() {
               </div>
 
               {editing && (
-                <label className="flex cursor-pointer items-center gap-3 text-sm text-zinc-700 dark:text-zinc-300">
+                <label className="flex cursor-pointer items-center gap-3 text-sm text-slate-700 dark:text-slate-300">
                   <input
                     type="checkbox"
                     checked={active}
                     onChange={(e) => setActive(e.target.checked)}
-                    className="h-4 w-4 accent-emerald-500"
+                    className="h-4 w-4 accent-brand-500"
                   />
                   Ativa
                 </label>
               )}
 
               {formError && (
-                <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+                <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
                   {formError}
                 </p>
               )}
@@ -725,7 +725,7 @@ export default function RecurringManager() {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {saving && <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar alterações' : 'Criar recorrência'}

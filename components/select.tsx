@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback, useId } from 'react'
 import { createPortal } from 'react-dom'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown } from '@/components/icons'
 
 export type SelectOption = {
   value: string
@@ -202,15 +202,15 @@ export default function Select({
           disabled={disabled}
           onClick={() => (open ? close() : openDropdown())}
           onKeyDown={handleTriggerKeyDown}
-          className={`flex w-full items-center justify-between rounded-lg border bg-white px-3.5 py-2.5 text-left text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-900 ${
+          className={`flex w-full items-center justify-between rounded-lg border bg-white px-3.5 py-2.5 text-left text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-900 ${
             open
-              ? 'border-emerald-500 ring-2 ring-emerald-500/20'
-              : 'border-zinc-300 dark:border-zinc-700'
-          } ${selected ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400'}`}
+              ? 'border-brand-500 ring-2 ring-brand-500/20'
+              : 'border-slate-300 dark:border-slate-700'
+          } ${selected ? 'text-slate-900 dark:text-slate-100' : 'text-slate-500 dark:text-slate-400'}`}
         >
           <span className="truncate">{selected?.label ?? placeholder}</span>
           <ChevronDown
-            className={`ml-2 h-4 w-4 shrink-0 text-zinc-400 transition-transform dark:text-zinc-500 ${
+            className={`ml-2 h-4 w-4 shrink-0 text-slate-400 transition-transform dark:text-slate-500 ${
               open ? 'rotate-180' : ''
             }`}
           />
@@ -230,7 +230,7 @@ export default function Select({
               width: pos.width,
               maxHeight: MAX_HEIGHT,
             }}
-            className="fixed z-[100] overflow-auto rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800"
+            className="fixed z-[100] overflow-auto rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800"
           >
             {options.map((opt) => {
               const isEnabled = !opt.disabled
@@ -249,16 +249,16 @@ export default function Select({
                   onMouseEnter={() => isEnabled && setActiveIndex(optionIndex)}
                   className={`flex w-full items-center px-3.5 py-2.5 text-left text-sm transition ${
                     opt.value === value
-                      ? 'bg-emerald-600 font-medium text-white'
+                      ? 'bg-brand-600 font-medium text-white'
                       : opt.disabled
-                        ? 'cursor-not-allowed text-zinc-300 dark:text-zinc-600'
+                        ? 'cursor-not-allowed text-slate-300 dark:text-slate-600'
                         : isActive
-                          ? 'bg-emerald-50 text-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-100'
-                          : 'text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700'
+                          ? 'bg-brand-50 text-brand-900 dark:bg-brand-900/30 dark:text-brand-100'
+                          : 'text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700'
                   }`}
                   style={{ paddingLeft: `${14 + (opt.depth ?? 0) * 20}px` }}
                 >
-                  {opt.depth ? <span className="mr-1.5 text-zinc-400 dark:text-zinc-500">└</span> : null}
+                  {opt.depth ? <span className="mr-1.5 text-slate-400 dark:text-slate-500">└</span> : null}
                   {opt.label}
                 </div>
               )
@@ -268,7 +268,7 @@ export default function Select({
                 role="option"
                 aria-selected={false}
                 aria-disabled="true"
-                className="border-t border-zinc-100 px-3.5 py-2.5 text-sm text-zinc-400 dark:border-zinc-700 dark:text-zinc-500"
+                className="border-t border-slate-100 px-3.5 py-2.5 text-sm text-slate-400 dark:border-slate-700 dark:text-slate-500"
               >
                 {placeholder}
               </div>

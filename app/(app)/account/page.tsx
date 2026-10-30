@@ -47,32 +47,32 @@ export default async function AccountPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Minha conta</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Minha conta</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Gerencie suas informações de acesso
         </p>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800">
         <div className="flex flex-wrap items-center gap-5">
           <AvatarUpload name={user.name ?? ''} image={user.image} />
           <div className="min-w-0">
-            <p className="text-base font-semibold text-zinc-900 dark:text-white">
+            <p className="text-base font-semibold text-slate-900 dark:text-white">
               {user.name}
             </p>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">{user.email}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{user.email}</p>
           </div>
         </div>
-        <dl className="mt-6 grid gap-4 border-t border-zinc-200 pt-4 text-sm sm:grid-cols-2 dark:border-zinc-700">
+        <dl className="mt-6 grid gap-4 border-t border-slate-200 pt-4 text-sm sm:grid-cols-2 dark:border-slate-700">
           <div>
-            <dt className="text-zinc-500">E-mail confirmado</dt>
-            <dd className="mt-0.5 text-zinc-700 dark:text-zinc-200">
+            <dt className="text-slate-500 dark:text-slate-400">E-mail confirmado</dt>
+            <dd className="mt-0.5 text-slate-700 dark:text-slate-200">
               {user.emailVerified ? 'Sim' : 'Não'}
             </dd>
           </div>
           <div>
-            <dt className="text-zinc-500">Conta criada em</dt>
-            <dd className="mt-0.5 text-zinc-700 dark:text-zinc-200">
+            <dt className="text-slate-500 dark:text-slate-400">Conta criada em</dt>
+            <dd className="mt-0.5 text-slate-700 dark:text-slate-200">
               {formatDateLong(user.createdAt)}
             </dd>
           </div>

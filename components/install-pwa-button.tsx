@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Download } from 'lucide-react'
+import { Download } from '@/components/icons'
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>
@@ -52,7 +52,7 @@ export default function InstallPwaButton({ compact, onAction }: Props) {
         onClick={handleInstall}
         title="Instalar app"
         aria-label="Instalar app"
-        className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+        className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
       >
         <Download aria-hidden="true" className="h-5 w-5" />
       </button>
@@ -63,7 +63,7 @@ export default function InstallPwaButton({ compact, onAction }: Props) {
     <button
       type="button"
       onClick={handleInstall}
-      className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+      className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
     >
       <Download aria-hidden="true" className="h-4 w-4" />
       Instalar app

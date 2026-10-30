@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowRightLeft, LoaderCircle, X } from 'lucide-react'
+import { ArrowRightLeft, LoaderCircle, X } from '@/components/icons'
 import CurrencyInput from '@/components/currency-input'
 import DatePicker from '@/components/date-picker'
-import Select, { type SelectOption } from '@/components/select'
+import Select from '@/components/select'
 import Modal from '@/components/modal'
 import { todayLocalISO } from '@/lib/format'
 import type { AccountDto } from '@/lib/types'
@@ -59,7 +59,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
   }
 
   const inputClass =
-    'w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500'
+    'w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500'
 
   return (
     <Modal open onClose={onClose} title="Transferência entre contas">
@@ -67,7 +67,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+          className="rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
           aria-label="Fechar"
         >
           <X className="h-5 w-5" />
@@ -76,7 +76,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
 
       <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="fromAccount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label htmlFor="fromAccount" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Da conta <span className="text-rose-500">*</span>
             </label>
             <Select
@@ -89,7 +89,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
           </div>
 
           <div>
-            <label htmlFor="toAccount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label htmlFor="toAccount" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Para a conta <span className="text-rose-500">*</span>
             </label>
             <Select
@@ -105,7 +105,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Valor (R$) <span className="text-rose-500">*</span>
               </label>
               <CurrencyInput
@@ -118,7 +118,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
               />
             </div>
             <div>
-              <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label htmlFor="date" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Data <span className="text-rose-500">*</span>
               </label>
               <DatePicker
@@ -130,7 +130,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
           </div>
 
           <div>
-            <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Descrição (opcional)
             </label>
             <input
@@ -145,7 +145,7 @@ export default function TransferForm({ open, accounts, onClose, onDone }: Props)
           </div>
 
           {error && (
-            <p role="alert" className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+            <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
               {error}
             </p>
           )}

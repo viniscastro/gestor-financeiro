@@ -182,7 +182,7 @@ export function parseCsv(content: string): ParsedTransaction[] {
 
 export function parseOfx(content: string): ParsedTransaction[] {
   const transactions: ParsedTransaction[] = []
-  let cleaned = content
+  const cleaned = content
 
   if (cleaned.includes('<?xml')) {
     const parser = new XMLParser({

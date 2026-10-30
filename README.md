@@ -38,7 +38,7 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 - 🏠 **Metas com aportes automáticos** — além do aporte manual, configure um valor fixo mensal descontado de uma conta automaticamente; metas também têm **ícone** próprio
 - 🔍 **Filtros avançados** — busque por texto, filtre por tipo, conta, categoria, mês ou **período personalizado** (data início/fim) nas transações
 - 📈 **Estatísticas com gráficos** — evolução mensal dos últimos 6 meses (barras) e despesas por categoria (pizza), com **Recharts**
-- 🎨 **Interface moderna** — temas **claro e escuro** com alternância, responsiva (menu lateral que vira gaveta no mobile) e ícones **Lucide**
+- 🎨 **Interface moderna** — temas **claro e escuro** com alternância, responsiva (menu lateral que vira gaveta no mobile) e ícones **Phosphor**
 - 🖼️ **Foto de perfil** — envie uma imagem (redimensionada no cliente) ou remova, exibida na sidebar e na página de conta
 - 📧 **Relatório mensal por e-mail** — no menu Conta, ative o envio automático no dia 1 de cada mês (com botão "Enviar agora") com um **PDF no mesmo layout do menu de cartões**
 - 🗑️ **Exclusão com desfazer** — ao excluir qualquer item (transação, conta, categoria, meta, orçamento, recorrência), um toast aparece com botão "Desfazer" para recriar o item
@@ -65,7 +65,7 @@ Uma aplicação web completa para gerenciar **entradas e saídas** de dinheiro, 
 | --------------- | ------------------------------------------------------ |
 | Framework       | [Next.js](https://nextjs.org) 16.3.0 (App Router + Turbopack) |
 | Linguagem       | [TypeScript](https://www.typescriptlang.org) 5         |
-| UI              | [Tailwind CSS](https://tailwindcss.com) 4 · [Lucide](https://lucide.dev) |
+| UI              | [Tailwind CSS](https://tailwindcss.com) 4 · [Phosphor Icons](https://phosphoricons.com) |
 | Gráficos        | [Recharts](https://recharts.org) 3.10.1                |
 | Banco de dados  | [PostgreSQL](https://www.postgresql.org) 17 · [Prisma](https://www.prisma.io) 7.9.1 (driver adapter `pg`) |
 | Autenticação    | [NextAuth.js](https://next-auth.js.org) 5 (beta) · [bcryptjs](https://github.com/dcodeIO/bcrypt.js) |
@@ -506,12 +506,18 @@ O projeto está pronto para deploy na [Vercel](https://vercel.com):
 
 1. Suba o código para um repositório no GitHub e importe-o na Vercel
 2. Use um PostgreSQL na nuvem (ex.: [Neon](https://neon.tech) ou [Supabase](https://supabase.com)) e obtenha a `DATABASE_URL`
-3. Configure as variáveis de ambiente na Vercel: `DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST="true"`, `EMAIL_FROM`, `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` (ou `RESEND_API_KEY`) e `SENTRY_DSN` (opcional)
-4. Rode as migrações no banco da nuvem:
+3. Configure as variáveis de ambiente na Vercel: `DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST="true"`, `EMAIL_FROM`, `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` (ou `RESEND_API_KEY`), `CRON_SECRET` e `SENTRY_DSN` (opcional)
+4. Prepare o banco da nuvem:
 
 ```bash
+# Banco novo e vazio
+npx prisma db push
+
+# Banco já existente, com o histórico de migrações aplicado
 npx prisma migrate deploy
 ```
+
+   Em banco vazio use `db push`: a migração `20250819_add_delete_code_fields` tem data anterior à `init` e faz o `migrate deploy` falhar.
 
 5. Faça o deploy 🚀
 

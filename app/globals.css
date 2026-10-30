@@ -4,24 +4,38 @@
 
 @utility app-backdrop-gradient {
   background:
-    radial-gradient(ellipse at top left, rgba(16, 185, 129, 0.15), transparent 50%),
-    radial-gradient(ellipse at bottom right, rgba(139, 92, 246, 0.12), transparent 50%);
+    radial-gradient(ellipse at top left, rgba(99, 102, 241, 0.16), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(14, 165, 233, 0.12), transparent 50%);
 }
 
 :root {
   color-scheme: light;
-  --background: #fafafa;
-  --foreground: #18181b;
-  --chart-grid: #e4e4e7;
-  --chart-axis: #a1a1aa;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --chart-grid: #e2e8f0;
+  --chart-axis: #94a3b8;
 }
 
 .dark {
   color-scheme: dark;
-  --background: #0e0e12;
-  --foreground: #e4e4e7;
-  --chart-grid: #27272a;
-  --chart-axis: #a1a1aa;
+  --background: #0a0f1e;
+  --foreground: #e2e8f0;
+  --chart-grid: #1e293b;
+  --chart-axis: #94a3b8;
+}
+
+@theme {
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #5a5ff0;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+  --color-brand-950: #1e1b4b;
 }
 
 @theme inline {
@@ -103,7 +117,7 @@ textarea:disabled {
 }
 
 :focus-visible {
-  outline: 2px solid #10b981;
+  outline: 2px solid var(--color-brand-500);
   outline-offset: 2px;
 }
 
@@ -114,7 +128,7 @@ a:focus-visible,
 [role="switch"]:focus-visible,
 [role="option"]:focus-visible,
 [role="listbox"]:focus-visible {
-  outline: 2px solid #10b981;
+  outline: 2px solid var(--color-brand-500);
   outline-offset: 2px;
 }
 
@@ -133,50 +147,50 @@ a:focus-visible,
 .badge-feature-idle,
 .badge-bug-idle,
 .badge-system-idle {
-  border-color: #e4e4e7;
-  background-color: #f4f4f5;
-  color: #52525b;
+  border-color: #e2e8f0;
+  background-color: #f1f5f9;
+  color: #475569;
 }
 .badge-feature-idle:hover,
 .badge-bug-idle:hover,
 .badge-system-idle:hover {
-  background-color: #fafafa;
+  background-color: #f8fafc;
 }
 .dark .badge-feature-idle,
 .dark .badge-bug-idle,
 .dark .badge-system-idle {
-  border-color: #3f3f46;
-  background-color: #27272a;
-  color: #d4d4d8;
+  border-color: #334155;
+  background-color: #1e293b;
+  color: #cbd5e1;
 }
 .dark .badge-feature-idle:hover,
 .dark .badge-bug-idle:hover,
 .dark .badge-system-idle:hover {
-  background-color: #3f3f46;
+  background-color: #334155;
 }
 
 .badge-feature-active,
 .badge-bug-active,
 .badge-system-active {
-  border-color: #059669;
-  background-color: #059669;
+  border-color: #4f46e5;
+  background-color: #4f46e5;
   color: #fff;
 }
 .dark .badge-feature-active,
 .dark .badge-bug-active,
 .dark .badge-system-active {
-  border-color: #059669;
-  background-color: #059669;
+  border-color: #4f46e5;
+  background-color: #4f46e5;
   color: #fff;
 }
 
 .badge-feature-icon,
 .badge-bug-icon,
 .badge-system-icon {
-  color: #10b981;
+  color: #4f46e5;
 }
 .dark .badge-feature-icon,
 .dark .badge-bug-icon,
 .dark .badge-system-icon {
-  color: #34d399;
+  color: #a5b4fc;
 }

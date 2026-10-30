@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import { usePathname } from 'next/navigation'
-import { Moon, Sun, SlidersHorizontal } from 'lucide-react'
+import { Moon, Sun, SlidersHorizontal } from '@/components/icons'
 import NotificationBell from '@/components/notification-bell'
 import PushToggle from '@/components/push-toggle'
 import InstallPwaButton from '@/components/install-pwa-button'
@@ -74,7 +74,7 @@ export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme
           onClick={cycle}
           title={labels[theme]}
           aria-label={`Alternar tema (atual: ${labels[theme]})`}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
         >
           <Icon aria-hidden="true" className="h-5 w-5" />
         </button>
@@ -90,7 +90,7 @@ export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme
         <button
           type="button"
           onClick={() => setMenuOpen((o) => !o)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
           aria-label="Menu"
           aria-haspopup="menu"
           aria-expanded={menuOpen}
@@ -99,25 +99,25 @@ export default function HeaderActions({ defaultTheme = 'light' }: { defaultTheme
         </button>
 
         {menuOpen && (
-          <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
+          <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
             <button
               type="button"
               onClick={cycle}
-              className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               <Icon aria-hidden="true" className="h-4 w-4" />
               {labels[theme]}
             </button>
-            <div className="border-t border-zinc-100 dark:border-zinc-700" />
+            <div className="border-t border-slate-100 dark:border-slate-700" />
             <PushToggle onAction={() => setMenuOpen(false)} />
-            <div className="border-t border-zinc-100 dark:border-zinc-700" />
+            <div className="border-t border-slate-100 dark:border-slate-700" />
             <button
               type="button"
               onClick={() => {
                 setMenuOpen(false)
                 window.dispatchEvent(new CustomEvent('toggle-dashboard-editor'))
               }}
-              className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
               Editar cards

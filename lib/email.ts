@@ -5,7 +5,7 @@ function buildHtml(code: string): string {
   return `
     <div style="font-family:Arial,Helvetica,sans-serif;background:#f4f4f5;padding:32px 16px">
       <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden">
-        <div style="background:#10b981;padding:20px 24px">
+        <div style="background:#4f46e5;padding:20px 24px">
           <p style="margin:0;color:#ffffff;font-size:18px;font-weight:700">🐷 Gestor Financeiro</p>
         </div>
         <div style="padding:28px 24px">
@@ -13,8 +13,8 @@ function buildHtml(code: string): string {
           <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:#52525b">
             Use o código abaixo para confirmar sua conta. Ele expira em 10 minutos.
           </p>
-          <div style="background:#ecfdf5;border:1px dashed #10b981;border-radius:12px;padding:20px;text-align:center">
-            <span style="font-size:32px;font-weight:800;letter-spacing:8px;color:#059669">${code}</span>
+          <div style="background:#eef2ff;border:1px dashed #6366f1;border-radius:12px;padding:20px;text-align:center">
+            <span style="font-size:32px;font-weight:800;letter-spacing:8px;color:#4338ca">${code}</span>
           </div>
           <p style="margin:20px 0 0;font-size:12px;line-height:1.6;color:#a1a1aa">
             Se você não fez esse pedido, pode ignorar este e-mail.
@@ -29,7 +29,7 @@ function buildResetHtml(code: string): string {
   return `
     <div style="font-family:Arial,Helvetica,sans-serif;background:#f4f4f5;padding:32px 16px">
       <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden">
-        <div style="background:#10b981;padding:20px 24px">
+        <div style="background:#4f46e5;padding:20px 24px">
           <p style="margin:0;color:#ffffff;font-size:18px;font-weight:700">🐷 Gestor Financeiro</p>
         </div>
         <div style="padding:28px 24px">
@@ -37,8 +37,8 @@ function buildResetHtml(code: string): string {
           <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:#52525b">
             Use o código abaixo para criar uma nova senha. Ele expira em 10 minutos.
           </p>
-          <div style="background:#ecfdf5;border:1px dashed #10b981;border-radius:12px;padding:20px;text-align:center">
-            <span style="font-size:32px;font-weight:800;letter-spacing:8px;color:#059669">${code}</span>
+          <div style="background:#eef2ff;border:1px dashed #6366f1;border-radius:12px;padding:20px;text-align:center">
+            <span style="font-size:32px;font-weight:800;letter-spacing:8px;color:#4338ca">${code}</span>
           </div>
           <p style="margin:20px 0 0;font-size:12px;line-height:1.6;color:#a1a1aa">
             Se você não pediu para redefinir a senha, pode ignorar este e-mail.

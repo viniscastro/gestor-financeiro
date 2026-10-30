@@ -76,8 +76,8 @@ export default async function StatsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Estatísticas</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Estatísticas</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Analise suas finanças com gráficos
         </p>
       </div>

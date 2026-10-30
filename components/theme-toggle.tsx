@@ -1,30 +1,30 @@
 'use client'
 
-import { useEffect, useState, useSyncExternalStore } from 'react'
-import { Moon, Sun } from 'lucide-react'
+import { useSyncExternalStore } from 'react'
+import { Moon, Sun } from '@/components/icons'
 
-const emptySubscribe = () => () => {}
+type Theme = 'light' | 'dark'
+
+function subscribe(onChange: () => void) {
+  const observer = new MutationObserver(onChange)
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+  return () => observer.disconnect()
+}
+
+function getTheme(): Theme {
+  return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+}
 
 export default function ThemeToggle() {
-  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const theme = useSyncExternalStore<Theme | null>(subscribe, getTheme, () => null)
 
-  useEffect(() => {
-    const saved = localStorage.getItem('theme') as 'light' | 'dark' | null
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const t = saved ?? (prefersDark ? 'dark' : 'light')
-    document.documentElement.classList.toggle('dark', t === 'dark')
-    setTheme(t)
-  }, [])
+  if (!theme) return null
 
-  function cycle() {
-    const next = theme === 'light' ? 'dark' : 'light'
-    setTheme(next)
+  function toggle() {
+    const next: Theme = theme === 'light' ? 'dark' : 'light'
     document.documentElement.classList.toggle('dark', next === 'dark')
-    localStorage.setItem('theme', next)
+    localStorage.setItem('gf-theme', next)
   }
-
-  if (!mounted) return null
 
   const Icon = theme === 'light' ? Sun : Moon
   const label = theme === 'light' ? 'Tema claro' : 'Tema escuro'
@@ -32,10 +32,10 @@ export default function ThemeToggle() {
   return (
     <button
       type="button"
-      onClick={cycle}
+      onClick={toggle}
       title={label}
       aria-label={`Alternar tema (atual: ${label})`}
-      className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+      className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
     >
       <Icon aria-hidden="true" className="h-5 w-5" />
     </button>

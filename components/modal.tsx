@@ -86,14 +86,14 @@ export default function Modal({
           aria-modal="true"
           aria-labelledby={titleId}
           tabIndex={-1}
-          className={`relative my-8 max-h-[90vh] w-full overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl outline-none dark:border-zinc-700 dark:bg-zinc-800 ${
+          className={`relative my-8 max-h-[90vh] w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl outline-none dark:border-slate-700 dark:bg-slate-800 ${
             wide ? 'max-w-lg' : 'max-w-md'
           } ${className}`}
           onKeyDown={handleKeyDown}
         >
           <h2
             id={titleId}
-            className="mb-5 text-lg font-bold text-zinc-900 dark:text-zinc-50"
+            className="mb-5 text-lg font-bold text-slate-900 dark:text-slate-50"
           >
             {title}
           </h2>
