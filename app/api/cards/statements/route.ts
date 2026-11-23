@@ -35,6 +35,11 @@ export async function POST(request: NextRequest) {
   if (!statementId) {
     return NextResponse.json({ error: 'statementId é obrigatório' }, { status: 400 })
   }
+  // A fatura só muda de status por ação explícita: `paid` precisa vir como
+  // booleano (nunca assume "paga" por omissão).
+  if (typeof paid !== 'boolean') {
+    return NextResponse.json({ error: 'paid deve ser true ou false' }, { status: 400 })
+  }
 
   const stmt = await prisma.creditCardStatement.findFirst({
     where: { id: statementId, userId: session.user.id },
@@ -47,10 +52,10 @@ export async function POST(request: NextRequest) {
   await prisma.creditCardStatement.update({
     where: { id: stmt.id },
     data: {
-      status: paid === false ? 'OPEN' : 'PAID',
-      paidAt: paid === false ? null : now,
+      status: paid ? 'PAID' : 'OPEN',
+      paidAt: paid ? now : null,
     },
   })
 
-  return NextResponse.json({ ok: true, status: paid === false ? 'OPEN' : 'PAID' })
+  return NextResponse.json({ ok: true, status: paid ? 'PAID' : 'OPEN' })
 }

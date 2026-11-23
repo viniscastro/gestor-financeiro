@@ -348,17 +348,24 @@ export default function CardsManager() {
     loadMonth(cardId, month)
   }
 
+  function daysUntilDue(s: CreditCardStatementDto): number {
+    const due = new Date(s.dueDate + 'T12:00:00')
+    due.setHours(0, 0, 0, 0)
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+    return Math.round((due.getTime() - now.getTime()) / 86_400_000)
+  }
+
+  function isOverdue(s: CreditCardStatementDto): boolean {
+    return s.status === 'OPEN' && s.totalAmount > 0 && daysUntilDue(s) < 0
+  }
+
+  // Liberado de 7 dias antes do vencimento em diante, inclusive depois de
+  // vencida: a fatura só passa a constar como paga quando a pessoa confirma.
   function canPayStatement(s: CreditCardStatementDto): boolean {
     if (s.status !== 'OPEN') return false
     if (s.totalAmount <= 0) return false
-    const due = new Date(s.dueDate + 'T12:00:00')
-    const now = new Date()
-    const startDue = new Date(due)
-    startDue.setHours(0, 0, 0, 0)
-    const startNow = new Date(now)
-    startNow.setHours(0, 0, 0, 0)
-    const days = Math.round((startDue.getTime() - startNow.getTime()) / 86_400_000)
-    return days >= 0 && days <= 7
+    return daysUntilDue(s) <= 7
   }
 
   function openPay(s: CreditCardStatementDto) {
@@ -701,7 +708,7 @@ export default function CardsManager() {
                   <div className="border-t border-slate-100 p-4 dark:border-slate-700">
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                       <div className="flex flex-wrap gap-1.5">
-                        {cardStatements.slice(0, 6).map((s) => {
+                        {cardStatements.map((s) => {
                           const isSel = activeMonth === s.monthKey
                           return (
                             <button
@@ -721,6 +728,11 @@ export default function CardsManager() {
                                 {s.status === 'PAID' && (
                                   <span className="rounded bg-black/25 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
                                     Paga
+                                  </span>
+                                )}
+                                {isOverdue(s) && (
+                                  <span className="rounded bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
+                                    Vencida
                                   </span>
                                 )}
                               </span>
@@ -785,8 +797,13 @@ export default function CardsManager() {
                               Fatura deste mês já foi <span className="font-bold">paga</span>
                             </span>
                           ) : (
-                            <span className="text-xs text-slate-500 dark:text-slate-400">
-                              {monthLabel(ms.monthKey)} · Vence {formatDDMMYYYY(ms.dueDate)}
+                            <span
+                              className={`text-xs ${
+                                isOverdue(ms) ? 'font-semibold text-rose-600 dark:text-rose-400' : 'text-slate-500 dark:text-slate-400'
+                              }`}
+                            >
+                              {monthLabel(ms.monthKey)} · {isOverdue(ms) ? 'Venceu' : 'Vence'} {formatDDMMYYYY(ms.dueDate)}
+                              {isOverdue(ms) ? ' · em aberto' : ''}
                             </span>
                           )}
                           <button
@@ -797,7 +814,7 @@ export default function CardsManager() {
                             title={
                               canPay && !paid
                                 ? 'Marcar fatura como paga'
-                                : 'Disponível para faturas abertas, com valor, de 7 dias antes até o dia do vencimento'
+                                : 'Disponível para faturas abertas, com valor, a partir de 7 dias antes do vencimento'
                             }
                           >
                             <Check className="h-3.5 w-3.5" />

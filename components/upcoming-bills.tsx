@@ -97,7 +97,9 @@ export default function UpcomingBills({ bills }: { bills: UpcomingBillDto[] }) {
             <li key={b.id} className="flex items-center justify-between gap-2 text-sm font-medium">
               <span className="truncate">{b.description}</span>
               <span className="shrink-0">
-                {b.days === 0
+                {b.days < 0
+                  ? `venceu há ${-b.days} ${b.days === -1 ? 'dia' : 'dias'}`
+                  : b.days === 0
                   ? 'vence hoje'
                   : b.days === 1
                     ? 'vence amanhã'
