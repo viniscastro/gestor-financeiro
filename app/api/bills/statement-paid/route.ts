@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { computeInvoiceTotal, invoiceWindow } from '@/lib/cards'
+import { computeInvoiceTotal, invoiceWindowForMonth } from '@/lib/cards'
 
 export async function POST(request: NextRequest) {
   const session = await auth()
@@ -33,6 +33,9 @@ export async function POST(request: NextRequest) {
   if (!stmt) {
     return NextResponse.json({ error: 'Fatura não encontrada' }, { status: 404 })
   }
+  if (stmt.status === 'PAID') {
+    return NextResponse.json({ error: 'Esta fatura já está paga' }, { status: 400 })
+  }
 
   let debitTx = false
   if (accountId) {
@@ -53,7 +56,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (debitTx) {
-      const window = invoiceWindow(stmt.card, new Date(stmt.dueDate))
+      const window = invoiceWindowForMonth(stmt.card, stmt.monthKey)
       const total = await computeInvoiceTotal(session.user!.id, stmt.card.id, window)
       if (total > 0) {
         const [yy, mm] = stmt.monthKey.split('-')

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import type { CreditCardDto, CreditCardStatementDto } from '@/lib/types'
+import { nextBusinessDay } from '@/lib/business-days'
 
 export const creditCardSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(50),
@@ -55,7 +56,9 @@ export function invoiceWindow(card: { closingDay: number; dueDay: number }, due:
   const y = due.getFullYear()
   const m = due.getMonth()
   const lastDayDue = new Date(y, m + 1, 0).getDate()
-  const dueDate = new Date(y, m, Math.min(card.dueDay, lastDayDue))
+  // Vencimento que cai em fim de semana ou feriado é adiado para o próximo dia
+  // útil. A fatura continua identificada pelo mês nominal (monthKey).
+  const dueDate = nextBusinessDay(new Date(y, m, Math.min(card.dueDay, lastDayDue)))
 
   const prevLastDay = new Date(y, m, 0).getDate()
   // Start INCLUSIVO: dia do fechamento do mês anterior. Uma compra feita no dia
@@ -70,20 +73,25 @@ export function invoiceWindow(card: { closingDay: number; dueDay: number }, due:
   return { monthKey: `${y}-${String(m + 1).padStart(2, '0')}`, dueDate, start, end }
 }
 
+// Janela da fatura a partir do mês nominal ("YYYY-MM"). Use isto em vez do
+// dueDate gravado: com o ajuste para dia útil o vencimento pode cair no mês
+// seguinte ao da fatura.
+export function invoiceWindowForMonth(card: { closingDay: number; dueDay: number }, monthKey: string): InvoiceWindow {
+  const [y, m] = monthKey.split('-').map(Number)
+  return invoiceWindow(card, new Date(y, m - 1, 1))
+}
+
 export function nextInvoiceWindow(card: { closingDay: number; dueDay: number }, from: Date): InvoiceWindow {
   const y = from.getFullYear()
   const m = from.getMonth()
-  for (let i = 0; i < 24; i++) {
-    const dueCandidateMo = (m + i) % 12
-    const dueCandidateY = y + Math.floor((m + i) / 12)
-    const lastDay = new Date(dueCandidateY, dueCandidateMo + 1, 0).getDate()
-    const dueCandidate = new Date(dueCandidateY, dueCandidateMo, Math.min(card.dueDay, lastDay))
-    // Compara com o início do dia: a fatura cujo vencimento é hoje continua
-    // sendo a "fatura vigente" durante todo o dia do vencimento (último dia
-    // para marcá-la como paga).
-    if (dueCandidate >= startOfDay(from)) {
-      return invoiceWindow(card, dueCandidate)
-    }
+  const today = startOfDay(from)
+  // Começa no mês anterior: um vencimento adiado (ex.: 28/02 num sábado vai
+  // para 02/03) ainda pode ser a fatura vigente no início do mês.
+  for (let i = -1; i < 24; i++) {
+    const w = invoiceWindow(card, new Date(y, m + i, 1))
+    // A fatura cujo vencimento é hoje continua sendo a "fatura vigente"
+    // durante todo o dia do vencimento.
+    if (w.dueDate >= today) return w
   }
   return invoiceWindow(card, from)
 }
@@ -124,7 +132,16 @@ export async function getOrCreateStatement(
   const existing = await prisma.creditCardStatement.findUnique({
     where: { cardId_monthKey: { cardId, monthKey: window.monthKey } },
   })
-  if (existing) return existing
+  if (existing) {
+    // Mantém o vencimento gravado em dia com a regra de dia útil.
+    if (existing.dueDate.getTime() !== window.dueDate.getTime()) {
+      return prisma.creditCardStatement.update({
+        where: { id: existing.id },
+        data: { dueDate: window.dueDate },
+      })
+    }
+    return existing
+  }
   return prisma.creditCardStatement.create({
     data: {
       userId,
@@ -146,24 +163,27 @@ export async function listStatements(userId: string, from: Date, months = 6) {
 
   for (const card of cards) {
     const current = nextInvoiceWindow(card, from)
+
+    // Faturas vencidas continuam em aberto até a pessoa marcar como paga:
+    // nunca são tratadas como pagas só porque o vencimento passou.
+    const overdue = await prisma.creditCardStatement.findMany({
+      where: { userId, cardId: card.id, status: { not: 'PAID' }, monthKey: { lt: current.monthKey } },
+      orderBy: { monthKey: 'asc' },
+    })
+    for (const old of overdue) {
+      const window = invoiceWindowForMonth(card, old.monthKey)
+      const total = await computeInvoiceTotal(userId, card.id, window)
+      if (total <= 0) continue
+      const stmt = await getOrCreateStatement(userId, card.id, window)
+      statements.push(toStatementDto(stmt, card, window, total))
+    }
+
+    const [cy, cm] = current.monthKey.split('-').map(Number)
     for (let i = 0; i < months; i++) {
-      const due = new Date(current.dueDate)
-      due.setMonth(due.getMonth() + i)
-      const window = invoiceWindow(card, due)
-      if (window.dueDate < startOfDay(from) && i === 0) continue
+      const window = invoiceWindow(card, new Date(cy, cm - 1 + i, 1))
       const stmt = await getOrCreateStatement(userId, card.id, window)
       const total = await computeInvoiceTotal(userId, card.id, window)
-      statements.push({
-        id: stmt.id,
-        cardId: card.id,
-        cardName: card.name,
-        monthlyLabel: window.monthKey,
-        monthKey: window.monthKey,
-        dueDate: window.dueDate.toISOString().slice(0, 10),
-        status: stmt.status === 'PAID' ? 'PAID' : 'OPEN',
-        totalAmount: total,
-        paidAt: stmt.paidAt ? stmt.paidAt.toISOString() : null,
-      })
+      statements.push(toStatementDto(stmt, card, window, total))
     }
   }
 
@@ -181,10 +201,34 @@ export async function getUpcomingCreditCardStatements(userId: string, withinDays
       const diffMs = startOfDay(due).getTime() - startOfDay(now).getTime()
       return { ...s, days: Math.round(diffMs / 86_400_000) }
     })
-    .filter((s) => s.days >= 0 && s.days <= withinDays && s.totalAmount > 0)
+    // Inclui as vencidas (days < 0): seguem pendentes até serem marcadas como pagas.
+    .filter((s) => s.days <= withinDays && s.totalAmount > 0)
     .sort((a, b) => a.days - b.days)
 
   return filtered
+}
+
+function toStatementDto(
+  stmt: { id: string; status: string; paidAt: Date | null },
+  card: { id: string; name: string },
+  window: InvoiceWindow,
+  total: number
+): CreditCardStatementDto {
+  return {
+    id: stmt.id,
+    cardId: card.id,
+    cardName: card.name,
+    monthlyLabel: window.monthKey,
+    monthKey: window.monthKey,
+    dueDate: toLocalISODate(window.dueDate),
+    status: stmt.status === 'PAID' ? 'PAID' : 'OPEN',
+    totalAmount: total,
+    paidAt: stmt.paidAt ? stmt.paidAt.toISOString() : null,
+  }
+}
+
+function toLocalISODate(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 function startOfDay(d: Date): Date {
